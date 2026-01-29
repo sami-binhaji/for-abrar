@@ -22,7 +22,7 @@ button.game-btn { background: #FF69B4; color: white; border: none; padding: 10px
 #sabala-container { position: absolute; bottom: 20px; transform: translateX(-50%); pointer-events: none; display: flex; flex-direction: column; align-items: center; }
 #nametag { background: white; color: #FF69B4; padding: 2px 10px; border-radius: 10px; font-weight: bold; font-size: 14px; margin-bottom: 5px; box-shadow: 2px 2px 0px #000; }
 #sabala-player { font-size: 60px; line-height: 1; }
-.banana { position: absolute; font-size: 40px; user-select: none; z-index: 10; }
+.banana { position: absolute; font-size: 40px; user-select: none; z-index: 10; cursor: pointer; }
 
 #death-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #FFD1DC; z-index: 9999; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
 .ayooz-title { color: #FF1493; font-size: 5rem; margin: 0; text-shadow: 4px 4px 0px white; }
@@ -39,8 +39,8 @@ button.game-btn { background: #FF69B4; color: white; border: none; padding: 10px
     <h1 id="death-title" class="ayooz-title">Yal 3ayooooz</h1>
     <p style="font-size: 2rem; color: #555; font-weight: bold;">Score: <span id="final-score">0</span></p>
     <div style="display:flex; gap: 10px;">
-        <button class="game-btn" onclick="retryGame()">RETRY 🔄</button>
-        <button class="game-btn" style="background: #555;" onclick="clearHighScore()">RESET BEST 🗑️</button>
+        <button class="game-btn" id="retry-btn">RETRY 🔄</button>
+        <button class="game-btn" style="background: #555;" id="clear-btn">RESET BEST 🗑️</button>
     </div>
     <button class="game-btn" style="margin-top:20px; background: white; color: #FF69B4;" onclick="location.reload()">MAIN MENU</button>
 </div>
@@ -56,29 +56,29 @@ button.game-btn { background: #FF69B4; color: white; border: none; padding: 10px
     <div class="menagerie">
         <div class="animal-box">
             <div class="label">The Squish</div>
-            <img src="seal.png" class="animal-img" onclick="playSeal()">
+            <img src="seal.png" class="animal-img" id="seal-img">
             <p id="seal-game" class="game-text">Pets: 0</p>
         </div>
         <div class="animal-box">
             <div class="label">The Chaos Bun</div>
             <img src="bunny.png" class="animal-img" id="bun-img">
             <p id="bun-game" class="game-text">Hungry...</p>
-            <button class="game-btn" onclick="playBun()">FEED CARROT 🥕</button>
+            <button class="game-btn" id="bun-btn">FEED CARROT 🥕</button>
         </div>
         <div class="animal-box">
             <div class="label">The Goblino</div>
             <img src="sphynx.png" class="animal-img" id="cat-img">
             <p id="cat-game" class="game-text">Temp: 20°C</p>
-            <button class="game-btn" onclick="playCat()">TURN ON HEATER 🔥</button>
+            <button class="game-btn" id="cat-btn">TURN ON HEATER 🔥</button>
         </div>
         <div class="animal-box">
             <div class="label">Janu</div>
             <img src="janu.png" class="animal-img" id="janu-img">
             <p id="janu-game" class="game-text">Janu is watching.</p>
-            <button class="game-btn" onclick="playJanu()">SAY HELLO</button>
+            <button class="game-btn" id="janu-btn">SAY HELLO</button>
         </div>
     </div>
-    <button id="final-boss-btn" onclick="startSabala()">ENTER SABALA SIMULATOR (enti)</button>
+    <button id="final-boss-btn">ENTER SABALA SIMULATOR (enti)</button>
 </div>
 
 <div id="sabala-sim">
@@ -115,39 +115,40 @@ fBtn.addEventListener("click", () => {
 // --- PETS ---
 let pCount=0, bClicks=0, cTemp=20, jClicks=0;
 
-function playSeal(){ 
+document.getElementById("seal-img").addEventListener("click", function() {
     pCount++; 
     let msg = "Pets: " + pCount;
     
     if(pCount === 10) {
         msg = "🥰 So cute and squishy! 🥰";
+        alert("🥰 So cute and squishy! 🥰");
     } else if(pCount === 20) {
         msg = "Shfeech mb 9aya? 😅";
-    } else if(pCount > 20) {
-        msg = "Pets: " + pCount + " (mb t3abt?)";
+        alert("Shfeech mb 9aya? 😅");
     }
     
     document.getElementById("seal-game").innerText = msg;
-}
+});
 
-function playBun(){ 
+document.getElementById("bun-btn").addEventListener("click", function() {
     bClicks++; 
     document.getElementById("bun-img").style.transform=`scale(${1+bClicks*0.45})`; 
-}
+});
 
-function playCat(){ 
+document.getElementById("cat-btn").addEventListener("click", function() {
     cTemp += 5; 
     let msg = "Temp: " + cTemp + "°C";
     
     if(cTemp > 65) {
         document.getElementById("cat-img").src="sphynx_black.png";
         msg = "7aragteeee 🔥😱";
+        alert("7aragteeee 🔥😱");
     }
     
     document.getElementById("cat-game").innerText = msg;
-}
+});
 
-function playJanu(){ 
+document.getElementById("janu-btn").addEventListener("click", function() {
     jClicks++; 
     if(jClicks <= 5) {
         const phrases = ["Whatcha doin?", "Pretty girl!", "I love Abrar!", "Muah!", "Peek-a-boo!"]; 
@@ -156,7 +157,7 @@ function playJanu(){
         document.getElementById("scare-video").src = "https://www.youtube.com/embed/ix3rE46lWsU?autoplay=1"; 
         document.getElementById("janu-scare").style.display = "block"; 
     } 
-}
+});
 
 function closeScare(){ 
     document.getElementById("scare-video").src = ""; 
@@ -170,14 +171,13 @@ let isSabalaActive = false;
 let score = 0;
 let highscore = parseInt(localStorage.getItem("sabalaHigh")) || 0;
 document.getElementById("high-score-val").innerText = highscore;
-let fallIntervals = [];
-let spawnTimeouts = [];
+let bananaSpawnTimeout = null;
 
-function startSabala(){ 
+document.getElementById("final-boss-btn").addEventListener("click", function() {
     document.getElementById("main-content").style.display = "none"; 
     document.getElementById("sabala-sim").style.display = "block"; 
     resetSabala();
-}
+});
 
 function spawnBanana(){
     if(!isSabalaActive) return;
@@ -189,44 +189,58 @@ function spawnBanana(){
     b.style.top = "-50px";
     document.getElementById("sabala-sim").appendChild(b);
 
+    let fallSpeed = 5;
+    
     const fallInterval = setInterval(() => {
         if(!isSabalaActive){ 
             clearInterval(fallInterval); 
-            b.remove(); 
+            if(b.parentNode) b.remove(); 
             return; 
         }
         
         let topPos = parseInt(b.style.top);
-        b.style.top = (topPos + 7 + score/4) + "px";
+        b.style.top = (topPos + fallSpeed) + "px";
 
         let bRect = b.getBoundingClientRect();
         let pRect = document.getElementById("sabala-player").getBoundingClientRect();
 
-        if(bRect.bottom > pRect.top && bRect.left < pRect.right && bRect.right > pRect.left){
+        // Collision detection
+        if(bRect.bottom > pRect.top && bRect.top < pRect.bottom && 
+           bRect.left < pRect.right && bRect.right > pRect.left){
             score++;
             document.getElementById("score-board").innerHTML = `Bananas: ${score} | High Score: ${highscore}`;
             clearInterval(fallInterval); 
-            b.remove();
-            spawnBanana();
+            if(b.parentNode) b.remove();
+            
+            // Spawn next banana after catching
+            if(bananaSpawnTimeout) clearTimeout(bananaSpawnTimeout);
+            bananaSpawnTimeout = setTimeout(() => spawnBanana(), 800);
             return;
         }
 
+        // Banana missed - game over
         if(topPos > window.innerHeight){ 
             clearInterval(fallInterval); 
-            b.remove(); 
+            if(b.parentNode) b.remove(); 
             triggerGameOver(); 
         }
-    }, 20);
-    
-    fallIntervals.push(fallInterval);
-    spawnTimeouts.push(setTimeout(spawnBanana, Math.max(300, 1000 - score*15)));
+    }, 30);
 }
 
 function triggerGameOver(){
     if(!isSabalaActive) return;
     
     isSabalaActive = false; 
-    stopAllBananas();
+    
+    // Clear any pending spawns
+    if(bananaSpawnTimeout) {
+        clearTimeout(bananaSpawnTimeout);
+        bananaSpawnTimeout = null;
+    }
+    
+    // Remove all bananas
+    document.querySelectorAll("#sabala-sim .banana").forEach(b => b.remove());
+    
     document.getElementById("sabala-sim").style.display = "none";
     document.getElementById("death-screen").style.display = "flex";
     document.getElementById("final-score").innerText = score;
@@ -248,34 +262,39 @@ function triggerGameOver(){
 }
 
 function resetSabala(){
-    stopAllBananas(); 
+    // Clear everything first
+    if(bananaSpawnTimeout) {
+        clearTimeout(bananaSpawnTimeout);
+        bananaSpawnTimeout = null;
+    }
+    
+    // Remove all existing bananas
+    document.querySelectorAll("#sabala-sim .banana").forEach(b => b.remove());
+    
     score = 0; 
     isSabalaActive = true;
-    document.querySelectorAll("#sabala-sim .banana").forEach(b => b.remove());
     document.getElementById("score-board").innerHTML = `Bananas: 0 | High Score: ${highscore}`;
     document.getElementById("sabala-container").style.left = "50%";
-    spawnBanana();
+    
+    // Start spawning after a brief delay
+    setTimeout(() => spawnBanana(), 500);
 }
 
-function retryGame() {
+// Retry button
+document.getElementById("retry-btn").addEventListener("click", function() {
+    console.log("Retry clicked!");
     document.getElementById("death-screen").style.display = "none";
     document.getElementById("sabala-sim").style.display = "block";
     resetSabala();
-}
+});
 
-function stopAllBananas(){ 
-    fallIntervals.forEach(i => clearInterval(i)); 
-    spawnTimeouts.forEach(t => clearTimeout(t)); 
-    fallIntervals = []; 
-    spawnTimeouts = []; 
-}
-
-function clearHighScore(){ 
+// Clear high score button
+document.getElementById("clear-btn").addEventListener("click", function() {
     localStorage.setItem("sabalaHigh", 0); 
     highscore = 0; 
     document.getElementById("high-score-val").innerText = 0; 
     alert("Record wiped!"); 
-}
+});
 
 // MONKEY FOLLOW MOUSE
 window.addEventListener("mousemove", e => {
