@@ -19,59 +19,40 @@
             cursor: url('https://img.icons8.com/color/32/hello-kitty.png'), auto;
         }
 
-        /* The glitter "floor" - Optimized for faster growth */
+        /* Rainbow Glitter Pile */
         #glitter-floor {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
             height: 0px; 
-            background: linear-gradient(transparent, rgba(255, 105, 180, 0.7));
-            box-shadow: 0 -5px 20px rgba(255, 105, 180, 0.5);
+            background: linear-gradient(to right, #ff00ff, #00ffff, #ff00ff, #ffff00);
+            background-size: 400% 400%;
+            animation: rainbowShift 5s ease infinite;
+            box-shadow: 0 -10px 30px rgba(255, 105, 180, 0.8);
             pointer-events: none;
             z-index: 999;
+            opacity: 0.6;
+        }
+
+        @keyframes rainbowShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .glitter {
             position: fixed;
-            width: 6px;
-            height: 6px;
-            background: #FF69B4;
+            width: 8px; /* Bigger */
+            height: 8px;
             border-radius: 50%;
             pointer-events: none;
             z-index: 1000;
+            box-shadow: 0 0 10px white; /* Glowing effect */
         }
 
-        #landing-page { text-align: center; padding: 20px; z-index: 10; }
-
-        #forbidden-button {
-            background-color: #FF69B4;
-            color: white;
-            border: 4px solid white;
-            padding: 20px 40px;
-            font-size: 24px;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 0 20px #FF69B4;
-            font-weight: bold;
-        }
-
-        #main-content {
-            display: none;
-            text-align: center;
-            width: 100%;
-            padding: 50px 0;
-            z-index: 10;
-        }
-
-        .menagerie {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin: 40px auto;
-            max-width: 1200px;
-        }
+        #main-content { display: none; text-align: center; width: 100%; padding: 50px 0; z-index: 10; }
+        .menagerie { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 40px auto; max-width: 1200px; }
 
         .animal-box {
             background: white;
@@ -84,8 +65,8 @@
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
-            transition: 0.3s;
             position: relative;
+            overflow: visible; /* Allows big bunny to show */
         }
 
         .animal-img {
@@ -93,21 +74,20 @@
             height: 140px;
             object-fit: contain;
             cursor: pointer;
-            transition: transform 0.2s ease;
+            transition: transform 0.1s linear; /* Faster response */
         }
 
-        @keyframes shake {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            20% { transform: translate(-3px, 0px) rotate(1deg); }
-            40% { transform: translate(3px, 2px) rotate(-1deg); }
-            60% { transform: translate(-3px, 1px) rotate(0deg); }
-            80% { transform: translate(3px, -1px) rotate(1deg); }
-            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        @keyframes violentShake {
+            0% { transform: translate(2px, 2px) rotate(0deg); }
+            25% { transform: translate(-4px, -2px) rotate(2deg); }
+            50% { transform: translate(4px, 4px) rotate(-2deg); }
+            75% { transform: translate(-4px, 2px) rotate(1deg); }
+            100% { transform: translate(2px, -4px) rotate(-1deg); }
         }
 
         .game-text { font-size: 0.8rem; color: #555; margin: 5px 0; font-weight: bold; }
         .label { color: #1a1a1a; font-weight: bold; font-size: 1rem; text-transform: uppercase; }
-        button.game-btn { background: #FF69B4; color: white; border: none; padding: 5px 10px; border-radius: 10px; cursor: pointer; font-size: 0.7rem; }
+        button.game-btn { background: #FF69B4; color: white; border: none; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: bold; }
         h1 { font-size: 2.5rem; text-shadow: 2px 2px 0px white; }
     </style>
 </head>
@@ -115,179 +95,92 @@
 
     <div id="glitter-floor"></div>
 
-    <div id="landing-page">
+    <div id="landing-page" style="text-align: center;">
         <h1>⚠️ CAUTION ⚠️</h1>
-        <p style="color: white; font-weight: bold;">DO NOT TOUCH THE PINK BUTTON.</p>
-        <button id="forbidden-button">CLICK ME</button>
+        <button id="forbidden-button" style="background:#FF69B4; color:white; padding:20px; border-radius:50px; cursor:pointer;">CLICK ME</button>
     </div>
 
     <div id="main-content">
         <h1>Happy Birthday, Abrar! 🎀</h1>
-        <p style="color: #666;">Look at all the glitter you're making...</p>
-
         <div class="menagerie">
-            <div class="animal-box">
-                <div class="label">The Squish</div>
-                <img src="seal.png" class="animal-img" onclick="playSeal()">
-                <p id="seal-game" class="game-text">Pets: 0</p>
-                <p class="game-text" style="font-size: 0.6rem;">(Click to pet)</p>
-            </div>
-
-            <div class="animal-box" id="bun-box">
+            <div class="animal-box" id="bunny-container">
                 <div class="label">The Chaos Bun</div>
                 <img src="bunny.png" class="animal-img" id="bun-img">
                 <p id="bun-game" class="game-text">Hungry...</p>
-                <button class="game-btn" id="feed-btn" onclick="playBun()">FEED CARROT 🥕</button>
+                <button class="game-btn" onclick="playBun()">FEED CARROT 🥕</button>
             </div>
-
-            <div class="animal-box">
-                <div class="label">The Goblino</div>
-                <img src="sphynx.png" class="animal-img" id="cat-img">
-                <p id="cat-game" class="game-text">Temp: 20°C (Cold!)</p>
-                <button class="game-btn" onclick="playCat()">TURN ON HEATER 🔥</button>
+            
             </div>
-
-            <div class="animal-box">
-                <div class="label">Janu</div>
-                <img src="janu.png" class="animal-img" id="janu-img">
-                <p id="janu-game" class="game-text">Janu wants to talk!</p>
-                <button class="game-btn" onclick="playJanu()">SAY HELLO</button>
-            </div>
-        </div>
     </div>
 
     <script>
-        // --- IMPROVED GLITTER & PILE UP ---
+        // --- RAINBOW GLITTER ---
         let pileHeight = 0;
         const floor = document.getElementById('glitter-floor');
 
         window.addEventListener('mousemove', (e) => {
-            if (Math.random() > 0.7) { // More frequent glitter
-                createGlitter(e.pageX, e.pageY);
-                // FASTER PILE UP
-                pileHeight += 0.4; 
+            if (Math.random() > 0.6) {
+                const glitter = document.createElement('div');
+                glitter.className = 'glitter';
+                glitter.style.left = e.pageX + 'px';
+                glitter.style.top = e.pageY + 'px';
+                
+                // Rainbowish colors
+                const colors = ['#FF69B4', '#DA70D6', '#00FFFF', '#FFD700', '#ADFF2F'];
+                glitter.style.background = colors[Math.floor(Math.random() * colors.length)];
+                
+                document.body.appendChild(glitter);
+                
+                pileHeight += 0.8; // Faster rising
                 floor.style.height = pileHeight + 'px';
+
+                glitter.animate([
+                    { transform: 'translate(0,0) scale(1)', opacity: 1 },
+                    { transform: `translate(${(Math.random()-0.5)*150}px, ${window.innerHeight}px) scale(0)`, opacity: 0 }
+                ], { duration: 1200 });
+                setTimeout(() => glitter.remove(), 1200);
             }
         });
 
-        function createGlitter(x, y) {
-            const glitter = document.createElement('div');
-            glitter.className = 'glitter';
-            glitter.style.left = x + 'px';
-            glitter.style.top = y + 'px';
-            glitter.style.background = `hsl(${Math.random() * 30 + 320}, 100%, 75%)`;
-            document.body.appendChild(glitter);
-
-            const destinationY = window.innerHeight;
-            const duration = 1000;
-
-            glitter.animate([
-                { transform: 'translate(0, 0) scale(1)', opacity: 1 },
-                { transform: `translate(${(Math.random()-0.5)*80}px, ${destinationY - y}px) scale(0)`, opacity: 0 }
-            ], { duration: duration });
-
-            setTimeout(() => glitter.remove(), duration);
-        }
-
-        // --- BUTTON EVASION ---
+        // --- BUTTON EVASION (Standard) ---
         const btn = document.getElementById('forbidden-button');
-        const landing = document.getElementById('landing-page');
-        const main = document.getElementById('main-content');
-        let escapes = 0;
-
-        btn.addEventListener('mouseover', () => {
-            if (escapes < 6) {
-                const x = Math.random() * (window.innerWidth - btn.clientWidth);
-                const y = Math.random() * (window.innerHeight - btn.clientHeight);
-                btn.style.position = 'absolute';
-                btn.style.left = x + 'px';
-                btn.style.top = y + 'px';
-                escapes++;
-            }
-        });
-
         btn.addEventListener('click', () => {
-            landing.style.display = 'none';
-            main.style.display = 'block';
+            document.getElementById('landing-page').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
             document.body.style.backgroundColor = '#FFD1DC';
         });
 
-        // --- MINI GAMES ---
-
-        // 1. Seal
-        let pets = 0;
-        function playSeal() {
-            pets++;
-            const sealText = document.getElementById('seal-game');
-            sealText.innerText = "Pets: " + pets;
-            if (pets === 10) alert("The seal thinks you're its best friend now.");
-            else if (pets === 20) alert("bs la? shfeech mb 9a7ya 😂");
-        }
-
-        // 2. Bunny (GUARANTEED POP)
-        let food = 0;
-        let hasExploded = false;
+        // --- THE BUNNY EXPLOSION ---
+        let foodCount = 0;
         function playBun() {
-            if (hasExploded) return;
-            food++;
+            foodCount++;
             const bunImg = document.getElementById('bun-img');
-            const bunText = document.getElementById('bun-game');
-            const feedBtn = document.getElementById('feed-btn');
+            const container = document.getElementById('bunny-container');
             
-            // Rapid growth
-            let scale = 1 + (food * 0.4);
-            bunImg.style.transform = `scale(${scale})`;
+            // Physical growth
+            let size = 1 + (foodCount * 0.4);
+            bunImg.style.transform = `scale(${size})`;
 
-            // Shake as it gets closer to 10
-            if (food >= 6) {
-                bunImg.style.animation = "shake 0.1s infinite";
+            if (foodCount >= 6) {
+                bunImg.style.animation = "violentShake 0.1s infinite";
             }
 
-            if (food === 3) bunText.innerText = "He's round...";
-            if (food === 8) bunText.innerText = "HE IS GOING TO POP!";
-
-            if (food >= 12) {
-                hasExploded = true;
-                // Replace content so it's GONE
-                document.getElementById('bun-box').innerHTML = `
+            // FORCED DESTRUCTION at 12
+            if (foodCount >= 12) {
+                // Wipe the entire container and replace with explosion
+                container.innerHTML = `
                     <div class="label">The Chaos Bun</div>
-                    <div style="font-size: 80px; margin: 20px;">💥</div>
-                    <p class="game-text" style="color: red;">POPPED!</p>
+                    <div style="font-size: 100px; animation: violentShake 0.05s infinite;">💥</div>
+                    <p class="game-text" style="color:red; font-size: 1.2rem;">FATAL ERROR: POPPED</p>
                 `;
-                alert("YOU FED HIM TOO MUCH. HE EXPLODED. 🥕💥");
-                setTimeout(() => alert("All that's left is fur and regret."), 400);
-            }
-        }
-
-        // 3. Cat
-        let temp = 20;
-        function playCat() {
-            temp += 5;
-            const catImg = document.getElementById('cat-img');
-            const catText = document.getElementById('cat-game');
-            catText.innerText = "Temp: " + temp + "°C";
-            if (temp === 35) {
-                catText.innerText = "Perfectly Toasty! ✨";
-                catImg.style.filter = "drop-shadow(0 0 10px gold)";
-            } else if (temp >= 55) {
-                catImg.src = "sphynx_black.png";
-                catImg.style.filter = "brightness(0.2)";
-                catText.innerText = "HE'S BURNT!";
-                alert("You overcooked him. Charcoal briquette.");
-            }
-        }
-
-        // 4. Janu
-        let januClicks = 0;
-        function playJanu() {
-            januClicks++;
-            const januText = document.getElementById('janu-game');
-            if (januClicks < 7) {
-                const phrases = ["Whatcha doin?", "Pretty girl!", "I love Abrar!", "Peek-a-boo!"];
-                januText.innerText = "Janu says: " + phrases[Math.floor(Math.random() * phrases.length)];
-            } else {
-                alert("bs yal 7mara! Stop poking me!");
-                januClicks = 0; 
+                
+                // Screen shake effect
+                document.body.style.animation = "violentShake 0.2s 3";
+                
+                setTimeout(() => {
+                    alert("BOOM! You fed him until he ceased to exist. 🥕💥");
+                    alert("Abrar... look at what you've done.");
+                }, 200);
             }
         }
     </script>
