@@ -472,45 +472,21 @@ document.getElementById("clear-btn").addEventListener("click", function() {
 
 // MONKEY FOLLOW MOUSE with enhanced cursor glitter
 let lastGlitterTime = 0;
-let ambientGlitterInterval = null;
-
-// Function to create ambient glitter on landing and main pages
-function startAmbientGlitter(targetElement) {
-    if(ambientGlitterInterval) return; // Already running
-    
-    ambientGlitterInterval = setInterval(() => {
-        // Only create glitter on landing or main pages
-        const landing = document.getElementById("landing-page");
-        const mainContent = document.getElementById("main-content");
-        const sabalaActive = document.getElementById("sabala-sim").style.display !== "none";
-        
-        if(sabalaActive) return; // Don't create ambient glitter during game
-        
-        const isLandingVisible = landing.style.display !== "none";
-        const isMainVisible = mainContent.style.display !== "none";
-        
-        if(!isLandingVisible && !isMainVisible) return;
-        
-        const glitter = document.createElement("div");
-        glitter.className = "ambient-glitter";
-        glitter.style.left = Math.random() * 100 + "%";
-        glitter.style.background = ["gold", "#FF69B4", "#00FFFF", "#FFD700", "white", "#FF1493"][Math.floor(Math.random()*6)];
-        glitter.style.animationDuration = (5 + Math.random() * 5) + "s"; // 5-10 seconds to fall
-        
-        if(isLandingVisible) landing.appendChild(glitter);
-        else if(isMainVisible) mainContent.appendChild(glitter);
-        
-        setTimeout(() => glitter.remove(), 12000); // Clean up after animation
-    }, 300); // Create new glitter every 300ms
-}
-
-// Start ambient glitter on page load
-startAmbientGlitter();
+let lastFillingGlitterTime = 0;
 
 window.addEventListener("mousemove", e => {
-    // Enhanced cursor glitter trail (more particles, more visible)
     const now = Date.now();
-    if(now - lastGlitterTime > 30) { // Faster spawn rate (was 50ms)
+    
+    // Check if we're on landing or main page (not Sabala game)
+    const landing = document.getElementById("landing-page");
+    const mainContent = document.getElementById("main-content");
+    const sabalaActive = document.getElementById("sabala-sim").style.display !== "none";
+    const isLandingVisible = landing && landing.style.display !== "none";
+    const isMainVisible = mainContent && mainContent.style.display !== "none";
+    const onFirstTwoPages = !sabalaActive && (isLandingVisible || isMainVisible);
+    
+    // Enhanced cursor glitter trail (more particles, more visible)
+    if(now - lastGlitterTime > 30) { // Faster spawn rate
         lastGlitterTime = now;
         
         // Create 2-3 particles instead of 1 for more intensity
@@ -526,7 +502,32 @@ window.addEventListener("mousemove", e => {
             glitter.style.background = ["gold", "#FF69B4", "#00FFFF", "#FFD700", "white", "#FF1493"][Math.floor(Math.random()*6)];
             document.body.appendChild(glitter);
             
-            setTimeout(() => glitter.remove(), 1200); // Longer life (was 800ms)
+            setTimeout(() => glitter.remove(), 1200); // Longer life
+        }
+    }
+    
+    // FILLING GLITTER: Only on first two pages, triggered by cursor movement
+    if(onFirstTwoPages && now - lastFillingGlitterTime > 100) { // Create filling glitter every 100ms
+        lastFillingGlitterTime = now;
+        
+        // Create 3-5 glitter particles that fall and STAY on the page
+        const fillCount = Math.floor(Math.random() * 3) + 3; // 3-5 particles
+        for(let i = 0; i < fillCount; i++) {
+            const glitter = document.createElement("div");
+            glitter.className = "ambient-glitter";
+            // Spawn randomly across the width, near cursor Y position or top
+            glitter.style.left = Math.random() * 100 + "%";
+            glitter.style.background = ["gold", "#FF69B4", "#00FFFF", "#FFD700", "white", "#FF1493"][Math.floor(Math.random()*6)];
+            glitter.style.animationDuration = (3 + Math.random() * 4) + "s"; // 3-7 seconds to fall
+            
+            if(isLandingVisible) landing.appendChild(glitter);
+            else if(isMainVisible) mainContent.appendChild(glitter);
+            
+            // Don't remove these - let them accumulate and fill the page!
+            // Only remove after a long time to prevent memory issues
+            setTimeout(() => {
+                if(glitter.parentNode) glitter.remove();
+            }, 30000); // Keep for 30 seconds
         }
     }
     
