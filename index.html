@@ -135,7 +135,6 @@
     </div>
 
     <script>
-        // --- BUTTON & GLITTER ---
         let pileHeight = 0;
         const floor = document.getElementById('glitter-floor');
         window.addEventListener('mousemove', (e) => {
@@ -172,7 +171,7 @@
             document.body.style.backgroundColor = "#FFD1DC";
         });
 
-        // --- UPDATED BUNNY (EXPLOSION) LOGIC ---
+        // FIXED BUNNY LOGIC
         let food = 0;
         function playBun() {
             food++;
@@ -182,23 +181,18 @@
             const bunBtn = document.getElementById("bun-btn");
             const frame = document.getElementById("bun-frame");
 
-            let currentScale = 1 + food * 0.35;
-            bunImg.style.transform = `scale(${currentScale})`;
+            bunImg.style.transform = `scale(${1 + food * 0.35})`;
 
-            // Add shake as it gets dangerously big
-            if (food > 8) {
+            if (food > 8 && food < 13) {
                 bunImg.style.animation = "shake 0.5s infinite";
             }
 
             if (food >= 13) {
-                // Step 1: Replace image with Explosion emoji
                 frame.innerHTML = "<span style='font-size: 80px;'>💥</span>";
                 bunBtn.style.display = "none";
                 bunText.innerHTML = "POPPED!";
-                
-                // Step 2: After 0.5 seconds, finish the "murder"
                 setTimeout(() => {
-                    frame.innerHTML = "🪦"; // Tombstone
+                    frame.innerHTML = "<span style='font-size: 60px;'>🪦</span>";
                     container.style.backgroundColor = "#2a2a2a";
                     container.style.boxShadow = "8px 8px 0px #000";
                     bunText.innerHTML = "YOU MURDERED THE BUNNY??";
@@ -208,7 +202,15 @@
             }
         }
 
-        // --- JANU & REMAINING ---
+        // FIXED SEAL LOGIC
+        let pets = 0;
+        function playSeal() {
+            pets++;
+            document.getElementById("seal-game").innerText = "Pets: " + pets;
+            if (pets === 10) alert("The seal thinks you're its best friend now.");
+            if (pets === 20) alert("bs la? shfeech mb 9a7ya 😂");
+        }
+
         function playJanu() {
             let januClicks = (window.januClicks || 0) + 1;
             window.januClicks = januClicks;
@@ -225,12 +227,7 @@
             document.getElementById("scare-video").src = "";
             document.getElementById("janu-scare").style.display = "none";
         }
-        function playSeal() {
-            let pets = (window.sealPets || 0) + 1;
-            window.sealPets = pets;
-            document.getElementById("seal-game").innerText = "Pets: " + pets;
-            if (pets === 20) alert("bs la? shfeech mb 9a7ya 😂");
-        }
+
         let temp = 20;
         function playCat() {
             temp += 5;
