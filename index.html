@@ -28,6 +28,9 @@ button.game-btn { background: #FF69B4; color: white; border: none; padding: 10px
 .ayooz-title { color: #FF1493; font-size: 5rem; margin: 0; text-shadow: 4px 4px 0px white; }
 .lee-gif { width: 160px; height: 160px; margin: 10px; border-radius: 15px; border: 4px solid white; object-fit: cover; }
 
+.glitter { position: absolute; width: 10px; height: 10px; background: gold; border-radius: 50%; pointer-events: none; animation: fall 3s linear forwards; z-index: 10000; }
+@keyframes fall { to { transform: translateY(100vh) rotate(360deg); opacity: 0; } }
+
 #final-boss-btn { display: inline-block; background: linear-gradient(45deg, #ffd700, #ff69b4); border: 5px solid white; padding: 20px 50px; font-size: 28px; border-radius: 50px; color: white; font-weight: bold; cursor: pointer; box-shadow: 0 0 30px gold; margin-top: 30px; animation: buttonPop 0.5s infinite alternate; }
 @keyframes buttonPop { from { transform: scale(1); } to { transform: scale(1.05); } }
 </style>
@@ -82,7 +85,7 @@ button.game-btn { background: #FF69B4; color: white; border: none; padding: 10px
 </div>
 
 <div id="sabala-sim">
-    <div id="score-board">Bananas: 0 | High Score: <span id="high-score-val">0</span></div>
+    <div id="score-board">Bananas: 0 | High Score: <span id="high-score-val">0</span> | Win at 30! 🏆</div>
     <div id="sabala-container">
         <div id="nametag">Abrar</div>
         <div id="sabala-player">🐒</div>
@@ -208,13 +211,19 @@ function spawnBanana(){
         if(bRect.bottom > pRect.top && bRect.top < pRect.bottom && 
            bRect.left < pRect.right && bRect.right > pRect.left){
             score++;
-            document.getElementById("score-board").innerHTML = `Bananas: ${score} | High Score: ${highscore}`;
+            document.getElementById("score-board").innerHTML = `Bananas: ${score} | High Score: ${highscore} | Win at 30! 🏆`;
             clearInterval(fallInterval); 
             if(b.parentNode) b.remove();
             
-            // Spawn next banana after catching
+            // Check for win condition (30 bananas)
+            if(score >= 30) {
+                triggerVictory();
+                return;
+            }
+            
+            // Spawn next banana after catching (slower pace)
             if(bananaSpawnTimeout) clearTimeout(bananaSpawnTimeout);
-            bananaSpawnTimeout = setTimeout(() => spawnBanana(), 800);
+            bananaSpawnTimeout = setTimeout(() => spawnBanana(), 1500);
             return;
         }
 
@@ -225,6 +234,43 @@ function spawnBanana(){
             triggerGameOver(); 
         }
     }, 30);
+}
+
+function triggerVictory(){
+    if(!isSabalaActive) return;
+    
+    isSabalaActive = false; 
+    
+    // Clear any pending spawns
+    if(bananaSpawnTimeout) {
+        clearTimeout(bananaSpawnTimeout);
+        bananaSpawnTimeout = null;
+    }
+    
+    // Remove all bananas
+    document.querySelectorAll("#sabala-sim .banana").forEach(b => b.remove());
+    
+    // Update high score
+    if(score > highscore){
+        highscore = score;
+        localStorage.setItem("sabalaHigh", highscore);
+        document.getElementById("high-score-val").innerText = highscore;
+    }
+    
+    document.getElementById("sabala-sim").style.display = "none";
+    document.getElementById("death-screen").style.display = "flex";
+    document.getElementById("death-screen").style.background = "linear-gradient(45deg, #FFD700, #FF69B4, #00FFFF)";
+    document.getElementById("final-score").innerText = score;
+
+    const title = document.getElementById("death-title");
+    const gifBox = document.getElementById("gif-container"); 
+    gifBox.innerHTML = "";
+
+    title.innerText = "🎉 YOU WON! SABALA! 🎉";
+    gifBox.innerHTML = '<img src="lee_dance.gif" class="lee-gif"><img src="lee_yes.gif" class="lee-gif">';
+    
+    // Trigger glitter effect
+    createGlitter();
 }
 
 function triggerGameOver(){
@@ -243,6 +289,7 @@ function triggerGameOver(){
     
     document.getElementById("sabala-sim").style.display = "none";
     document.getElementById("death-screen").style.display = "flex";
+    document.getElementById("death-screen").style.background = "#FFD1DC";
     document.getElementById("final-score").innerText = score;
 
     const title = document.getElementById("death-title");
@@ -253,11 +300,28 @@ function triggerGameOver(){
         highscore = score;
         localStorage.setItem("sabalaHigh", highscore);
         document.getElementById("high-score-val").innerText = highscore;
-        title.innerText = "🎉 9ij Sabala! 🎉";
+        title.innerText = "🎉 New Record! 🎉";
         gifBox.innerHTML = '<img src="lee_dance.gif" class="lee-gif"><img src="lee_yes.gif" class="lee-gif">';
     } else {
         title.innerText = "Yal 3ayooooz";
         gifBox.innerHTML = '<img src="lee_crazy.gif" class="lee-gif">';
+    }
+}
+
+function createGlitter(){
+    for(let i = 0; i < 100; i++){
+        setTimeout(() => {
+            const glitter = document.createElement("div");
+            glitter.className = "glitter";
+            glitter.style.left = Math.random() * 100 + "%";
+            glitter.style.top = "-10px";
+            glitter.style.background = ["gold", "#FF69B4", "#00FFFF", "#FFD700", "white"][Math.floor(Math.random()*5)];
+            glitter.style.animationDelay = Math.random() * 0.5 + "s";
+            glitter.style.animationDuration = (Math.random() * 2 + 2) + "s";
+            document.getElementById("death-screen").appendChild(glitter);
+            
+            setTimeout(() => glitter.remove(), 3500);
+        }, i * 30);
     }
 }
 
@@ -273,7 +337,7 @@ function resetSabala(){
     
     score = 0; 
     isSabalaActive = true;
-    document.getElementById("score-board").innerHTML = `Bananas: 0 | High Score: ${highscore}`;
+    document.getElementById("score-board").innerHTML = `Bananas: 0 | High Score: ${highscore} | Win at 30! 🏆`;
     document.getElementById("sabala-container").style.left = "50%";
     
     // Start spawning after a brief delay
