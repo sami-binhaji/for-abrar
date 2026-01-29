@@ -7,6 +7,9 @@
 <style>
 body { background-color: #1a1a1a; color: #FF69B4; font-family: 'Segoe UI', sans-serif; margin: 0; overflow-x: hidden; cursor: url('https://img.icons8.com/color/32/hello-kitty.png'), auto; }
 
+.cursor-glitter { position: fixed; width: 8px; height: 8px; background: gold; border-radius: 50%; pointer-events: none; animation: cursorGlitterFade 0.8s ease-out forwards; z-index: 9998; }
+@keyframes cursorGlitterFade { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.3) translateY(20px); } }
+
 #landing-page, #main-content, #sabala-sim { display: none; text-align: center; min-height: 100vh; width: 100%; }
 #landing-page { display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
 #main-content { padding: 50px 0; }
@@ -18,8 +21,6 @@ body { background-color: #1a1a1a; color: #FF69B4; font-family: 'Segoe UI', sans-
 button.game-btn { background: #FF69B4; color: white; border: none; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: bold; }
 
 #sabala-sim { background-color: #2ecc71; cursor: none; position: relative; overflow: hidden; }
-.cursor-glitter { position: fixed; width: 8px; height: 8px; background: gold; border-radius: 50%; pointer-events: none; animation: cursorGlitterFade 0.8s ease-out forwards; z-index: 9998; }
-@keyframes cursorGlitterFade { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.3) translateY(20px); } }
 #score-board { font-size: 30px; color: white; padding: 20px; font-weight: bold; text-shadow: 2px 2px #000; }
 #sabala-container { position: absolute; bottom: 20px; transform: translateX(-50%); pointer-events: none; display: flex; flex-direction: column; align-items: center; }
 #nametag { background: white; color: #FF69B4; padding: 2px 10px; border-radius: 10px; font-weight: bold; font-size: 14px; margin-bottom: 5px; box-shadow: 2px 2px 0px #000; }
@@ -220,16 +221,20 @@ function spawnBanana(){
         if(bRect.bottom > pRect.top && bRect.top < pRect.bottom && 
            bRect.left < pRect.right && bRect.right > pRect.left){
             score++;
+            
+            // Check for win condition BEFORE updating display (beat previous highscore)
+            if(highscore > 0 && score > highscore) {
+                clearInterval(fallInterval);
+                activeBananas.delete(b);
+                if(b.parentNode) b.remove();
+                triggerVictory();
+                return;
+            }
+            
             document.getElementById("score-board").innerHTML = `Bananas: ${score} | High Score: ${highscore}`;
             clearInterval(fallInterval); 
             activeBananas.delete(b);
             if(b.parentNode) b.remove();
-            
-            // Check for win condition (beat highscore)
-            if(highscore > 0 && score > highscore) {
-                triggerVictory();
-                return;
-            }
             return;
         }
 
@@ -388,30 +393,30 @@ document.getElementById("clear-btn").addEventListener("click", function() {
     alert("Record wiped!"); 
 });
 
-// MONKEY FOLLOW MOUSE with cursor glitter
+// MONKEY FOLLOW MOUSE with cursor glitter (Sabala game only)
 let lastGlitterTime = 0;
 window.addEventListener("mousemove", e => {
-    if(!isSabalaActive) return;
-    
-    const container = document.getElementById("sabala-container");
-    let x = e.pageX; 
-    if(x < 50) x = 50; 
-    if(x > window.innerWidth - 50) x = window.innerWidth - 50;
-    container.style.left = x + "px";
-    
-    // Add cursor glitter trail
+    // Global cursor glitter trail
     const now = Date.now();
-    if(now - lastGlitterTime > 50) { // Throttle glitter creation
+    if(now - lastGlitterTime > 50) {
         lastGlitterTime = now;
         const glitter = document.createElement("div");
         glitter.className = "cursor-glitter";
         glitter.style.left = e.pageX + "px";
         glitter.style.top = e.pageY + "px";
         glitter.style.background = ["gold", "#FF69B4", "#00FFFF", "#FFD700", "white"][Math.floor(Math.random()*5)];
-        document.getElementById("sabala-sim").appendChild(glitter);
+        document.body.appendChild(glitter);
         
         setTimeout(() => glitter.remove(), 800);
     }
+    
+    // Sabala game-specific: move the monkey
+    if(!isSabalaActive) return;
+    const container = document.getElementById("sabala-container");
+    let x = e.pageX; 
+    if(x < 50) x = 50; 
+    if(x > window.innerWidth - 50) x = window.innerWidth - 50;
+    container.style.left = x + "px";
 });
 </script>
 </body>
