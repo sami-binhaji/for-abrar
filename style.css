@@ -1,45 +1,28 @@
-/* Resetting the basics */
-html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #1a1a1a; /* Dark background so the pink pops */
+body {
+    background-color: #1a1a1a;
+    color: #FF69B4;
+    font-family: sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: 'Comic Sans MS', cursive, sans-serif;
+    height: 100vh;
+    margin: 0;
     overflow: hidden;
-}
-
-#landing-page {
-    text-align: center;
-    z-index: 10;
-}
-
-#warning-text {
-    color: #FF69B4;
-    margin-bottom: 20px;
-    font-size: 2rem;
 }
 
 #forbidden-button {
     background-color: #FF69B4;
     color: white;
-    border: 4px solid white;
+    border: none;
     padding: 15px 30px;
-    font-size: 1.5rem;
+    font-size: 20px;
     border-radius: 50px;
     cursor: pointer;
-    box-shadow: 0 0 20px #FF69B4;
-    /* This ensures it doesn't vanish immediately */
-    position: relative; 
 }
 
-/* The Menagerie (hidden at first) */
-#main-content {
-    display: none;
-    width: 100%;
-    height: 100%;
-    background-color: #FFD1DC; /* Pink background for the surprise */
+.animal {
+    font-size: 100px;
+    cursor: help;
+    display: inline-block;
+    margin: 20px;
 }
