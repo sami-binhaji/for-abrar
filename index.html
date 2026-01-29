@@ -52,7 +52,7 @@
     <div id="landing-page" style="display: flex;">
         <h1>⚠️ CAUTION ⚠️</h1>
         <p style="color:white;font-weight:bold;">DO NOT TOUCH THE PINK BUTTON.</p>
-        <button id="forbidden-button" style="position:relative; background-color: #FF69B4; color: white; border: 4px solid white; padding: 20px 40px; font-size: 24px; border-radius: 50px; cursor: pointer; font-weight: bold;">CLICK ME</button>
+        <button id="forbidden-button" style="background-color: #FF69B4; color: white; border: 4px solid white; padding: 20px 40px; font-size: 24px; border-radius: 50px; cursor: pointer; font-weight: bold;">CLICK ME</button>
     </div>
 
     <div id="main-content">
@@ -63,7 +63,7 @@
                 <img src="seal.png" class="animal-img" onclick="playSeal()">
                 <p id="seal-game" class="game-text">Pets: 0</p>
             </div>
-            <div id="bunny-container" class="animal-box">
+            <div class="animal-box">
                 <div class="label">The Chaos Bun</div>
                 <img src="bunny.png" class="animal-img" id="bun-img">
                 <p id="bun-game" class="game-text">Hungry...</p>
@@ -99,33 +99,42 @@
     </div>
 
     <script>
-        // --- PETS LOGIC ---
+        // --- BUTTON LOGIC (NOW STOPS AFTER 6 JUMPS) ---
+        const fBtn = document.getElementById("forbidden-button");
+        let escapes = 0;
+        fBtn.addEventListener("mouseover", () => {
+            if (escapes < 6) {
+                fBtn.style.position = "absolute";
+                fBtn.style.left = Math.random() * (window.innerWidth - 200) + "px";
+                fBtn.style.top = Math.random() * (window.innerHeight - 100) + "px";
+                escapes++;
+            }
+        });
+        fBtn.addEventListener("click", () => {
+            document.getElementById("landing-page").style.display = "none";
+            document.getElementById("main-content").style.display = "block";
+            document.body.style.backgroundColor = "#FFD1DC";
+        });
+
+        // --- PETS & JANU ---
         let pCount = 0, bClicks = 0, cTemp = 20, jClicks = 0;
 
         function playSeal() {
-            pCount++;
-            document.getElementById("seal-game").innerText = "Pets: " + pCount;
+            pCount++; document.getElementById("seal-game").innerText = "Pets: " + pCount;
             if (pCount === 20) alert("bs la? shfeech mb 9a7ya 😂");
         }
         function playBun() {
-            bClicks++;
-            const b = document.getElementById("bun-img");
-            b.style.transform = `scale(${1 + bClicks * 0.45})`;
+            bClicks++; document.getElementById("bun-img").style.transform = `scale(${1 + bClicks * 0.45})`;
             document.getElementById("bun-game").innerText = "MEGA BUNNY!";
         }
         function playCat() {
-            cTemp += 5;
-            const t = document.getElementById("cat-game");
-            t.innerText = "Temp: " + cTemp + "°C";
-            if (cTemp > 65) {
-                document.getElementById("cat-img").src = "sphynx_black.png";
-                alert("You overcooked him 😭");
-            }
+            cTemp += 5; document.getElementById("cat-game").innerText = "Temp: " + cTemp + "°C";
+            if (cTemp > 65) { document.getElementById("cat-img").src = "sphynx_black.png"; alert("You overcooked him 😭"); }
         }
         function playJanu() {
             jClicks++;
             if (jClicks <= 5) {
-                const phrases = ["Whatcha doin?", "Pretty girl!", "I love Abrar!", "Muah! 💋", "Peek-a-boo!"];
+                const phrases = ["Whatcha doin?", "Pretty girl!", "I love Abrar!", "Peek-a-boo!", "Muah!"];
                 document.getElementById("janu-game").innerText = "Janu says: " + phrases[Math.floor(Math.random() * phrases.length)];
             } else {
                 document.getElementById("scare-video").src = "https://www.youtube.com/embed/ix3rE46lWsU?autoplay=1";
@@ -135,32 +144,17 @@
         function closeScare() {
             document.getElementById("scare-video").src = "";
             document.getElementById("janu-scare").style.display = "none";
-            jClicks = 0;
-            document.getElementById("janu-game").innerText = "Janu is watching.";
+            jClicks = 0; document.getElementById("janu-game").innerText = "Janu is watching.";
         }
 
-        // --- SABALA ENGINE ---
-        let isSabalaActive = false;
-        let score = 0;
+        // --- SABALA GAME ---
+        let isSabalaActive = false, score = 0;
         let highscore = Number(localStorage.getItem("sabalaHigh")) || 0;
         document.getElementById("high-score-val").innerText = highscore;
 
-        const fBtn = document.getElementById("forbidden-button");
-        fBtn.addEventListener("mouseover", () => {
-            fBtn.style.position = "absolute";
-            fBtn.style.left = Math.random() * (window.innerWidth - 150) + "px";
-            fBtn.style.top = Math.random() * (window.innerHeight - 100) + "px";
-        });
-        fBtn.addEventListener("click", () => {
-            document.getElementById("landing-page").style.display = "none";
-            document.getElementById("main-content").style.display = "block";
-            document.body.style.backgroundColor = "#FFD1DC";
-        });
-
         function startSabala() {
             document.querySelectorAll('.banana').forEach(b => b.remove());
-            isSabalaActive = true;
-            score = 0;
+            isSabalaActive = true; score = 0;
             document.getElementById("score-board").innerHTML = `Bananas: 0 | High Score: ${highscore}`;
             document.getElementById("main-content").style.display = "none";
             document.getElementById("sabala-sim").style.display = "block";
@@ -195,9 +189,7 @@
                     document.getElementById("score-board").innerHTML = `Bananas: ${score} | High Score: ${highscore}`;
                     b.remove(); clearInterval(fall);
                 }
-                if (topPos > window.innerHeight) {
-                    clearInterval(fall); b.remove(); triggerGameOver();
-                }
+                if (topPos > window.innerHeight) { clearInterval(fall); b.remove(); triggerGameOver(); }
             }, 20);
             setTimeout(spawnBanana, 1000 - (score * 12 > 700 ? 700 : score * 12));
         }
@@ -205,29 +197,25 @@
         function triggerGameOver() {
             if (!isSabalaActive) return;
             isSabalaActive = false;
-
             const title = document.getElementById("death-title");
             const gifBox = document.getElementById("gif-container");
             document.getElementById("final-score").innerText = score;
 
-            // CRITICAL FIX: Capture OLD highscore before updating
-            let oldHigh = Number(highscore);
-            let currentScore = Number(score);
+            // CHECK SCORE VS MEMORY
+            let oldHigh = Number(localStorage.getItem("sabalaHigh")) || 0;
 
-            if (currentScore > oldHigh && currentScore > 0) {
-                // NEW RECORD Logic
-                highscore = currentScore;
+            if (score > oldHigh) {
+                // WIN SCREEN
+                highscore = score;
                 localStorage.setItem("sabalaHigh", highscore);
                 document.getElementById("high-score-val").innerText = highscore;
-                
                 title.innerText = "9ij Sabala";
                 gifBox.innerHTML = '<img src="lee_dance.gif" class="lee-gif"><img src="lee_yes.gif" class="lee-gif">';
             } else {
-                // FAILURE Logic
+                // LOSE SCREEN
                 title.innerText = "Yal 3ayooooz";
                 gifBox.innerHTML = '<img src="lee_crazy.gif" class="lee-gif">';
             }
-            
             document.getElementById("death-screen").style.display = "flex";
         }
 
