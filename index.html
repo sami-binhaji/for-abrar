@@ -7,12 +7,15 @@
 <style>
 body { background-color: #1a1a1a; color: #FF69B4; font-family: 'Segoe UI', sans-serif; margin: 0; overflow-x: hidden; cursor: url('https://img.icons8.com/color/32/hello-kitty.png'), auto; }
 
-.cursor-glitter { position: fixed; width: 8px; height: 8px; background: gold; border-radius: 50%; pointer-events: none; animation: cursorGlitterFade 0.8s ease-out forwards; z-index: 9998; }
-@keyframes cursorGlitterFade { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.3) translateY(20px); } }
+.cursor-glitter { position: fixed; width: 15px; height: 15px; background: gold; border-radius: 50%; pointer-events: none; animation: cursorGlitterFade 1.2s ease-out forwards; z-index: 9998; box-shadow: 0 0 10px gold; }
+@keyframes cursorGlitterFade { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.2) translateY(30px); } }
 
-#landing-page, #main-content, #sabala-sim { display: none; text-align: center; min-height: 100vh; width: 100%; }
-#landing-page { display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
-#main-content { padding: 50px 0; }
+.ambient-glitter { position: fixed; width: 12px; height: 12px; background: gold; border-radius: 50%; pointer-events: none; z-index: 1; box-shadow: 0 0 8px currentColor; animation: ambientFall linear forwards; }
+@keyframes ambientFall { from { opacity: 0; transform: translateY(-20px) rotate(0deg); } 20% { opacity: 1; } 80% { opacity: 1; } to { opacity: 0; transform: translateY(100vh) rotate(360deg); } }
+
+#landing-page, #main-content, #sabala-sim { display: none; text-align: center; min-height: 100vh; width: 100%; position: relative; }
+#landing-page { display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; overflow: hidden; }
+#main-content { padding: 50px 0; position: relative; overflow: hidden; }
 
 .menagerie { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 40px auto; max-width: 1200px; }
 .animal-box { background: white; padding: 15px; border-radius: 25px; box-shadow: 8px 8px 0px #FF69B4; width: 200px; min-height: 280px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; transition: 0.5s; overflow: hidden; position: relative; }
@@ -467,21 +470,64 @@ document.getElementById("clear-btn").addEventListener("click", function() {
     alert("Record wiped! Click Retry to start fresh."); 
 });
 
-// MONKEY FOLLOW MOUSE with global cursor glitter
+// MONKEY FOLLOW MOUSE with enhanced cursor glitter
 let lastGlitterTime = 0;
-window.addEventListener("mousemove", e => {
-    // Global cursor glitter trail
-    const now = Date.now();
-    if(now - lastGlitterTime > 50) {
-        lastGlitterTime = now;
-        const glitter = document.createElement("div");
-        glitter.className = "cursor-glitter";
-        glitter.style.left = e.pageX + "px";
-        glitter.style.top = e.pageY + "px";
-        glitter.style.background = ["gold", "#FF69B4", "#00FFFF", "#FFD700", "white"][Math.floor(Math.random()*5)];
-        document.body.appendChild(glitter);
+let ambientGlitterInterval = null;
+
+// Function to create ambient glitter on landing and main pages
+function startAmbientGlitter(targetElement) {
+    if(ambientGlitterInterval) return; // Already running
+    
+    ambientGlitterInterval = setInterval(() => {
+        // Only create glitter on landing or main pages
+        const landing = document.getElementById("landing-page");
+        const mainContent = document.getElementById("main-content");
+        const sabalaActive = document.getElementById("sabala-sim").style.display !== "none";
         
-        setTimeout(() => glitter.remove(), 800);
+        if(sabalaActive) return; // Don't create ambient glitter during game
+        
+        const isLandingVisible = landing.style.display !== "none";
+        const isMainVisible = mainContent.style.display !== "none";
+        
+        if(!isLandingVisible && !isMainVisible) return;
+        
+        const glitter = document.createElement("div");
+        glitter.className = "ambient-glitter";
+        glitter.style.left = Math.random() * 100 + "%";
+        glitter.style.background = ["gold", "#FF69B4", "#00FFFF", "#FFD700", "white", "#FF1493"][Math.floor(Math.random()*6)];
+        glitter.style.animationDuration = (5 + Math.random() * 5) + "s"; // 5-10 seconds to fall
+        
+        if(isLandingVisible) landing.appendChild(glitter);
+        else if(isMainVisible) mainContent.appendChild(glitter);
+        
+        setTimeout(() => glitter.remove(), 12000); // Clean up after animation
+    }, 300); // Create new glitter every 300ms
+}
+
+// Start ambient glitter on page load
+startAmbientGlitter();
+
+window.addEventListener("mousemove", e => {
+    // Enhanced cursor glitter trail (more particles, more visible)
+    const now = Date.now();
+    if(now - lastGlitterTime > 30) { // Faster spawn rate (was 50ms)
+        lastGlitterTime = now;
+        
+        // Create 2-3 particles instead of 1 for more intensity
+        const particleCount = Math.random() > 0.5 ? 2 : 3;
+        for(let i = 0; i < particleCount; i++) {
+            const glitter = document.createElement("div");
+            glitter.className = "cursor-glitter";
+            // Add slight random offset for spread effect
+            const offsetX = (Math.random() - 0.5) * 20;
+            const offsetY = (Math.random() - 0.5) * 20;
+            glitter.style.left = (e.pageX + offsetX) + "px";
+            glitter.style.top = (e.pageY + offsetY) + "px";
+            glitter.style.background = ["gold", "#FF69B4", "#00FFFF", "#FFD700", "white", "#FF1493"][Math.floor(Math.random()*6)];
+            document.body.appendChild(glitter);
+            
+            setTimeout(() => glitter.remove(), 1200); // Longer life (was 800ms)
+        }
     }
     
     // Sabala game-specific: move the monkey
