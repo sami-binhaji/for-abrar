@@ -21,12 +21,20 @@
         .game-text { font-size: 0.8rem; color: #555; margin: 5px 0; font-weight: bold; }
         button.game-btn { background: #FF69B4; color: white; border: none; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: bold; }
         
-        #sabala-sim { background-color: #2ecc71; cursor: none; }
-        #sabala-player { position: absolute; font-size: 60px; bottom: 20px; transform: translateX(-50%); pointer-events: none; }
-        .banana { position: absolute; font-size: 40px; }
+        /* SABALA SIM STYLING */
+        #sabala-sim { background-color: #2ecc71; cursor: none; position: relative; overflow: hidden; }
         #score-board { font-size: 30px; color: white; padding: 20px; font-weight: bold; text-shadow: 2px 2px #000; }
+        
+        #sabala-container { position: absolute; bottom: 20px; transform: translateX(-50%); pointer-events: none; display: flex; flex-direction: column; align-items: center; }
+        #nametag { background: white; color: #FF69B4; padding: 2px 10px; border-radius: 10px; font-weight: bold; font-size: 14px; margin-bottom: 5px; box-shadow: 2px 2px 0px #000; }
+        #sabala-player { font-size: 60px; line-height: 1; }
+        
+        .banana { position: absolute; font-size: 40px; user-select: none; }
 
-        /* GOLDEN BUTTON - NOW ALWAYS VISIBLE */
+        /* DEATH SCREEN */
+        #death-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #FFD1DC; z-index: 9999; flex-direction: column; justify-content: center; align-items: center; }
+        .ayooz-title { color: #FF1493; font-size: 5rem; margin: 0; text-shadow: 4px 4px 0px white; }
+
         #final-boss-btn { display: inline-block; background: linear-gradient(45deg, #ffd700, #ff69b4); border: 5px solid white; padding: 20px 50px; font-size: 28px; border-radius: 50px; color: white; font-weight: bold; cursor: pointer; box-shadow: 0 0 30px gold; margin-top: 30px; animation: buttonPop 0.5s infinite alternate; }
         @keyframes buttonPop { from { transform: scale(1); } to { transform: scale(1.05); } }
     </style>
@@ -34,6 +42,12 @@
 <body>
 
     <div id="glitter-floor"></div>
+
+    <div id="death-screen">
+        <h1 class="ayooz-title">Yal 3ayooooz</h1>
+        <p style="font-size: 2rem; color: #555;">Final Score: <span id="final-score">0</span></p>
+        <button class="game-btn" style="padding: 20px 50px; font-size: 24px;" onclick="resetSabala()">RETRY 🔄</button>
+    </div>
 
     <div id="landing-page" style="display: flex;">
         <h1>⚠️ CAUTION ⚠️</h1>
@@ -74,7 +88,12 @@
     <div id="sabala-sim">
         <div id="score-board">Bananas: 0 | High Score: <span id="high-score">0</span></div>
         <h2 style="color:white">CATCH THE BANANAS! 🍌</h2>
-        <div id="sabala-player">🐒</div>
+        
+        <div id="sabala-container">
+            <div id="nametag">Abrar</div>
+            <div id="sabala-player">🐒</div>
+        </div>
+
         <button class="game-btn" style="position:fixed; bottom:20px; right:20px; z-index:5000;" onclick="location.reload()">BACK TO PETS</button>
     </div>
 
@@ -84,6 +103,8 @@
     </div>
 
     <script>
+        let isSabalaActive = false;
+
         // --- SEAL ---
         let pCount = 0;
         function playSeal() {
@@ -144,18 +165,25 @@
         document.getElementById("high-score").innerText = highscore;
 
         function startSabala() {
+            isSabalaActive = true;
             document.getElementById("main-content").style.display = "none";
             document.getElementById("sabala-sim").style.display = "block";
             spawnBanana();
         }
 
         window.addEventListener("mousemove", (e) => {
-            const p = document.getElementById("sabala-player");
-            if(p) p.style.left = e.pageX + "px";
+            const container = document.getElementById("sabala-container");
+            if(container && isSabalaActive) {
+                let x = e.pageX;
+                // Keep within screen
+                if (x < 40) x = 40;
+                if (x > window.innerWidth - 40) x = window.innerWidth - 40;
+                container.style.left = x + "px";
+            }
         });
 
         function spawnBanana() {
-            if (document.getElementById("sabala-sim").style.display === "none") return;
+            if (!isSabalaActive) return;
             const b = document.createElement("div");
             b.className = "banana"; b.innerHTML = "🍌";
             b.style.left = Math.random() * (window.innerWidth - 50) + "px";
@@ -163,6 +191,7 @@
             document.getElementById("sabala-sim").appendChild(b);
 
             let fall = setInterval(() => {
+                if (!isSabalaActive) { clearInterval(fall); b.remove(); return; }
                 let topPos = parseInt(b.style.top);
                 b.style.top = (topPos + 6 + (score/4)) + "px";
                 let bRect = b.getBoundingClientRect(), pRect = document.getElementById("sabala-player").getBoundingClientRect();
@@ -175,10 +204,23 @@
                 }
                 if (topPos > window.innerHeight) {
                     b.remove(); clearInterval(fall);
-                    if (score > 0) { alert("GAME OVER! Score: " + score); score = 0; }
+                    triggerAyooz();
                 }
             }, 20);
             setTimeout(spawnBanana, 1000 - (score * 12));
+        }
+
+        function triggerAyooz() {
+            isSabalaActive = false;
+            document.getElementById("final-score").innerText = score;
+            document.getElementById("death-screen").style.display = "flex";
+        }
+
+        function resetSabala() {
+            score = 0;
+            document.getElementById("score-board").innerHTML = `Bananas: 0 | High Score: ${highscore}`;
+            document.getElementById("death-screen").style.display = "none";
+            startSabala();
         }
 
         // --- LANDING & GLITTER ---
@@ -199,6 +241,9 @@
         });
 
         window.addEventListener('mousemove', (e) => {
+            // Disable glitter if playing the monkey game to prevent clutter
+            if (isSabalaActive) return;
+
             if (Math.random() > 0.85) {
                 const g = document.createElement('div');
                 g.className = 'glitter';
