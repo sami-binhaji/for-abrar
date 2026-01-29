@@ -205,8 +205,16 @@ function startGame(){
     hasBeatenHighscore = false;
     gameStartTime = Date.now();
     isSabalaActive = true;
-    document.getElementById("score-board").innerHTML = `Bananas: 0 | High Score: ${highscore}`;
-    document.getElementById("sabala-container").style.left = "50%";
+    
+    // Update UI safely
+    const scoreBoard = document.getElementById("score-board");
+    if(scoreBoard) {
+        scoreBoard.innerHTML = `Bananas: 0 | High Score: ${highscore}`;
+    }
+    const container = document.getElementById("sabala-container");
+    if(container) {
+        container.style.left = "50%";
+    }
     
     console.log("Game started. Active:", isSabalaActive, "HasBeaten:", hasBeatenHighscore);
     // Start spawning
@@ -266,16 +274,21 @@ function spawnBanana(){
                 const oldHighscore = highscore;
                 highscore = score;
                 localStorage.setItem("sabalaHigh", highscore);
-                document.getElementById("high-score-val").innerText = highscore;
+                const highScoreVal = document.getElementById("high-score-val");
+                if(highScoreVal) highScoreVal.innerText = highscore;
                 console.log("🎉 Beat the highscore! Keep going! Old:", oldHighscore, "New:", score);
             } else if(hasBeatenHighscore && score > highscore) {
                 // Continue updating highscore as player keeps going
                 highscore = score;
                 localStorage.setItem("sabalaHigh", highscore);
-                document.getElementById("high-score-val").innerText = highscore;
+                const highScoreVal = document.getElementById("high-score-val");
+                if(highScoreVal) highScoreVal.innerText = highscore;
             }
             
-            document.getElementById("score-board").innerHTML = `Bananas: ${score} | High Score: ${highscore}${hasBeatenHighscore ? ' 🔥' : ''}`;
+            const scoreBoard = document.getElementById("score-board");
+            if(scoreBoard) {
+                scoreBoard.innerHTML = `Bananas: ${score} | High Score: ${highscore}${hasBeatenHighscore ? ' 🔥' : ''}`;
+            }
             clearInterval(fallInterval);
             const idx = allIntervals.indexOf(fallInterval);
             if(idx > -1) allIntervals.splice(idx, 1);
@@ -398,8 +411,13 @@ document.getElementById("clear-btn").addEventListener("click", function() {
     highscore = 0;
     hasBeatenHighscore = false;
     score = 0;
-    document.getElementById("high-score-val").innerText = 0;
-    document.getElementById("score-board").innerHTML = `Bananas: 0 | High Score: 0`;
+    
+    // Update UI elements safely
+    const highScoreVal = document.getElementById("high-score-val");
+    if(highScoreVal) highScoreVal.innerText = 0;
+    
+    const scoreBoard = document.getElementById("score-board");
+    if(scoreBoard) scoreBoard.innerHTML = `Bananas: 0 | High Score: 0`;
     
     console.log("After - Score:", score, "Highscore:", highscore, "Active:", isSabalaActive, "HasBeaten:", hasBeatenHighscore);
     console.log("===== HIGHSCORE CLEARED =====");
