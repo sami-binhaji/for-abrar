@@ -51,7 +51,6 @@
             box-shadow: 0 0 10px white;
         }
 
-        /* Video Popup Styling */
         #janu-scare {
             display: none;
             position: fixed;
@@ -69,7 +68,7 @@
         #main-content { display: none; text-align: center; width: 100%; padding: 50px 0; z-index: 10; }
         #forbidden-button { position: relative; background-color: #FF69B4; color: white; border: 4px solid white; padding: 20px 40px; font-size: 24px; border-radius: 50px; cursor: pointer; box-shadow: 0 0 20px #FF69B4; font-weight: bold; }
         .menagerie { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 40px auto; max-width: 1200px; }
-        .animal-box { background: white; padding: 15px; border-radius: 25px; box-shadow: 8px 8px 0px #FF69B4; width: 200px; min-height: 280px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
+        .animal-box { background: white; padding: 15px; border-radius: 25px; box-shadow: 8px 8px 0px #FF69B4; width: 200px; min-height: 280px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; transition: 0.5s; }
         .animal-img { width: 140px; height: 140px; object-fit: contain; cursor: pointer; transition: transform 0.2s, filter 0.3s; }
         .game-text { font-size: 0.8rem; color: #555; margin: 5px 0; font-weight: bold; }
         .label { color: #1a1a1a; font-weight: bold; font-size: 1rem; text-transform: uppercase; }
@@ -101,12 +100,14 @@
                 <img src="seal.png" class="animal-img" onclick="playSeal()">
                 <p id="seal-game" class="game-text">Pets: 0</p>
             </div>
+
             <div id="bunny-container" class="animal-box">
                 <div class="label">The Chaos Bun</div>
                 <img src="bunny.png" class="animal-img" id="bun-img">
                 <p id="bun-game" class="game-text">Hungry...</p>
-                <button class="game-btn" onclick="playBun()">FEED CARROT 🥕</button>
+                <button class="game-btn" id="bun-btn" onclick="playBun()">FEED CARROT 🥕</button>
             </div>
+
             <div class="animal-box">
                 <div class="label">The Goblino</div>
                 <img src="sphynx.png" class="animal-img" id="cat-img">
@@ -123,7 +124,6 @@
     </div>
 
     <script>
-        // --- BUTTON & GLITTER (As before) ---
         let pileHeight = 0;
         const floor = document.getElementById('glitter-floor');
         window.addEventListener('mousemove', (e) => {
@@ -160,52 +160,59 @@
             document.body.style.backgroundColor = "#FFD1DC";
         });
 
-        // --- NEW JANU "OSKOT" LOGIC ---
-        let januClicks = 0;
-        function playJanu() {
-            januClicks++;
-            const januText = document.getElementById("janu-game");
-            const phrases = ["Whatcha doin?", "Pretty girl!", "I love Abrar!", "Peek-a-boo!"];
-            
-            if (januClicks < 7) {
-                januText.innerText = "Janu says: " + phrases[Math.floor(Math.random() * phrases.length)];
-            } else {
-                // Trigger the Oskot video!
-                const videoFrame = document.getElementById("scare-video");
-                const scareDiv = document.getElementById("janu-scare");
+        // --- THE BUNNY (MURDER) LOGIC ---
+        let food = 0;
+        function playBun() {
+            food++;
+            const bunImg = document.getElementById("bun-img");
+            const bunText = document.getElementById("bun-game");
+            const container = document.getElementById("bunny-container");
+            const bunBtn = document.getElementById("bun-btn");
+
+            bunImg.style.transform = `scale(${1 + food * 0.35})`;
+
+            if (food === 13) {
+                // The Bunny Disappears and the box changes
+                bunImg.style.display = "none"; 
+                bunBtn.style.display = "none";
+                container.style.backgroundColor = "#2a2a2a";
+                container.style.boxShadow = "8px 8px 0px #000";
                 
-                // Embed URL with autoplay on
-                videoFrame.src = "https://www.youtube.com/embed/ix3rE46lWsU?autoplay=1";
-                scareDiv.style.display = "block";
+                // Final text
+                bunText.innerHTML = "YOU MURDERED THE BUNNY??";
+                bunText.style.color = "#FF0000";
+                bunText.style.fontSize = "1.1rem";
                 
-                januClicks = 0; // Reset
+                alert("YOU MURDERED THE BUNNY?? 🥕💥");
+                alert("He's gone, Abrar. You fed him into the void.");
             }
         }
 
+        // --- THE OSKOT LOGIC ---
+        let januClicks = 0;
+        function playJanu() {
+            januClicks++;
+            const phrases = ["Whatcha doin?", "Pretty girl!", "I love Abrar!", "Peek-a-boo!"];
+            if (januClicks < 7) {
+                document.getElementById("janu-game").innerText = "Janu says: " + phrases[Math.floor(Math.random() * phrases.length)];
+            } else {
+                const videoFrame = document.getElementById("scare-video");
+                videoFrame.src = "https://www.youtube.com/embed/ix3rE46lWsU?autoplay=1";
+                document.getElementById("janu-scare").style.display = "block";
+                januClicks = 0;
+            }
+        }
         function closeScare() {
-            const videoFrame = document.getElementById("scare-video");
-            const scareDiv = document.getElementById("janu-scare");
-            videoFrame.src = ""; // Stops the video
-            scareDiv.style.display = "none";
+            document.getElementById("scare-video").src = "";
+            document.getElementById("janu-scare").style.display = "none";
         }
 
-        // --- OTHER GAMES (Seal, Bunny, Cat) ---
+        // --- REMAINING GAMES ---
         let pets = 0;
         function playSeal() {
             pets++;
             document.getElementById("seal-game").innerText = "Pets: " + pets;
             if (pets === 20) alert("bs la? shfeech mb 9a7ya 😂");
-        }
-
-        let food = 0;
-        function playBun() {
-            food++;
-            const bunImg = document.getElementById("bun-img");
-            bunImg.style.transform = `scale(${1 + food * 0.35})`;
-            if (food >= 13) {
-                document.getElementById("bunny-container").innerHTML = `<div class="label">The Chaos Bun</div><div style="font-size: 80px; padding: 20px;">💥</div><p class="game-text" style="color:red;">KABOOM!</p>`;
-                alert("YOU FED HIM TOO MUCH 🥕💥");
-            }
         }
 
         let temp = 20;
