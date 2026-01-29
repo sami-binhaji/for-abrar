@@ -60,6 +60,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            position: relative;
         }
 
         .animal-box:hover {
@@ -71,6 +72,14 @@
             height: 150px;
             object-fit: contain;
             margin-bottom: 15px;
+            z-index: 2;
+        }
+
+        /* Fallback Emoji styling in case image fails */
+        .fallback-emoji {
+            position: absolute;
+            font-size: 80px;
+            z-index: 1;
         }
 
         .label {
@@ -78,6 +87,7 @@
             font-weight: bold;
             font-size: 1.2rem;
             text-transform: uppercase;
+            z-index: 2;
         }
 
         h1 { font-size: 3rem; text-shadow: 2px 2px 0px white; }
@@ -97,17 +107,20 @@
 
         <div class="menagerie">
             <div class="animal-box" title="Round, squishy, and basically a professional napper. Just like you.">
+                <span class="fallback-emoji">🦭</span>
                 <img src="https://img.icons8.com/color/200/seal.png" class="animal-img" alt="Seal">
                 <div class="label">The Squish</div>
             </div>
 
             <div class="animal-box" title="High speed, constant snacking, and incredibly cute.">
+                <span class="fallback-emoji">🐰</span>
                 <img src="https://img.icons8.com/color/200/rabbit.png" class="animal-img" alt="Rabbit">
                 <div class="label">The Chaos Bun</div>
             </div>
 
             <div class="animal-box" title="A little weird, totally unique, and 100% lovable.">
-                <img src="https://img.icons8.com/color/200/sphynx-cat.png" class="animal-img" alt="Sphynx">
+                <span class="fallback-emoji">🐈‍⬛</span>
+                <img src="https://cdn-icons-png.flaticon.com/512/616/616434.png" class="animal-img" alt="Sphynx">
                 <div class="label">The Goblino</div>
             </div>
         </div>
