@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FOR ABRAR 💖</title>
+    <title>FOR ABRAR & JANU 💖</title>
     <style>
         body {
             background-color: #1a1a1a;
             color: #FF69B4;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
             margin: 0;
             display: flex;
             justify-content: center;
@@ -42,73 +42,58 @@
         .menagerie {
             display: flex;
             justify-content: center;
-            gap: 30px;
+            gap: 20px;
             flex-wrap: wrap;
             margin: 40px auto;
-            max-width: 1000px;
+            max-width: 1200px;
         }
 
         .animal-box {
             background: white;
-            padding: 20px;
-            border-radius: 30px;
-            box-shadow: 10px 10px 0px #FF69B4;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            width: 220px;
-            min-height: 250px;
+            padding: 15px;
+            border-radius: 25px;
+            box-shadow: 8px 8px 0px #FF69B4;
+            width: 200px;
+            min-height: 280px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-        }
-
-        .animal-box:hover {
-            transform: scale(1.1) rotate(3deg);
+            justify-content: space-between;
+            transition: 0.3s;
         }
 
         .animal-img {
-            width: 180px;
-            height: 180px;
+            width: 140px;
+            height: 140px;
             object-fit: contain;
-            margin-bottom: 15px;
+            cursor: pointer;
+        }
+
+        .game-text {
+            font-size: 0.8rem;
+            color: #555;
+            margin: 5px 0;
+            font-weight: bold;
         }
 
         .label {
             color: #1a1a1a;
             font-weight: bold;
-            font-size: 1.2rem;
+            font-size: 1rem;
             text-transform: uppercase;
         }
 
-        /* Receipts Section Styling */
-        .receipts-container {
-            margin-top: 100px;
-            padding-bottom: 100px;
+        button.game-btn {
+            background: #FF69B4;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.7rem;
         }
 
-        .receipt-grid {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            padding: 20px;
-        }
-
-        .receipt-pic {
-            width: 250px;
-            background: white;
-            padding: 10px;
-            padding-bottom: 40px; /* Polaroid look */
-            border: 1px solid #ddd;
-            box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
-            transform: rotate(-2deg);
-            transition: 0.3s;
-        }
-
-        .receipt-pic:nth-child(even) { transform: rotate(3deg); }
-        .receipt-pic:hover { transform: rotate(0deg) scale(1.05); z-index: 5; }
-
-        h1 { font-size: 3rem; text-shadow: 2px 2px 0px white; }
+        h1 { font-size: 2.5rem; text-shadow: 2px 2px 0px white; }
     </style>
 </head>
 <body>
@@ -121,34 +106,41 @@
 
     <div id="main-content">
         <h1>Happy Birthday, Abrar! 🎀</h1>
-        <p style="color: #666;">You're my favorite chaotic energy. Hover for a secret...</p>
+        <p style="color: #666;">Interacting with the animals might reveal secrets...</p>
 
         <div class="menagerie">
-            <div class="animal-box" title="Round, squishy, and basically a professional napper. Just like you.">
-                <img src="seal.png" class="animal-img" alt="Seal">
+            <div class="animal-box">
                 <div class="label">The Squish</div>
+                <img src="seal.png" class="animal-img" onclick="playSeal()">
+                <p id="seal-game" class="game-text">Pets: 0</p>
+                <p class="game-text" style="font-size: 0.6rem;">(Click to pet)</p>
             </div>
 
-            <div class="animal-box" title="High speed, constant snacking, and incredibly cute.">
-                <img src="rabbit.png" class="animal-img" alt="Rabbit">
+            <div class="animal-box">
                 <div class="label">The Chaos Bun</div>
+                <img src="rabbit.png" class="animal-img" id="bun-img">
+                <p id="bun-game" class="game-text">Hungry...</p>
+                <button class="game-btn" onclick="playBun()">FEED CARROT 🥕</button>
             </div>
 
-            <div class="animal-box" title="A little weird, totally unique, and 100% lovable.">
-                <img src="sphynx.png" class="animal-img" alt="Sphynx">
+            <div class="animal-box">
                 <div class="label">The Goblino</div>
+                <img src="sphynx.png" class="animal-img" id="cat-img">
+                <p id="cat-game" class="game-text">Temp: 20°C (Cold!)</p>
+                <button class="game-btn" onclick="playCat()">TURN ON HEATER 🔥</button>
             </div>
-        </div>
 
-        <div class="receipts-container">
-            <h2 style="color: #FF69B4; font-size: 2rem;">💖 The Receipts 💖</h2>
-            <div class="receipt-grid">
-                <p style="color: #888;">Add your screenshots below in the code whenever you're ready!</p>
-                </div>
+            <div class="animal-box">
+                <div class="label">Janu</div>
+                <img src="janu.png" class="animal-img">
+                <p id="janu-game" class="game-text">Janu wants to talk!</p>
+                <button class="game-btn" onclick="playJanu()">SAY HELLO</button>
+            </div>
         </div>
     </div>
 
     <script>
+        // --- BUTTON EVASION ---
         const btn = document.getElementById('forbidden-button');
         const landing = document.getElementById('landing-page');
         const main = document.getElementById('main-content');
@@ -171,6 +163,45 @@
             document.body.style.backgroundColor = '#FFD1DC';
             document.body.style.overflow = 'auto';
         });
+
+        // --- MINI GAMES ---
+
+        // 1. Seal Petting
+        let pets = 0;
+        function playSeal() {
+            pets++;
+            document.getElementById('seal-game').innerText = "Pets: " + pets;
+            if(pets == 10) alert("The seal thinks you're its best friend now.");
+        }
+
+        // 2. Bun Feeding
+        let food = 0;
+        function playBun() {
+            food++;
+            const bunImg = document.getElementById('bun-img');
+            bunImg.style.transform = "scale(1.1)";
+            setTimeout(() => bunImg.style.transform = "scale(1)", 100);
+            document.getElementById('bun-game').innerText = "Carrots Eaten: " + food;
+            if(food == 5) document.getElementById('bun-game').innerText = "Full & Happy! 🥕";
+        }
+
+        // 3. Cat Heater
+        let temp = 20;
+        function playCat() {
+            temp += 5;
+            document.getElementById('cat-game').innerText = "Temp: " + temp + "°C";
+            if(temp >= 35) {
+                document.getElementById('cat-game').innerText = "Perfectly Toasty! ✨";
+                document.getElementById('cat-img').style.filter = "drop-shadow(0 0 10px gold)";
+            }
+        }
+
+        // 4. Janu Talking
+        function playJanu() {
+            const phrases = ["Whatcha doin?", "Pretty girl!", "I love Abrar!", "Birthday treat?", "Peek-a-boo!"];
+            const random = phrases[Math.floor(Math.random() * phrases.length)];
+            document.getElementById('janu-game').innerText = "Janu says: " + random;
+        }
     </script>
 </body>
 </html>
