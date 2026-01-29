@@ -137,8 +137,42 @@ document.getElementById("seal-img").addEventListener("click", function() {
 });
 
 document.getElementById("bun-btn").addEventListener("click", function() {
-    bClicks++; 
-    document.getElementById("bun-img").style.transform=`scale(${1+bClicks*0.45})`; 
+    bClicks++;
+    const bunImg = document.getElementById("bun-img");
+    const bunGame = document.getElementById("bun-game");
+    
+    if(bClicks < 10) {
+        bunImg.style.transform=`scale(${1+bClicks*0.45})`;
+        if(bClicks === 5) {
+            bunGame.innerText = "Getting full... 😰";
+        } else if(bClicks === 8) {
+            bunGame.innerText = "Too much... 😵";
+        }
+    } else if(bClicks === 10) {
+        // EXPLOSION!
+        bunImg.style.transform = "scale(0)";
+        bunImg.style.opacity = "0";
+        bunImg.style.transition = "all 0.3s ease";
+        bunGame.innerText = "💥 YOU KILLED THE BUNNY! 💥";
+        bunGame.style.color = "red";
+        bunGame.style.fontSize = "1rem";
+        bunGame.style.fontWeight = "bold";
+        
+        // Show guilt message
+        setTimeout(() => {
+            alert("😭 How could you?! You fed the poor bunny to death! You monster! 😭\n\nThe bunny just wanted love, not ALL the carrots!");
+        }, 500);
+        
+        // Reset after shame
+        setTimeout(() => {
+            bClicks = 0;
+            bunImg.style.transform = "scale(1)";
+            bunImg.style.opacity = "1";
+            bunGame.innerText = "Hungry...";
+            bunGame.style.color = "#555";
+            bunGame.style.fontSize = "0.8rem";
+        }, 5000);
+    }
 });
 
 document.getElementById("cat-btn").addEventListener("click", function() {
@@ -160,7 +194,8 @@ document.getElementById("janu-btn").addEventListener("click", function() {
         const phrases = ["Whatcha doin?", "Pretty girl!", "I love Abrar!", "Muah!", "Peek-a-boo!"]; 
         document.getElementById("janu-game").innerText = "Janu says: " + phrases[Math.floor(Math.random()*phrases.length)];
     } else { 
-        document.getElementById("scare-video").src = "https://www.youtube.com/embed/ix3rE46lWsU?autoplay=1"; 
+        // Start video at 6 second mark
+        document.getElementById("scare-video").src = "https://www.youtube.com/embed/ix3rE46lWsU?autoplay=1&start=6"; 
         document.getElementById("janu-scare").style.display = "block"; 
     } 
 });
