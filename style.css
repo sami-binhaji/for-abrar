@@ -1,28 +1,88 @@
 body {
     background-color: #1a1a1a;
     color: #FF69B4;
-    font-family: sans-serif;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    margin: 0;
-    overflow: hidden;
+    min-height: 100vh;
+}
+
+#landing-page, #main-content {
+    text-align: center;
 }
 
 #forbidden-button {
     background-color: #FF69B4;
     color: white;
-    border: none;
-    padding: 15px 30px;
-    font-size: 20px;
+    border: 4px solid white;
+    padding: 20px 40px;
+    font-size: 24px;
     border-radius: 50px;
     cursor: pointer;
+    box-shadow: 0 0 20px #FF69B4;
+    font-weight: bold;
 }
 
-.animal {
-    font-size: 100px;
-    cursor: help;
-    display: inline-block;
-    margin: 20px;
+.menagerie {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+.animal-box {
+    background: white;
+    padding: 15px;
+    border-radius: 25px;
+    box-shadow: 8px 8px 0px #FF69B4;
+    width: 200px;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.animal-img {
+    width: 140px;
+    height: 140px;
+    object-fit: contain;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.label {
+    color: #1a1a1a;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.game-text {
+    font-size: 0.8rem;
+    color: #555;
+    font-weight: bold;
+}
+
+.game-btn {
+    background: #FF69B4;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.7rem;
+}
+
+/* 💥 EXPLOSION ANIMATION */
+.explode {
+    animation: boom 0.6s ease-out forwards;
+}
+
+@keyframes boom {
+    0% { transform: scale(3) rotate(0deg); opacity: 1; }
+    50% { transform: scale(5) rotate(180deg); opacity: 0.7; }
+    100% { transform: scale(0); opacity: 0; }
 }
