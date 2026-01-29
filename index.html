@@ -51,6 +51,15 @@
             box-shadow: 0 0 10px white;
         }
 
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            50% { transform: translate(-1px, 2px) rotate(1deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            100% { transform: translate(1px, -2px) rotate(0deg); }
+        }
+
         #janu-scare {
             display: none;
             position: fixed;
@@ -103,7 +112,9 @@
 
             <div id="bunny-container" class="animal-box">
                 <div class="label">The Chaos Bun</div>
-                <img src="bunny.png" class="animal-img" id="bun-img">
+                <div id="bun-frame" style="position:relative; width:140px; height:140px; display:flex; align-items:center; justify-content:center;">
+                    <img src="bunny.png" class="animal-img" id="bun-img">
+                </div>
                 <p id="bun-game" class="game-text">Hungry...</p>
                 <button class="game-btn" id="bun-btn" onclick="playBun()">FEED CARROT 🥕</button>
             </div>
@@ -124,6 +135,7 @@
     </div>
 
     <script>
+        // --- BUTTON & GLITTER ---
         let pileHeight = 0;
         const floor = document.getElementById('glitter-floor');
         window.addEventListener('mousemove', (e) => {
@@ -160,7 +172,7 @@
             document.body.style.backgroundColor = "#FFD1DC";
         });
 
-        // --- THE BUNNY (MURDER) LOGIC ---
+        // --- UPDATED BUNNY (EXPLOSION) LOGIC ---
         let food = 0;
         function playBun() {
             food++;
@@ -168,53 +180,57 @@
             const bunText = document.getElementById("bun-game");
             const container = document.getElementById("bunny-container");
             const bunBtn = document.getElementById("bun-btn");
+            const frame = document.getElementById("bun-frame");
 
-            bunImg.style.transform = `scale(${1 + food * 0.35})`;
+            let currentScale = 1 + food * 0.35;
+            bunImg.style.transform = `scale(${currentScale})`;
 
-            if (food === 13) {
-                // The Bunny Disappears and the box changes
-                bunImg.style.display = "none"; 
+            // Add shake as it gets dangerously big
+            if (food > 8) {
+                bunImg.style.animation = "shake 0.5s infinite";
+            }
+
+            if (food >= 13) {
+                // Step 1: Replace image with Explosion emoji
+                frame.innerHTML = "<span style='font-size: 80px;'>💥</span>";
                 bunBtn.style.display = "none";
-                container.style.backgroundColor = "#2a2a2a";
-                container.style.boxShadow = "8px 8px 0px #000";
+                bunText.innerHTML = "POPPED!";
                 
-                // Final text
-                bunText.innerHTML = "YOU MURDERED THE BUNNY??";
-                bunText.style.color = "#FF0000";
-                bunText.style.fontSize = "1.1rem";
-                
-                alert("YOU MURDERED THE BUNNY?? 🥕💥");
-                alert("He's gone, Abrar. You fed him into the void.");
+                // Step 2: After 0.5 seconds, finish the "murder"
+                setTimeout(() => {
+                    frame.innerHTML = "🪦"; // Tombstone
+                    container.style.backgroundColor = "#2a2a2a";
+                    container.style.boxShadow = "8px 8px 0px #000";
+                    bunText.innerHTML = "YOU MURDERED THE BUNNY??";
+                    bunText.style.color = "#FF0000";
+                    alert("YOU MURDERED THE BUNNY?? 🥕💥");
+                }, 600);
             }
         }
 
-        // --- THE OSKOT LOGIC ---
-        let januClicks = 0;
+        // --- JANU & REMAINING ---
         function playJanu() {
-            januClicks++;
-            const phrases = ["Whatcha doin?", "Pretty girl!", "I love Abrar!", "Peek-a-boo!"];
+            let januClicks = (window.januClicks || 0) + 1;
+            window.januClicks = januClicks;
             if (januClicks < 7) {
+                const phrases = ["Whatcha doin?", "Pretty girl!", "I love Abrar!", "Peek-a-boo!"];
                 document.getElementById("janu-game").innerText = "Janu says: " + phrases[Math.floor(Math.random() * phrases.length)];
             } else {
-                const videoFrame = document.getElementById("scare-video");
-                videoFrame.src = "https://www.youtube.com/embed/ix3rE46lWsU?autoplay=1";
+                document.getElementById("scare-video").src = "https://www.youtube.com/embed/ix3rE46lWsU?autoplay=1";
                 document.getElementById("janu-scare").style.display = "block";
-                januClicks = 0;
+                window.januClicks = 0;
             }
         }
         function closeScare() {
             document.getElementById("scare-video").src = "";
             document.getElementById("janu-scare").style.display = "none";
         }
-
-        // --- REMAINING GAMES ---
-        let pets = 0;
         function playSeal() {
-            pets++;
+            let pets = (window.sealPets || 0) + 1;
+            window.sealPets = pets;
             document.getElementById("seal-game").innerText = "Pets: " + pets;
             if (pets === 20) alert("bs la? shfeech mb 9a7ya 😂");
         }
-
         let temp = 20;
         function playCat() {
             temp += 5;
