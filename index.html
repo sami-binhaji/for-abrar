@@ -60,7 +60,6 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            position: relative;
         }
 
         .animal-box:hover {
@@ -68,18 +67,10 @@
         }
 
         .animal-img {
-            width: 150px;
-            height: 150px;
+            width: 180px;
+            height: 180px;
             object-fit: contain;
             margin-bottom: 15px;
-            z-index: 2;
-        }
-
-        /* Fallback Emoji styling in case image fails */
-        .fallback-emoji {
-            position: absolute;
-            font-size: 80px;
-            z-index: 1;
         }
 
         .label {
@@ -87,8 +78,35 @@
             font-weight: bold;
             font-size: 1.2rem;
             text-transform: uppercase;
-            z-index: 2;
         }
+
+        /* Receipts Section Styling */
+        .receipts-container {
+            margin-top: 100px;
+            padding-bottom: 100px;
+        }
+
+        .receipt-grid {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+
+        .receipt-pic {
+            width: 250px;
+            background: white;
+            padding: 10px;
+            padding-bottom: 40px; /* Polaroid look */
+            border: 1px solid #ddd;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
+            transform: rotate(-2deg);
+            transition: 0.3s;
+        }
+
+        .receipt-pic:nth-child(even) { transform: rotate(3deg); }
+        .receipt-pic:hover { transform: rotate(0deg) scale(1.05); z-index: 5; }
 
         h1 { font-size: 3rem; text-shadow: 2px 2px 0px white; }
     </style>
@@ -107,22 +125,26 @@
 
         <div class="menagerie">
             <div class="animal-box" title="Round, squishy, and basically a professional napper. Just like you.">
-                <span class="fallback-emoji">🦭</span>
-                <img src="https://img.icons8.com/color/200/seal.png" class="animal-img" alt="Seal">
+                <img src="seal.png" class="animal-img" alt="Seal">
                 <div class="label">The Squish</div>
             </div>
 
             <div class="animal-box" title="High speed, constant snacking, and incredibly cute.">
-                <span class="fallback-emoji">🐰</span>
-                <img src="https://img.icons8.com/color/200/rabbit.png" class="animal-img" alt="Rabbit">
+                <img src="rabbit.png" class="animal-img" alt="Rabbit">
                 <div class="label">The Chaos Bun</div>
             </div>
 
             <div class="animal-box" title="A little weird, totally unique, and 100% lovable.">
-                <span class="fallback-emoji">🐈‍⬛</span>
-                <img src="https://cdn-icons-png.flaticon.com/512/616/616434.png" class="animal-img" alt="Sphynx">
+                <img src="sphynx.png" class="animal-img" alt="Sphynx">
                 <div class="label">The Goblino</div>
             </div>
+        </div>
+
+        <div class="receipts-container">
+            <h2 style="color: #FF69B4; font-size: 2rem;">💖 The Receipts 💖</h2>
+            <div class="receipt-grid">
+                <p style="color: #888;">Add your screenshots below in the code whenever you're ready!</p>
+                </div>
         </div>
     </div>
 
