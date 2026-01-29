@@ -19,22 +19,23 @@
             cursor: url('https://img.icons8.com/color/32/hello-kitty.png'), auto;
         }
 
+        /* The glitter "floor" - Optimized for faster growth */
         #glitter-floor {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
             height: 0px; 
-            background: linear-gradient(transparent, rgba(255, 105, 180, 0.5));
+            background: linear-gradient(transparent, rgba(255, 105, 180, 0.7));
+            box-shadow: 0 -5px 20px rgba(255, 105, 180, 0.5);
             pointer-events: none;
             z-index: 999;
-            transition: height 0.3s ease;
         }
 
         .glitter {
             position: fixed;
-            width: 5px;
-            height: 5px;
+            width: 6px;
+            height: 6px;
             background: #FF69B4;
             border-radius: 50%;
             pointer-events: none;
@@ -84,7 +85,7 @@
             align-items: center;
             justify-content: space-between;
             transition: 0.3s;
-            overflow: hidden; /* Keeps the big bunny from overlapping other boxes */
+            position: relative;
         }
 
         .animal-img {
@@ -92,7 +93,16 @@
             height: 140px;
             object-fit: contain;
             cursor: pointer;
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.2s ease;
+        }
+
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            40% { transform: translate(3px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            80% { transform: translate(3px, -1px) rotate(1deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
         }
 
         .game-text { font-size: 0.8rem; color: #555; margin: 5px 0; font-weight: bold; }
@@ -123,7 +133,7 @@
                 <p class="game-text" style="font-size: 0.6rem;">(Click to pet)</p>
             </div>
 
-            <div class="animal-box">
+            <div class="animal-box" id="bun-box">
                 <div class="label">The Chaos Bun</div>
                 <img src="bunny.png" class="animal-img" id="bun-img">
                 <p id="bun-game" class="game-text">Hungry...</p>
@@ -147,17 +157,16 @@
     </div>
 
     <script>
-        // --- GLITTER LOGIC ---
+        // --- IMPROVED GLITTER & PILE UP ---
         let pileHeight = 0;
         const floor = document.getElementById('glitter-floor');
 
         window.addEventListener('mousemove', (e) => {
-            if (Math.random() > 0.85) {
+            if (Math.random() > 0.7) { // More frequent glitter
                 createGlitter(e.pageX, e.pageY);
-                if (pileHeight < 150) { 
-                    pileHeight += 0.15;
-                    floor.style.height = pileHeight + 'px';
-                }
+                // FASTER PILE UP
+                pileHeight += 0.4; 
+                floor.style.height = pileHeight + 'px';
             }
         });
 
@@ -166,13 +175,17 @@
             glitter.className = 'glitter';
             glitter.style.left = x + 'px';
             glitter.style.top = y + 'px';
-            glitter.style.background = `hsl(${Math.random() * 20 + 330}, 100%, 70%)`;
+            glitter.style.background = `hsl(${Math.random() * 30 + 320}, 100%, 75%)`;
             document.body.appendChild(glitter);
-            const duration = Math.random() * 1000 + 1000;
+
+            const destinationY = window.innerHeight;
+            const duration = 1000;
+
             glitter.animate([
-                { transform: 'translate(0, 0)', opacity: 1 },
-                { transform: `translate(${(Math.random()-0.5)*100}px, ${window.innerHeight - y}px)`, opacity: 0 }
+                { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                { transform: `translate(${(Math.random()-0.5)*80}px, ${destinationY - y}px) scale(0)`, opacity: 0 }
             ], { duration: duration });
+
             setTimeout(() => glitter.remove(), duration);
         }
 
@@ -211,48 +224,38 @@
             else if (pets === 20) alert("bs la? shfeech mb 9a7ya 😂");
         }
 
-        // 2. Bunny (THE GUARANTEED EXPLOSION)
+        // 2. Bunny (GUARANTEED POP)
         let food = 0;
         let hasExploded = false;
-
         function playBun() {
             if (hasExploded) return;
-            
             food++;
             const bunImg = document.getElementById('bun-img');
             const bunText = document.getElementById('bun-game');
             const feedBtn = document.getElementById('feed-btn');
             
-            // 1. Make him grow
-            let currentScale = 1 + (food * 0.3); // Even bigger growth
-            bunImg.style.transform = `scale(${currentScale})`;
+            // Rapid growth
+            let scale = 1 + (food * 0.4);
+            bunImg.style.transform = `scale(${scale})`;
 
-            // 2. Add a shake effect when he's nearly full
-            if (food > 8) {
+            // Shake as it gets closer to 10
+            if (food >= 6) {
                 bunImg.style.animation = "shake 0.1s infinite";
             }
-            
-            if (food === 3) bunText.innerText = "He's getting a bit round...";
-            if (food === 7) bunText.innerText = "He's becoming a sphere...";
-            if (food === 11) alert("He literally cannot move. I hope you're happy.");
-            
-            // 3. THE POP
-            if (food >= 14) {
+
+            if (food === 3) bunText.innerText = "He's round...";
+            if (food === 8) bunText.innerText = "HE IS GOING TO POP!";
+
+            if (food >= 12) {
                 hasExploded = true;
-                
-                // Physically remove the bunny and replace with explosion emoji
-                const container = bunImg.parentElement;
-                container.innerHTML = `
+                // Replace content so it's GONE
+                document.getElementById('bun-box').innerHTML = `
                     <div class="label">The Chaos Bun</div>
-                    <div style="font-size: 100px; margin: 20px;">💥</div>
-                    <p id="bun-game" class="game-text" style="color: red; font-weight: bold;">BOOM. POPPED.</p>
+                    <div style="font-size: 80px; margin: 20px;">💥</div>
+                    <p class="game-text" style="color: red;">POPPED!</p>
                 `;
-                
-                // Final insults
-                setTimeout(() => {
-                    alert("YOU FED HIM TOO MUCH. HE EXPLODED. 🥕💥");
-                    alert("All that's left is fur and regret. Happy Birthday, monster.");
-                }, 100);
+                alert("YOU FED HIM TOO MUCH. HE EXPLODED. 🥕💥");
+                setTimeout(() => alert("All that's left is fur and regret."), 400);
             }
         }
 
@@ -266,12 +269,11 @@
             if (temp === 35) {
                 catText.innerText = "Perfectly Toasty! ✨";
                 catImg.style.filter = "drop-shadow(0 0 10px gold)";
-            } 
-            else if (temp >= 55) {
+            } else if (temp >= 55) {
                 catImg.src = "sphynx_black.png";
-                catImg.style.filter = "brightness(0.3)";
+                catImg.style.filter = "brightness(0.2)";
                 catText.innerText = "HE'S BURNT!";
-                alert("You overcooked him. He's a charcoal briquette now.");
+                alert("You overcooked him. Charcoal briquette.");
             }
         }
 
@@ -291,4 +293,3 @@
     </script>
 </body>
 </html>
-
