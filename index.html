@@ -249,9 +249,12 @@ function spawnBanana(){
         let bRect = b.getBoundingClientRect();
         let pRect = document.getElementById("sabala-player").getBoundingClientRect();
 
-        // Collision detection - caught banana
-        if(bRect.bottom > pRect.top && bRect.top < pRect.bottom && 
-           bRect.left < pRect.right && bRect.right > pRect.left){
+        // Collision detection - caught banana (more forgiving hitbox)
+        const hitboxPadding = 10; // pixels of extra collision detection
+        if(bRect.bottom > pRect.top - hitboxPadding && 
+           bRect.top < pRect.bottom + hitboxPadding && 
+           bRect.left < pRect.right + hitboxPadding && 
+           bRect.right > pRect.left - hitboxPadding){
             score++;
             
             // Check if just beat highscore for the first time this session
@@ -259,10 +262,11 @@ function spawnBanana(){
             if(!hasBeatenHighscore && score > highscore) {
                 hasBeatenHighscore = true;
                 // Update highscore in real-time
+                const oldHighscore = highscore;
                 highscore = score;
                 localStorage.setItem("sabalaHigh", highscore);
                 document.getElementById("high-score-val").innerText = highscore;
-                console.log("🎉 Beat the highscore! Keep going! Old:", highscore, "New:", score);
+                console.log("🎉 Beat the highscore! Keep going! Old:", oldHighscore, "New:", score);
             } else if(hasBeatenHighscore && score > highscore) {
                 // Continue updating highscore as player keeps going
                 highscore = score;
@@ -368,10 +372,27 @@ document.getElementById("retry-btn").addEventListener("click", function() {
 
 // Clear high score button
 document.getElementById("clear-btn").addEventListener("click", function() {
+    console.log("Clearing highscore...");
+    
+    // Stop current game if running
+    if(isSabalaActive) {
+        isSabalaActive = false;
+        allIntervals.forEach(interval => clearInterval(interval));
+        allIntervals = [];
+        allTimeouts.forEach(timeout => clearTimeout(timeout));
+        allTimeouts = [];
+        document.querySelectorAll("#sabala-sim .banana").forEach(b => b.remove());
+    }
+    
+    // Reset highscore
     localStorage.setItem("sabalaHigh", 0); 
-    highscore = 0; 
-    document.getElementById("high-score-val").innerText = 0; 
-    alert("Record wiped!"); 
+    highscore = 0;
+    hasBeatenHighscore = false;
+    score = 0;
+    document.getElementById("high-score-val").innerText = 0;
+    document.getElementById("score-board").innerHTML = `Bananas: 0 | High Score: 0`;
+    
+    alert("Record wiped! Click Retry to start fresh."); 
 });
 
 // MONKEY FOLLOW MOUSE with global cursor glitter
