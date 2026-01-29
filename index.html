@@ -67,6 +67,7 @@
             height: 140px;
             object-fit: contain;
             cursor: pointer;
+            transition: transform 0.3s ease;
         }
 
         .game-text {
@@ -132,7 +133,7 @@
 
             <div class="animal-box">
                 <div class="label">Janu</div>
-                <img src="janu.png" class="animal-img">
+                <img src="janu.png" class="animal-img" id="janu-img">
                 <p id="janu-game" class="game-text">Janu wants to talk!</p>
                 <button class="game-btn" onclick="playJanu()">SAY HELLO</button>
             </div>
@@ -167,54 +168,77 @@
         // --- MINI GAMES ---
 
         // 1. Seal Petting
-        // 1. Updated Seal Petting with the "bs la?" trigger
         let pets = 0;
         function playSeal() {
             pets++;
             const sealText = document.getElementById('seal-game');
             sealText.innerText = "Pets: " + pets;
-        
-            if (pets === 10) {
-                sealText.innerText = "Best Friends! 💖";
-                alert("The seal thinks you're its best friend now.");
-            } 
+            if (pets === 10) alert("The seal thinks you're its best friend now.");
             else if (pets === 20) {
                 sealText.style.color = "red";
-                sealText.style.fontWeight = "bold";
                 alert("bs la? shfeech mb 9a7ya 😂");
             }
         }
 
-        // 2. Bun Feeding
+        // 2. Bunny Feeding (Progressively Fat)
         let food = 0;
         function playBun() {
             food++;
             const bunImg = document.getElementById('bun-img');
-            bunImg.style.transform = "scale(1.1)";
-            setTimeout(() => bunImg.style.transform = "scale(1)", 100);
-            document.getElementById('bun-game').innerText = "Carrots Eaten: " + food;
-            if(food == 5) document.getElementById('bun-game').innerText = "Full & Happy! 🥕";
-        }
-
-        // 3. Cat Heater
-        let temp = 20;
-        function playCat() {
-            temp += 5;
-            document.getElementById('cat-game').innerText = "Temp: " + temp + "°C";
-            if(temp >= 35) {
-                document.getElementById('cat-game').innerText = "Perfectly Toasty! ✨";
-                document.getElementById('cat-img').style.filter = "drop-shadow(0 0 10px gold)";
+            const bunText = document.getElementById('bun-game');
+            
+            // Bunny gets bigger each click
+            let currentScale = 1 + (food * 0.15);
+            bunImg.style.transform = `scale(${currentScale})`;
+            
+            if (food === 3) bunText.innerText = "He's getting a bit round...";
+            if (food === 6) {
+                bunText.innerText = "He's becoming a sphere.";
+                alert("Do you see what you're doing to him?");
+            }
+            if (food === 10) {
+                bunText.innerText = "HE'S CHONKED OUT.";
+                alert("He literally cannot move his little legs. I hope you're happy.");
             }
         }
 
-        // 4. Janu Talking
+        // 3. Cat Heater (Overheating/Black Image)
+        let temp = 20;
+        function playCat() {
+            temp += 5;
+            const catImg = document.getElementById('cat-img');
+            const catText = document.getElementById('cat-game');
+            catText.innerText = "Temp: " + temp + "°C";
+
+            if (temp === 35) {
+                catText.innerText = "Perfectly Toasty! ✨";
+                catImg.style.filter = "drop-shadow(0 0 10px gold)";
+            } 
+            else if (temp >= 55) {
+                catText.innerText = "HE'S BURNT!";
+                catText.style.color = "red";
+                catImg.src = "sphynx_black.png"; // Make sure this file is uploaded!
+                catImg.style.filter = "brightness(0.4)";
+                alert("You overcooked him. He's a charcoal briquette now.");
+            }
+        }
+
+        // 4. Janu Talking (Sassy Edition)
+        let januClicks = 0;
         function playJanu() {
-            const phrases = ["Whatcha doin?", "Pretty girl!", "I love Abrar!", "Birthday treat?", "Peek-a-boo!"];
-            const random = phrases[Math.floor(Math.random() * phrases.length)];
-            document.getElementById('janu-game').innerText = "Janu says: " + random;
+            januClicks++;
+            const januText = document.getElementById('janu-game');
+            
+            if (januClicks < 7) {
+                const phrases = ["Whatcha doin?", "Pretty girl!", "I love Abrar!", "Peek-a-boo!"];
+                const random = phrases[Math.floor(Math.random() * phrases.length)];
+                januText.innerText = "Janu says: " + random;
+            } else {
+                januText.innerText = "Janu is mad.";
+                alert("bs yal 7mara! Stop poking me!");
+                januClicks = 0; // Resets for next time
+            }
         }
     </script>
 </body>
 </html>
-
-
