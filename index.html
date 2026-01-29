@@ -200,8 +200,12 @@ function startGame(){
 }
 
 function spawnBanana(){
-    if(!isSabalaActive) return;
+    if(!isSabalaActive) {
+        console.log("Cannot spawn - game not active");
+        return;
+    }
     
+    console.log("Spawning banana...");
     const b = document.createElement("div"); 
     b.className = "banana"; 
     b.innerHTML = "🍌";
@@ -236,8 +240,16 @@ function spawnBanana(){
             // Check if just beat highscore for the first time this session
             if(!hasBeatenHighscore && highscore > 0 && score > highscore) {
                 hasBeatenHighscore = true;
-                // Show celebration message but keep playing!
+                // Update highscore in real-time
+                highscore = score;
+                localStorage.setItem("sabalaHigh", highscore);
+                document.getElementById("high-score-val").innerText = highscore;
                 console.log("🎉 Beat the highscore! Keep going!");
+            } else if(hasBeatenHighscore && score > highscore) {
+                // Continue updating highscore as player keeps going
+                highscore = score;
+                localStorage.setItem("sabalaHigh", highscore);
+                document.getElementById("high-score-val").innerText = highscore;
             }
             
             document.getElementById("score-board").innerHTML = `Bananas: ${score} | High Score: ${highscore}${hasBeatenHighscore ? ' 🔥' : ''}`;
@@ -245,6 +257,7 @@ function spawnBanana(){
             if(b.parentNode) b.remove();
             
             // Always spawn next banana - game continues!
+            console.log("Spawning next banana after catch. Score:", score);
             setTimeout(() => spawnBanana(), 600 + Math.random() * 400);
             return;
         }
@@ -268,7 +281,7 @@ function endGame(didBeatHighscore){
     // Remove all bananas
     document.querySelectorAll("#sabala-sim .banana").forEach(b => b.remove());
     
-    // Update highscore if needed
+    // Highscore is already updated in real-time during play, but double-check
     if(score > highscore){
         highscore = score;
         localStorage.setItem("sabalaHigh", highscore);
