@@ -141,6 +141,8 @@ document.getElementById("bun-btn").addEventListener("click", function() {
     const bunImg = document.getElementById("bun-img");
     const bunGame = document.getElementById("bun-game");
     
+    console.log("Bunny fed! Count:", bClicks); // Debug log
+    
     if(bClicks < 10) {
         bunImg.style.transform=`scale(${1+bClicks*0.45})`;
         if(bClicks === 5) {
@@ -150,9 +152,10 @@ document.getElementById("bun-btn").addEventListener("click", function() {
         }
     } else if(bClicks === 10) {
         // EXPLOSION!
+        console.log("BUNNY EXPLODING!");
+        bunImg.style.transition = "all 0.3s ease";
         bunImg.style.transform = "scale(0)";
         bunImg.style.opacity = "0";
-        bunImg.style.transition = "all 0.3s ease";
         bunGame.innerText = "💥 YOU KILLED THE BUNNY! 💥";
         bunGame.style.color = "red";
         bunGame.style.fontSize = "1rem";
@@ -165,6 +168,7 @@ document.getElementById("bun-btn").addEventListener("click", function() {
         
         // Reset after shame
         setTimeout(() => {
+            console.log("Respawning bunny...");
             bClicks = 0;
             bunImg.style.transform = "scale(1)";
             bunImg.style.opacity = "1";
@@ -172,6 +176,9 @@ document.getElementById("bun-btn").addEventListener("click", function() {
             bunGame.style.color = "#555";
             bunGame.style.fontSize = "0.8rem";
         }, 5000);
+    } else {
+        // Prevent going over 10
+        bClicks = 10;
     }
 });
 
