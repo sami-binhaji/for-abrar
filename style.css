@@ -3,20 +3,27 @@ body {
     color: #FF69B4;
     font-family: 'Segoe UI', Tahoma, sans-serif;
     margin: 0;
+    overflow: hidden;
 }
 
-/* BOTH pages full screen */
+/* BOTH PAGES FULL SCREEN */
 #landing-page,
 #main-content {
-    min-height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
     text-align: center;
 }
 
-/* hide game page at start */
+/* hide minigames at start */
 #main-content {
     display: none;
 }
@@ -34,7 +41,7 @@ body {
     font-weight: bold;
 }
 
-/* GAME LAYOUT */
+/* MENAGERIE LAYOUT */
 .menagerie {
     display: flex;
     justify-content: center;
@@ -79,7 +86,7 @@ body {
     font-weight: bold;
 }
 
-/* BUTTONS */
+/* GAME BUTTONS */
 .game-btn {
     background: #FF69B4;
     color: white;
@@ -90,7 +97,7 @@ body {
     font-size: 0.7rem;
 }
 
-/* 💥 EXPLOSION */
+/* BUNNY EXPLOSION */
 .explode {
     animation: boom 0.6s ease-out forwards;
 }
