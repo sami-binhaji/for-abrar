@@ -39,7 +39,7 @@
 <body>
 
     <div id="death-screen">
-        <div id="gif-container" style="display:flex;"></div>
+        <div id="gif-container" style="display:flex; justify-content:center;"></div>
         <h1 id="death-title" class="ayooz-title">Yal 3ayooooz</h1>
         <p style="font-size: 2rem; color: #555; font-weight: bold;">Score: <span id="final-score">0</span></p>
         <div style="display:flex; gap: 10px;">
@@ -67,7 +67,7 @@
                 <div class="label">The Chaos Bun</div>
                 <img src="bunny.png" class="animal-img" id="bun-img">
                 <p id="bun-game" class="game-text">Hungry...</p>
-                <button class="game-btn" id="bun-btn" onclick="playBun()">FEED CARROT 🥕</button>
+                <button class="game-btn" onclick="playBun()">FEED CARROT 🥕</button>
             </div>
             <div class="animal-box">
                 <div class="label">The Goblino</div>
@@ -99,28 +99,57 @@
     </div>
 
     <script>
-        // --- PET VARIABLES ---
-        let pCount = 0; 
-        let bClicks = 0; 
-        let cTemp = 20; 
-        let jClicks = 0; // NEW: Janu counter
+        // --- PETS LOGIC ---
+        let pCount = 0, bClicks = 0, cTemp = 20, jClicks = 0;
 
-        // --- SABALA VARIABLES ---
+        function playSeal() {
+            pCount++;
+            document.getElementById("seal-game").innerText = "Pets: " + pCount;
+            if (pCount === 20) alert("bs la? shfeech mb 9a7ya 😂");
+        }
+        function playBun() {
+            bClicks++;
+            const b = document.getElementById("bun-img");
+            b.style.transform = `scale(${1 + bClicks * 0.45})`;
+            document.getElementById("bun-game").innerText = "MEGA BUNNY!";
+        }
+        function playCat() {
+            cTemp += 5;
+            const t = document.getElementById("cat-game");
+            t.innerText = "Temp: " + cTemp + "°C";
+            if (cTemp > 65) {
+                document.getElementById("cat-img").src = "sphynx_black.png";
+                alert("You overcooked him 😭");
+            }
+        }
+        function playJanu() {
+            jClicks++;
+            if (jClicks <= 5) {
+                const phrases = ["Whatcha doin?", "Pretty girl!", "I love Abrar!", "Muah! 💋", "Peek-a-boo!"];
+                document.getElementById("janu-game").innerText = "Janu says: " + phrases[Math.floor(Math.random() * phrases.length)];
+            } else {
+                document.getElementById("scare-video").src = "https://www.youtube.com/embed/ix3rE46lWsU?autoplay=1";
+                document.getElementById("janu-scare").style.display = "block";
+            }
+        }
+        function closeScare() {
+            document.getElementById("scare-video").src = "";
+            document.getElementById("janu-scare").style.display = "none";
+            jClicks = 0;
+            document.getElementById("janu-game").innerText = "Janu is watching.";
+        }
+
+        // --- SABALA ENGINE ---
         let isSabalaActive = false;
         let score = 0;
         let highscore = Number(localStorage.getItem("sabalaHigh")) || 0;
         document.getElementById("high-score-val").innerText = highscore;
 
-        // --- BUTTON LOGIC ---
         const fBtn = document.getElementById("forbidden-button");
-        let escapes = 0;
         fBtn.addEventListener("mouseover", () => {
-            if (escapes < 6) {
-                fBtn.style.position = "absolute";
-                fBtn.style.left = Math.random() * (window.innerWidth - 150) + "px";
-                fBtn.style.top = Math.random() * (window.innerHeight - 100) + "px";
-                escapes++;
-            }
+            fBtn.style.position = "absolute";
+            fBtn.style.left = Math.random() * (window.innerWidth - 150) + "px";
+            fBtn.style.top = Math.random() * (window.innerHeight - 100) + "px";
         });
         fBtn.addEventListener("click", () => {
             document.getElementById("landing-page").style.display = "none";
@@ -128,56 +157,6 @@
             document.body.style.backgroundColor = "#FFD1DC";
         });
 
-        // --- PETS LOGIC ---
-        function playSeal() {
-            pCount++;
-            document.getElementById("seal-game").innerText = "Pets: " + pCount;
-            if (pCount === 10) alert("The seal thinks you're its best friend now.");
-            if (pCount === 20) alert("bs la? shfeech mb 9a7ya 😂");
-        }
-
-        function playBun() {
-            bClicks++;
-            const bunImg = document.getElementById("bun-img");
-            bunImg.style.transform = `scale(${1 + bClicks * 0.45})`;
-            if (bClicks >= 5) document.getElementById("bun-game").innerHTML = "MEGA BUNNY!";
-        }
-
-        function playCat() {
-            cTemp += 5;
-            const text = document.getElementById("cat-game");
-            text.innerText = "Temp: " + cTemp + "°C";
-            if (cTemp <= 65) {
-                document.getElementById("cat-img").style.filter = `drop-shadow(0 0 ${(cTemp-20)*0.8}px gold)`;
-            } else {
-                document.getElementById("cat-img").src = "sphynx_black.png";
-                text.innerText = "YOU OVERCOOKED HIM 😭";
-                text.style.color = "red";
-                alert("You overcooked him 😭");
-            }
-        }
-
-        function playJanu() {
-            jClicks++;
-            if (jClicks <= 5) {
-                // Talk for the first 5 clicks
-                const phrases = ["Whatcha doin?", "Pretty girl!", "I love Abrar!", "Peek-a-boo!", "Muah! 💋", "Hee hee!"];
-                document.getElementById("janu-game").innerText = "Janu says: " + phrases[Math.floor(Math.random() * phrases.length)];
-            } else {
-                // Scare on the 6th click
-                document.getElementById("scare-video").src = "https://www.youtube.com/embed/ix3rE46lWsU?autoplay=1";
-                document.getElementById("janu-scare").style.display = "block";
-            }
-        }
-
-        function closeScare() {
-            document.getElementById("scare-video").src = "";
-            document.getElementById("janu-scare").style.display = "none";
-            jClicks = 0; // Reset counter so she talks again
-            document.getElementById("janu-game").innerText = "Janu is watching.";
-        }
-
-        // --- SABALA ENGINE ---
         function startSabala() {
             document.querySelectorAll('.banana').forEach(b => b.remove());
             isSabalaActive = true;
@@ -192,8 +171,7 @@
             const container = document.getElementById("sabala-container");
             if(container && isSabalaActive) {
                 let x = e.pageX;
-                if (x < 50) x = 50;
-                if (x > window.innerWidth - 50) x = window.innerWidth - 50;
+                if (x < 50) x = 50; if (x > window.innerWidth - 50) x = window.innerWidth - 50;
                 container.style.left = x + "px";
             }
         });
@@ -208,29 +186,20 @@
 
             let fall = setInterval(() => {
                 if (!isSabalaActive) { clearInterval(fall); b.remove(); return; }
-                
                 let topPos = parseInt(b.style.top);
                 b.style.top = (topPos + 6 + (score/5)) + "px";
-                
-                let bRect = b.getBoundingClientRect();
-                let pRect = document.getElementById("sabala-player").getBoundingClientRect();
+                let bRect = b.getBoundingClientRect(), pRect = document.getElementById("sabala-player").getBoundingClientRect();
 
                 if (bRect.bottom > pRect.top && bRect.left < pRect.right && bRect.right > pRect.left) {
                     score++;
                     document.getElementById("score-board").innerHTML = `Bananas: ${score} | High Score: ${highscore}`;
                     b.remove(); clearInterval(fall);
                 }
-                
                 if (topPos > window.innerHeight) {
-                    clearInterval(fall);
-                    b.remove();
-                    triggerGameOver();
+                    clearInterval(fall); b.remove(); triggerGameOver();
                 }
             }, 20);
-            
-            if (isSabalaActive) {
-                setTimeout(spawnBanana, 1000 - (score * 12 > 700 ? 700 : score * 12));
-            }
+            setTimeout(spawnBanana, 1000 - (score * 12 > 700 ? 700 : score * 12));
         }
 
         function triggerGameOver() {
@@ -240,32 +209,32 @@
             const title = document.getElementById("death-title");
             const gifBox = document.getElementById("gif-container");
             document.getElementById("final-score").innerText = score;
-            gifBox.innerHTML = "";
 
-            // Use Number() to ensure math is correct
-            if (Number(score) > Number(highscore) && Number(score) > 0) {
-                // NEW RECORD
-                highscore = score;
+            // CRITICAL FIX: Capture OLD highscore before updating
+            let oldHigh = Number(highscore);
+            let currentScore = Number(score);
+
+            if (currentScore > oldHigh && currentScore > 0) {
+                // NEW RECORD Logic
+                highscore = currentScore;
                 localStorage.setItem("sabalaHigh", highscore);
                 document.getElementById("high-score-val").innerText = highscore;
                 
                 title.innerText = "9ij Sabala";
                 gifBox.innerHTML = '<img src="lee_dance.gif" class="lee-gif"><img src="lee_yes.gif" class="lee-gif">';
             } else {
-                // LOSS
+                // FAILURE Logic
                 title.innerText = "Yal 3ayooooz";
                 gifBox.innerHTML = '<img src="lee_crazy.gif" class="lee-gif">';
             }
+            
             document.getElementById("death-screen").style.display = "flex";
         }
 
         function clearHighScore() {
-            if(confirm("Delete high score?")) {
-                highscore = 0;
-                localStorage.setItem("sabalaHigh", 0);
-                document.getElementById("high-score-val").innerText = 0;
-                alert("Highscore deleted!");
-            }
+            highscore = 0; localStorage.setItem("sabalaHigh", 0);
+            document.getElementById("high-score-val").innerText = 0;
+            alert("Highscore deleted!");
         }
 
         function resetSabala() {
@@ -277,8 +246,7 @@
             if (isSabalaActive) return;
             if (Math.random() > 0.85) {
                 const g = document.createElement('div');
-                g.className = 'glitter';
-                g.style.left = e.pageX + 'px'; g.style.top = e.pageY + 'px';
+                g.className = 'glitter'; g.style.left = e.pageX + 'px'; g.style.top = e.pageY + 'px';
                 g.style.background = ['#FF69B4', '#DA70D6', '#00FFFF', '#FFD700'][Math.floor(Math.random()*4)];
                 document.body.appendChild(g);
                 g.animate([{ opacity: 1 }, { transform: `translate(${(Math.random()-0.5)*150}px, 200px) scale(0)`, opacity: 0 }], 1000);
