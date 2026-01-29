@@ -18,6 +18,7 @@
         .menagerie { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 40px auto; max-width: 1200px; }
         .animal-box { background: white; padding: 15px; border-radius: 25px; box-shadow: 8px 8px 0px #FF69B4; width: 200px; min-height: 280px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; transition: 0.5s; overflow: hidden; }
         .animal-img { width: 140px; height: 140px; object-fit: contain; cursor: pointer; transition: transform 0.2s, filter 0.3s; }
+        .game-text { font-size: 0.8rem; color: #555; margin: 5px 0; font-weight: bold; }
         button.game-btn { background: #FF69B4; color: white; border: none; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: bold; }
         
         #sabala-sim { background-color: #2ecc71; cursor: none; }
@@ -82,77 +83,87 @@
 
     <script>
         let gamesDone = { seal: false, bun: false, cat: false, janu: false };
+
         function checkProgress() {
-            if (Object.values(gamesDone).every(v => v === true)) {
+            if (gamesDone.seal && gamesDone.bun && gamesDone.cat && gamesDone.janu) {
                 document.getElementById('final-boss-btn').style.display = 'inline-block';
             }
         }
 
-        // --- BUNNY (REVERTED TO GROWING) ---
-        let food = 0;
+        // --- BUNNY FIXED ---
+        let foodCount = 0;
         function playBun() {
-            food++;
+            foodCount++;
             const bunImg = document.getElementById("bun-img");
             const bunText = document.getElementById("bun-game");
             const bunBtn = document.getElementById("bun-btn");
 
-            bunImg.style.transform = `scale(${1 + food * 0.45})`;
+            bunImg.style.transform = `scale(${1 + foodCount * 0.45})`;
 
-            if (food >= 13) {
+            if (foodCount >= 13) {
                 bunText.innerHTML = "MEGA BUNNY UNLOCKED! ✨";
                 bunBtn.innerText = "MAX LEVEL";
                 bunBtn.style.opacity = "0.5";
                 bunBtn.disabled = true;
-                gamesDone.bun = true; checkProgress();
+                gamesDone.bun = true; 
+                checkProgress();
             }
         }
 
-        // --- SEAL (RESTORED MESSAGES) ---
-        let pets = 0;
+        // --- SEAL FIXED ---
+        let petCount = 0;
         function playSeal() {
-            pets++;
-            document.getElementById("seal-game").innerText = "Pets: " + pets;
-            if (pets === 10) alert("The seal thinks you're its best friend now.");
-            if (pets >= 20) {
+            petCount++;
+            document.getElementById("seal-game").innerText = "Pets: " + petCount;
+            if (petCount === 10) alert("The seal thinks you're its best friend now.");
+            if (petCount >= 20) {
                 if (!gamesDone.seal) alert("bs la? shfeech mb 9a7ya 😂");
-                gamesDone.seal = true; checkProgress();
+                gamesDone.seal = true; 
+                checkProgress();
             }
         }
 
-        // --- GOBLINO ---
-        let temp = 20;
+        // --- GOBLINO FIXED ---
+        let catTemp = 20;
         function playCat() {
-            temp += 5;
-            document.getElementById("cat-game").innerText = "Temp: " + temp + "°C";
-            if (temp <= 65) {
-                document.getElementById("cat-img").style.filter = `drop-shadow(0 0 ${(temp-20)*0.8}px gold)`;
+            catTemp += 5;
+            const catText = document.getElementById("cat-game");
+            catText.innerText = "Temp: " + catTemp + "°C";
+            
+            if (catTemp <= 65) {
+                document.getElementById("cat-img").style.filter = `drop-shadow(0 0 ${(catTemp-20)*0.8}px gold)`;
             } else {
                 document.getElementById("cat-img").src = "sphynx_black.png";
                 document.getElementById("cat-img").style.filter = "drop-shadow(0 0 15px #FF4500) brightness(0.6)";
-                gamesDone.cat = true; checkProgress();
+                catText.innerText = "YOU OVERCOOKED HIM 😭";
+                catText.style.color = "red";
+                if (!gamesDone.cat) alert("You overcooked him 😭");
+                gamesDone.cat = true; 
+                checkProgress();
             }
         }
 
-        // --- JANU ---
-        let januClicks = 0;
+        // --- JANU FIXED ---
+        let januClickCount = 0;
         function playJanu() {
-            januClicks++;
-            if (januClicks < 7) {
+            januClickCount++;
+            if (januClickCount < 7) {
                 const phrases = ["Whatcha doin?", "Pretty girl!", "I love Abrar!", "Peek-a-boo!"];
                 document.getElementById("janu-game").innerText = "Janu says: " + phrases[Math.floor(Math.random() * phrases.length)];
             } else {
                 document.getElementById("scare-video").src = "https://www.youtube.com/embed/ix3rE46lWsU?autoplay=1";
                 document.getElementById("janu-scare").style.display = "block";
-                gamesDone.janu = true; checkProgress();
-                januClicks = 0;
+                gamesDone.janu = true; 
+                checkProgress();
+                januClickCount = 0;
             }
         }
         function closeScare() { document.getElementById("scare-video").src = ""; document.getElementById("janu-scare").style.display = "none"; }
 
         // --- SABALA SIM ---
-        let score = 0;
-        let highscore = localStorage.getItem("sabalaHigh") || 0;
-        document.getElementById("high-score").innerText = highscore;
+        let currentScore = 0;
+        let bestScore = localStorage.getItem("sabalaHigh") || 0;
+        document.getElementById("high-score").innerText = bestScore;
 
         function startSabala() {
             document.getElementById("main-content").style.display = "none";
@@ -161,7 +172,8 @@
         }
 
         window.addEventListener("mousemove", (e) => {
-            document.getElementById("sabala-player").style.left = e.pageX + "px";
+            const p = document.getElementById("sabala-player");
+            if(p) p.style.left = e.pageX + "px";
         });
 
         function spawnBanana() {
@@ -173,41 +185,42 @@
             document.getElementById("sabala-sim").appendChild(b);
 
             let fall = setInterval(() => {
-                let top = parseInt(b.style.top);
-                b.style.top = (top + 6 + (score/4)) + "px";
+                let topPos = parseInt(b.style.top);
+                b.style.top = (topPos + 6 + (currentScore/4)) + "px";
                 let bRect = b.getBoundingClientRect(), pRect = document.getElementById("sabala-player").getBoundingClientRect();
 
                 if (bRect.top + 40 > pRect.top && bRect.left < pRect.right && bRect.right > pRect.left) {
-                    score++;
-                    document.getElementById("score-board").innerHTML = `Bananas: ${score} | High Score: ${highscore}`;
-                    if (score > highscore) { highscore = score; localStorage.setItem("sabalaHigh", highscore); }
+                    currentScore++;
+                    document.getElementById("score-board").innerHTML = `Bananas: ${currentScore} | High Score: ${bestScore}`;
+                    if (currentScore > bestScore) { bestScore = currentScore; localStorage.setItem("sabalaHigh", bestScore); }
                     b.remove(); clearInterval(fall);
                 }
-                if (top > window.innerHeight) {
+                if (topPos > window.innerHeight) {
                     b.remove(); clearInterval(fall);
-                    if (score > 0) { alert("GAME OVER! Score: " + score); score = 0; }
+                    if (currentScore > 0) { alert("GAME OVER! Score: " + currentScore); currentScore = 0; }
                 }
             }, 20);
-            setTimeout(spawnBanana, 1000 - (score * 12));
+            setTimeout(spawnBanana, 1000 - (currentScore * 12));
         }
 
-        // --- LANDING & GLITTER ---
-        const fBtn = document.getElementById("forbidden-button");
-        let escapes = 0;
-        fBtn.addEventListener("mouseover", () => {
-            if (escapes < 6) {
-                fBtn.style.position = "absolute";
-                fBtn.style.left = Math.random() * (window.innerWidth - 100) + "px";
-                fBtn.style.top = Math.random() * (window.innerHeight - 50) + "px";
-                escapes++;
+        // --- LANDING ---
+        const forbiddenBtn = document.getElementById("forbidden-button");
+        let runCount = 0;
+        forbiddenBtn.addEventListener("mouseover", () => {
+            if (runCount < 6) {
+                forbiddenBtn.style.position = "absolute";
+                forbiddenBtn.style.left = Math.random() * (window.innerWidth - 100) + "px";
+                forbiddenBtn.style.top = Math.random() * (window.innerHeight - 50) + "px";
+                runCount++;
             }
         });
-        fBtn.addEventListener("click", () => {
+        forbiddenBtn.addEventListener("click", () => {
             document.getElementById("landing-page").style.display = "none";
             document.getElementById("main-content").style.display = "block";
             document.body.style.backgroundColor = "#FFD1DC";
         });
 
+        // --- GLITTER ---
         window.addEventListener('mousemove', (e) => {
             if (Math.random() > 0.85) {
                 const g = document.createElement('div');
@@ -215,8 +228,8 @@
                 g.style.left = e.pageX + 'px'; g.style.top = e.pageY + 'px';
                 g.style.background = ['#FF69B4', '#DA70D6', '#00FFFF', '#FFD700'][Math.floor(Math.random()*4)];
                 document.body.appendChild(g);
-                let floor = document.getElementById('glitter-floor');
-                floor.style.height = (parseFloat(floor.style.height || 0) + 0.2) + 'px';
+                let floorElem = document.getElementById('glitter-floor');
+                floorElem.style.height = (parseFloat(floorElem.style.height || 0) + 0.2) + 'px';
                 g.animate([{ opacity: 1 }, { transform: `translate(${(Math.random()-0.5)*150}px, ${window.innerHeight}px) scale(0)`, opacity: 0 }], 1500);
                 setTimeout(() => g.remove(), 1500);
             }
