@@ -1,25 +1,119 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FOR ABRAR 💖</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        /* ALL CSS INTEGRATED HERE FOR EASIER EDITS */
+        body {
+            background-color: #1a1a1a;
+            color: #FF69B4;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background-color 1s ease;
+        }
+
+        #landing-page { text-align: center; }
+
+        #forbidden-button {
+            background-color: #FF69B4;
+            color: white;
+            border: 4px solid white;
+            padding: 20px 40px;
+            font-size: 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 20px #FF69B4;
+            transition: transform 0.1s;
+        }
+
+        /* The Animal Menagerie Styling */
+        #main-content {
+            display: none;
+            text-align: center;
+            width: 100%;
+            padding: 50px 20px;
+        }
+
+        .menagerie {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .animal-box {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 10px 10px 0px #FF69B4;
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+
+        .animal-box:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .emoji { font-size: 80px; }
+        .label { color: #1a1a1a; font-weight: bold; margin-top: 10px; }
+
+        /* The Text Screenshot Section */
+        .receipts {
+            margin-top: 80px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .screenshot {
+            width: 200px;
+            border: 10px solid white;
+            border-bottom: 40px solid white;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.3);
+            transform: rotate(-3deg);
+        }
+    </style>
 </head>
 <body>
 
     <div id="landing-page">
-        <h1 id="warning-text">WARNING: DO NOT CLICK THE PINK BUTTON</h1>
+        <h1 style="font-size: 2.5rem;">WARNING: DO NOT CLICK THE BUTTON</h1>
         <button id="forbidden-button">CLICK ME</button>
     </div>
 
-    <div id="main-content" style="display: none;">
-        <h1>Happy Birthday Abrar! 🐷💖</h1>
-        <p>Hover over the animals for a surprise...</p>
+    <div id="main-content">
+        <h1 style="font-size: 3rem;">Happy Birthday, Abrar! 🎀</h1>
+        <p>You're my favorite chaotic animal. Hover for proof.</p>
+
         <div class="menagerie">
-            <span class="animal" title="You're as cute as a pig!">🐷</span>
-            <span class="animal" title="Chaotic but lovable">🐿️</span>
-            <span class="animal" title="One of a kind">🦄</span>
+            <div class="animal-box" title="Round, squishy, and loves to nap. Sound familiar?">
+                <div class="emoji">🦭</div>
+                <div class="label">The Seal</div>
+            </div>
+
+            <div class="animal-box" title="High energy, constant snacking, very cute.">
+                <div class="emoji">🐰</div>
+                <div class="label">The Bun</div>
+            </div>
+
+            <div class="animal-box" title="A little bit weird, very unique, 100% lovable.">
+                <div class="emoji">🐈‍⬛</div>
+                <div class="label">The Goblino</div>
+            </div>
+        </div>
+
+        <div class="receipts">
+            <h2 style="width: 100%;">Some of my favorite "Receipts"</h2>
+            <p>(Replace these with your screenshot images later!)</p>
         </div>
     </div>
 
@@ -27,16 +121,16 @@
         const btn = document.getElementById('forbidden-button');
         const landing = document.getElementById('landing-page');
         const main = document.getElementById('main-content');
-        let count = 0;
+        let escapes = 0;
 
         btn.addEventListener('mouseover', () => {
-            if (count < 5) {
-                const x = Math.random() * (window.innerWidth - 100);
-                const y = Math.random() * (window.innerHeight - 50);
+            if (escapes < 6) {
+                const x = Math.random() * (window.innerWidth - btn.clientWidth);
+                const y = Math.random() * (window.innerHeight - btn.clientHeight);
                 btn.style.position = 'absolute';
                 btn.style.left = x + 'px';
                 btn.style.top = y + 'px';
-                count++;
+                escapes++;
             }
         });
 
@@ -44,6 +138,7 @@
             landing.style.display = 'none';
             main.style.display = 'block';
             document.body.style.backgroundColor = '#FFD1DC';
+            document.body.style.overflow = 'auto'; // Let her scroll now!
         });
     </script>
 </body>
