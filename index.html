@@ -276,7 +276,9 @@ function spawnBanana(){
             }
             
             document.getElementById("score-board").innerHTML = `Bananas: ${score} | High Score: ${highscore}${hasBeatenHighscore ? ' 🔥' : ''}`;
-            clearInterval(fallInterval); 
+            clearInterval(fallInterval);
+            const idx = allIntervals.indexOf(fallInterval);
+            if(idx > -1) allIntervals.splice(idx, 1);
             if(b.parentNode) b.remove();
             
             // Always spawn next banana - game continues!
@@ -295,6 +297,7 @@ function spawnBanana(){
             if(b.parentNode) b.remove();
             // Pass whether player beat highscore this session
             endGame(hasBeatenHighscore);
+            return; // Important: exit the interval
         }
     }, 30);
     allIntervals.push(fallInterval);
