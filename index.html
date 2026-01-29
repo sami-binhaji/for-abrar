@@ -211,9 +211,10 @@
             else if (pets === 20) alert("bs la? shfeech mb 9a7ya 😂");
         }
 
-        // 2. Bunny (FIXED EXPLOSION)
+        // 2. Bunny (THE GUARANTEED EXPLOSION)
         let food = 0;
         let hasExploded = false;
+
         function playBun() {
             if (hasExploded) return;
             
@@ -222,26 +223,36 @@
             const bunText = document.getElementById('bun-game');
             const feedBtn = document.getElementById('feed-btn');
             
-            // Increment size
-            let currentScale = 1 + (food * 0.25);
+            // 1. Make him grow
+            let currentScale = 1 + (food * 0.3); // Even bigger growth
             bunImg.style.transform = `scale(${currentScale})`;
+
+            // 2. Add a shake effect when he's nearly full
+            if (food > 8) {
+                bunImg.style.animation = "shake 0.1s infinite";
+            }
             
             if (food === 3) bunText.innerText = "He's getting a bit round...";
             if (food === 7) bunText.innerText = "He's becoming a sphere...";
-            if (food === 10) alert("He literally cannot move. I hope you're happy.");
+            if (food === 11) alert("He literally cannot move. I hope you're happy.");
             
-            if (food >= 13) {
+            // 3. THE POP
+            if (food >= 14) {
                 hasExploded = true;
-                // Instant disappear
-                bunImg.style.display = "none"; 
-                bunText.innerText = "BOOM. 💥";
-                bunText.style.color = "red";
-                feedBtn.style.display = "none"; // Hide button after explosion
                 
-                alert("YOU FED HIM TOO MUCH. HE EXPLODED. 🥕💥");
+                // Physically remove the bunny and replace with explosion emoji
+                const container = bunImg.parentElement;
+                container.innerHTML = `
+                    <div class="label">The Chaos Bun</div>
+                    <div style="font-size: 100px; margin: 20px;">💥</div>
+                    <p id="bun-game" class="game-text" style="color: red; font-weight: bold;">BOOM. POPPED.</p>
+                `;
+                
+                // Final insults
                 setTimeout(() => {
-                    alert("All that's left is fur and regret.");
-                }, 500);
+                    alert("YOU FED HIM TOO MUCH. HE EXPLODED. 🥕💥");
+                    alert("All that's left is fur and regret. Happy Birthday, monster.");
+                }, 100);
             }
         }
 
@@ -280,3 +291,4 @@
     </script>
 </body>
 </html>
+
