@@ -5,100 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FOR ABRAR & JANU 💖</title>
     <style>
-        body {
-            background-color: #1a1a1a;
-            color: #FF69B4;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden;
-            transition: background-color 1s ease;
-            cursor: url('https://img.icons8.com/color/32/hello-kitty.png'), auto;
-        }
+        body { background-color: #1a1a1a; color: #FF69B4; font-family: 'Segoe UI', sans-serif; margin: 0; overflow-x: hidden; cursor: url('https://img.icons8.com/color/32/hello-kitty.png'), auto; }
+        
+        /* Layouts */
+        #landing-page, #main-content, #sabala-sim { display: none; text-align: center; min-height: 100vh; width: 100%; }
+        #landing-page { display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        #main-content { padding: 50px 0; }
 
-        /* Rainbow Glitter Pile */
-        #glitter-floor {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 0px; 
-            background: linear-gradient(to right, #ff00ff, #00ffff, #ff00ff, #ffff00);
-            background-size: 400% 400%;
-            animation: rainbowShift 8s ease infinite;
-            box-shadow: 0 -10px 30px rgba(255, 105, 180, 0.6);
-            pointer-events: none;
-            z-index: 999;
-            opacity: 0.5;
-        }
+        /* Glitter */
+        .glitter { position: fixed; width: 10px; height: 10px; border-radius: 2px; pointer-events: none; z-index: 1000; box-shadow: 0 0 10px white; }
+        #glitter-floor { position: fixed; bottom: 0; left: 0; width: 100%; height: 0px; background: linear-gradient(to right, #ff00ff, #00ffff, #ff00ff, #ffff00); background-size: 400% 400%; animation: rainbowShift 8s ease infinite; z-index: 999; opacity: 0.5; }
+        @keyframes rainbowShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
-        @keyframes rainbowShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .glitter {
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            border-radius: 2px;
-            pointer-events: none;
-            z-index: 1000;
-            box-shadow: 0 0 10px white;
-        }
-
-        @keyframes shake {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            10% { transform: translate(-1px, -2px) rotate(-1deg); }
-            30% { transform: translate(3px, 2px) rotate(0deg); }
-            50% { transform: translate(-1px, 2px) rotate(1deg); }
-            70% { transform: translate(3px, 1px) rotate(-1deg); }
-            100% { transform: translate(1px, -2px) rotate(0deg); }
-        }
-
-        #janu-scare {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 2000;
-            background: black;
-            padding: 10px;
-            border: 5px solid #FF69B4;
-            border-radius: 20px;
-        }
-
-        #landing-page { text-align: center; z-index: 10; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; width: 100%;}
-        #main-content { display: none; text-align: center; width: 100%; padding: 50px 0; z-index: 10; }
-        #forbidden-button { position: relative; background-color: #FF69B4; color: white; border: 4px solid white; padding: 20px 40px; font-size: 24px; border-radius: 50px; cursor: pointer; box-shadow: 0 0 20px #FF69B4; font-weight: bold; }
+        /* Menagerie */
         .menagerie { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 40px auto; max-width: 1200px; }
         .animal-box { background: white; padding: 15px; border-radius: 25px; box-shadow: 8px 8px 0px #FF69B4; width: 200px; min-height: 280px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; transition: 0.5s; }
         .animal-img { width: 140px; height: 140px; object-fit: contain; cursor: pointer; transition: transform 0.2s, filter 0.3s; }
-        .game-text { font-size: 0.8rem; color: #555; margin: 5px 0; font-weight: bold; }
-        .label { color: #1a1a1a; font-weight: bold; font-size: 1rem; text-transform: uppercase; }
         button.game-btn { background: #FF69B4; color: white; border: none; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: bold; }
-        h1 { font-size: 2.5rem; text-shadow: 2px 2px 0px white; }
+        
+        /* Sabala Sim Styling */
+        #sabala-sim { background-color: #2ecc71; cursor: none; }
+        #sabala-player { position: absolute; font-size: 60px; bottom: 20px; transform: translateX(-50%); pointer-events: none; }
+        .banana { position: absolute; font-size: 40px; }
+        #score-board { font-size: 30px; color: white; padding: 20px; font-weight: bold; text-shadow: 2px 2px #000; }
+
+        /* Secret Button */
+        #final-boss-btn { display: none; background: linear-gradient(45deg, #ffd700, #ff69b4); border: 5px solid white; padding: 20px 50px; font-size: 28px; border-radius: 50px; color: white; font-weight: bold; cursor: pointer; box-shadow: 0 0 30px gold; margin-top: 30px; animation: shake 0.5s infinite; }
+        @keyframes shake { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(5deg); } 75% { transform: rotate(-5deg); } }
+        @keyframes imgShake { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-2px, -1px); } 100% { transform: translate(1px, 1px); } }
     </style>
 </head>
 <body>
 
     <div id="glitter-floor"></div>
 
-    <div id="janu-scare">
-        <iframe id="scare-video" width="315" height="560" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-        <br>
-        <button class="game-btn" onclick="closeScare()">SORRY JANU 😭</button>
-    </div>
-
-    <div id="landing-page">
+    <div id="landing-page" style="display: flex;">
         <h1>⚠️ CAUTION ⚠️</h1>
         <p style="color:white;font-weight:bold;">DO NOT TOUCH THE PINK BUTTON.</p>
-        <button id="forbidden-button">CLICK ME</button>
+        <button id="forbidden-button" style="position:relative; background-color: #FF69B4; color: white; border: 4px solid white; padding: 20px 40px; font-size: 24px; border-radius: 50px; cursor: pointer; font-weight: bold;">CLICK ME</button>
     </div>
 
     <div id="main-content">
@@ -109,16 +53,12 @@
                 <img src="seal.png" class="animal-img" onclick="playSeal()">
                 <p id="seal-game" class="game-text">Pets: 0</p>
             </div>
-
             <div id="bunny-container" class="animal-box">
                 <div class="label">The Chaos Bun</div>
-                <div id="bun-frame" style="position:relative; width:140px; height:140px; display:flex; align-items:center; justify-content:center;">
-                    <img src="bunny.png" class="animal-img" id="bun-img">
-                </div>
+                <div id="bun-frame"><img src="bunny.png" class="animal-img" id="bun-img"></div>
                 <p id="bun-game" class="game-text">Hungry...</p>
                 <button class="game-btn" id="bun-btn" onclick="playBun()">FEED CARROT 🥕</button>
             </div>
-
             <div class="animal-box">
                 <div class="label">The Goblino</div>
                 <img src="sphynx.png" class="animal-img" id="cat-img">
@@ -132,123 +72,180 @@
                 <button class="game-btn" onclick="playJanu()">SAY HELLO</button>
             </div>
         </div>
+        <button id="final-boss-btn" onclick="startSabala()">ENTER SABALA SIMULATOR (enti)</button>
+    </div>
+
+    <div id="sabala-sim">
+        <div id="score-board">Bananas: 0 | High Score: <span id="high-score">0</span></div>
+        <h2 style="color:white">MOVE MOUSE TO CATCH BANANAS! 🍌</h2>
+        <div id="sabala-player">🐒</div>
+    </div>
+
+    <div id="janu-scare" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:2000; background:black; padding:10px; border:5px solid #FF69B4; border-radius:20px;">
+        <iframe id="scare-video" width="315" height="560" src="" frameborder="0" allow="autoplay"></iframe><br>
+        <button class="game-btn" onclick="closeScare()">SORRY JANU 😭</button>
     </div>
 
     <script>
-        let pileHeight = 0;
-        const floor = document.getElementById('glitter-floor');
-        window.addEventListener('mousemove', (e) => {
-            if (Math.random() > 0.85) {
-                const glitter = document.createElement('div');
-                glitter.className = 'glitter';
-                glitter.style.left = e.pageX + 'px';
-                glitter.style.top = e.pageY + 'px';
-                const colors = ['#FF69B4', '#DA70D6', '#00FFFF', '#FFD700', '#FF4500'];
-                glitter.style.background = colors[Math.floor(Math.random() * colors.length)];
-                document.body.appendChild(glitter);
-                pileHeight += 0.2; 
-                floor.style.height = pileHeight + 'px';
-                glitter.animate([{ transform: 'translate(0,0) rotate(0deg) scale(1)', opacity: 1 }, { transform: `translate(${(Math.random()-0.5)*150}px, ${window.innerHeight - e.pageY}px) rotate(360deg) scale(0)`, opacity: 0 }], { duration: 1500 });
-                setTimeout(() => glitter.remove(), 1500);
+        let gamesDone = { seal: false, bun: false, cat: false, janu: false };
+        function checkProgress() {
+            if (Object.values(gamesDone).every(v => v === true)) {
+                document.getElementById('final-boss-btn').style.display = 'inline-block';
             }
-        });
+        }
 
-        const btn = document.getElementById("forbidden-button");
-        let escapes = 0;
-        btn.addEventListener("mouseover", () => {
-            if (escapes < 6) {
-                const x = Math.random() * (window.innerWidth - btn.clientWidth);
-                const y = Math.random() * (window.innerHeight - btn.clientHeight);
-                btn.style.position = "absolute";
-                btn.style.left = x + "px";
-                btn.style.top = y + "px";
-                escapes++;
-            }
-        });
-        btn.addEventListener("click", () => {
-            document.getElementById("landing-page").style.display = "none";
-            document.getElementById("main-content").style.display = "block";
-            document.body.style.backgroundColor = "#FFD1DC";
-        });
-
-        // FIXED BUNNY LOGIC
+        // --- BUNNY ---
         let food = 0;
         function playBun() {
             food++;
             const bunImg = document.getElementById("bun-img");
-            const bunText = document.getElementById("bun-game");
-            const container = document.getElementById("bunny-container");
-            const bunBtn = document.getElementById("bun-btn");
-            const frame = document.getElementById("bun-frame");
-
-            // Scale the bunny up
-            let currentScale = 1 + food * 0.35;
-            bunImg.style.transform = `scale(${currentScale})`;
-
-            // Add shake as it gets dangerously big
-            if (food > 8 && food < 13) {
-                bunImg.style.animation = "shake 0.5s infinite";
-            }
-
+            if (food > 8 && food < 13) bunImg.style.animation = "imgShake 0.1s infinite";
+            bunImg.style.transform = `scale(${1 + food * 0.35})`;
             if (food >= 13) {
-                // 1. Force the frame to ONLY show the explosion
-                frame.innerHTML = "<span style='font-size: 100px; display: block; transform: scale(2); transition: 0.2s;'>💥</span>";
-                
-                // 2. Hide the button and update text immediately
-                bunBtn.style.display = "none";
-                bunText.innerHTML = "POPPED!";
-                
-                // 3. After the "pop" moment, show the tombstone
+                document.getElementById("bun-frame").innerHTML = "<span style='font-size: 100px; display: block; transform: scale(2);'>💥</span>";
+                document.getElementById("bun-btn").style.display = "none";
                 setTimeout(() => {
-                    frame.innerHTML = "<span style='font-size: 60px;'>🪦</span>";
-                    container.style.backgroundColor = "#2a2a2a";
-                    container.style.boxShadow = "8px 8px 0px #000";
-                    bunText.innerHTML = "YOU MURDERED THE BUNNY??";
-                    bunText.style.color = "#FF0000";
+                    document.getElementById("bun-frame").innerHTML = "<span style='font-size: 60px;'>🪦</span>";
+                    document.getElementById("bunny-container").style.backgroundColor = "#2a2a2a";
+                    document.getElementById("bun-game").innerHTML = "YOU MURDERED THE BUNNY??";
+                    document.getElementById("bun-game").style.color = "red";
+                    gamesDone.bun = true; checkProgress();
                     alert("YOU MURDERED THE BUNNY?? 🥕💥");
                 }, 600);
             }
         }
-        // FIXED SEAL LOGIC
+
+        // --- SEAL ---
         let pets = 0;
         function playSeal() {
             pets++;
             document.getElementById("seal-game").innerText = "Pets: " + pets;
             if (pets === 10) alert("The seal thinks you're its best friend now.");
-            if (pets === 20) alert("bs la? shfeech mb 9a7ya 😂");
+            if (pets >= 20) {
+                if (!gamesDone.seal) alert("bs la? shfeech mb 9a7ya 😂");
+                gamesDone.seal = true; checkProgress();
+            }
         }
 
+        // --- GOBLINO ---
+        let temp = 20;
+        function playCat() {
+            temp += 5;
+            document.getElementById("cat-game").innerText = "Temp: " + temp + "°C";
+            if (temp <= 65) {
+                document.getElementById("cat-img").style.filter = `drop-shadow(0 0 ${(temp-20)*0.8}px gold)`;
+            } else {
+                document.getElementById("cat-img").src = "sphynx_black.png";
+                document.getElementById("cat-img").style.filter = "drop-shadow(0 0 15px #FF4500) brightness(0.6)";
+                gamesDone.cat = true; checkProgress();
+            }
+        }
+
+        // --- JANU ---
+        let januClicks = 0;
         function playJanu() {
-            let januClicks = (window.januClicks || 0) + 1;
-            window.januClicks = januClicks;
+            januClicks++;
             if (januClicks < 7) {
                 const phrases = ["Whatcha doin?", "Pretty girl!", "I love Abrar!", "Peek-a-boo!"];
                 document.getElementById("janu-game").innerText = "Janu says: " + phrases[Math.floor(Math.random() * phrases.length)];
             } else {
                 document.getElementById("scare-video").src = "https://www.youtube.com/embed/ix3rE46lWsU?autoplay=1";
                 document.getElementById("janu-scare").style.display = "block";
-                window.januClicks = 0;
+                gamesDone.janu = true; checkProgress();
+                januClicks = 0;
             }
         }
-        function closeScare() {
-            document.getElementById("scare-video").src = "";
-            document.getElementById("janu-scare").style.display = "none";
+        function closeScare() { document.getElementById("scare-video").src = ""; document.getElementById("janu-scare").style.display = "none"; }
+
+        // --- SABALA SIMULATOR ---
+        let score = 0;
+        let highscore = localStorage.getItem("sabalaHigh") || 0;
+        document.getElementById("high-score").innerText = highscore;
+
+        function startSabala() {
+            document.getElementById("main-content").style.display = "none";
+            document.getElementById("sabala-sim").style.display = "block";
+            document.body.style.backgroundColor = "#2ecc71";
+            spawnBanana();
         }
 
-        let temp = 20;
-        function playCat() {
-            temp += 5;
-            const catImg = document.getElementById("cat-img");
-            document.getElementById("cat-game").innerText = "Temp: " + temp + "°C";
-            if (temp <= 65) {
-                catImg.style.filter = `drop-shadow(0 0 ${(temp-20)*0.8}px gold)`;
-            } else {
-                catImg.src = "sphynx_black.png";
-                catImg.style.filter = "drop-shadow(0 0 15px #FF4500) brightness(0.6)";
-                if (temp === 70) alert("You overcooked him 😭");
-            }
+        const player = document.getElementById("sabala-player");
+        window.addEventListener("mousemove", (e) => {
+            player.style.left = e.pageX + "px";
+        });
+
+        function spawnBanana() {
+            if (document.getElementById("sabala-sim").style.display === "none") return;
+            const b = document.createElement("div");
+            b.className = "banana";
+            b.innerHTML = "🍌";
+            b.style.left = Math.random() * (window.innerWidth - 50) + "px";
+            b.style.top = "-50px";
+            document.getElementById("sabala-sim").appendChild(b);
+
+            let fall = setInterval(() => {
+                let top = parseInt(b.style.top);
+                b.style.top = (top + 5 + (score/5)) + "px";
+
+                // Collision Detection
+                let bRect = b.getBoundingClientRect();
+                let pRect = player.getBoundingClientRect();
+
+                if (bRect.top + 40 > pRect.top && bRect.left < pRect.right && bRect.right > pRect.left) {
+                    score++;
+                    document.getElementById("score-board").innerHTML = `Bananas: ${score} | High Score: ${highscore}`;
+                    if (score > highscore) {
+                        highscore = score;
+                        localStorage.setItem("sabalaHigh", highscore);
+                    }
+                    b.remove();
+                    clearInterval(fall);
+                }
+
+                if (top > window.innerHeight) {
+                    b.remove();
+                    clearInterval(fall);
+                    if (score > 0) {
+                        alert("GAME OVER! You dropped a banana. Score: " + score);
+                        score = 0;
+                    }
+                }
+            }, 20);
+            setTimeout(spawnBanana, 1000 - (score * 10));
         }
+
+        // --- LANDING BUTTON ---
+        const fBtn = document.getElementById("forbidden-button");
+        let escapes = 0;
+        fBtn.addEventListener("mouseover", () => {
+            if (escapes < 6) {
+                fBtn.style.position = "absolute";
+                fBtn.style.left = Math.random() * (window.innerWidth - 100) + "px";
+                fBtn.style.top = Math.random() * (window.innerHeight - 50) + "px";
+                escapes++;
+            }
+        });
+        fBtn.addEventListener("click", () => {
+            document.getElementById("landing-page").style.display = "none";
+            document.getElementById("main-content").style.display = "block";
+            document.body.style.backgroundColor = "#FFD1DC";
+        });
+
+        // --- GLITTER ---
+        window.addEventListener('mousemove', (e) => {
+            if (Math.random() > 0.85) {
+                const g = document.createElement('div');
+                g.className = 'glitter';
+                g.style.left = e.pageX + 'px'; g.style.top = e.pageY + 'px';
+                const colors = ['#FF69B4', '#DA70D6', '#00FFFF', '#FFD700', '#FF4500'];
+                g.style.background = colors[Math.floor(Math.random() * colors.length)];
+                document.body.appendChild(g);
+                let floorHeight = parseFloat(document.getElementById('glitter-floor').style.height) || 0;
+                document.getElementById('glitter-floor').style.height = (floorHeight + 0.2) + 'px';
+                g.animate([{ opacity: 1 }, { transform: `translate(${(Math.random()-0.5)*150}px, ${window.innerHeight}px) scale(0)`, opacity: 0 }], 1500);
+                setTimeout(() => g.remove(), 1500);
+            }
+        });
     </script>
 </body>
 </html>
-
