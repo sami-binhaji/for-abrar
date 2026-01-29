@@ -34,6 +34,7 @@
         /* DEATH SCREEN */
         #death-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #FFD1DC; z-index: 9999; flex-direction: column; justify-content: center; align-items: center; }
         .ayooz-title { color: #FF1493; font-size: 5rem; margin: 0; text-shadow: 4px 4px 0px white; }
+        .lee-gif { width: 150px; height: 150px; margin: 10px; border-radius: 15px; border: 4px solid white; }
 
         #final-boss-btn { display: inline-block; background: linear-gradient(45deg, #ffd700, #ff69b4); border: 5px solid white; padding: 20px 50px; font-size: 28px; border-radius: 50px; color: white; font-weight: bold; cursor: pointer; box-shadow: 0 0 30px gold; margin-top: 30px; animation: buttonPop 0.5s infinite alternate; }
         @keyframes buttonPop { from { transform: scale(1); } to { transform: scale(1.05); } }
@@ -44,9 +45,16 @@
     <div id="glitter-floor"></div>
 
     <div id="death-screen">
-        <h1 class="ayooz-title">Yal 3ayooooz</h1>
-        <p style="font-size: 2rem; color: #555;">Final Score: <span id="final-score">0</span></p>
-        <button class="game-btn" style="padding: 20px 50px; font-size: 24px;" onclick="resetSabala()">RETRY 🔄</button>
+        <div id="gif-container">
+            </div>
+        <h1 id="death-title" class="ayooz-title">Yal 3ayooooz</h1>
+        <p style="font-size: 2rem; color: #555; font-weight: bold;">Score: <span id="final-score">0</span></p>
+        
+        <div style="display:flex; gap: 10px;">
+            <button class="game-btn" onclick="resetSabala()">RETRY 🔄</button>
+            <button class="game-btn" style="background: #555;" onclick="clearHighScore()">RESET BEST 🗑️</button>
+        </div>
+        <button class="game-btn" style="margin-top:20px; background: white; color: #FF69B4;" onclick="location.reload()">MAIN MENU</button>
     </div>
 
     <div id="landing-page" style="display: flex;">
@@ -86,15 +94,13 @@
     </div>
 
     <div id="sabala-sim">
-        <div id="score-board">Bananas: 0 | High Score: <span id="high-score">0</span></div>
+        <div id="score-board">Bananas: 0 | High Score: <span id="high-score-val">0</span></div>
         <h2 style="color:white">CATCH THE BANANAS! 🍌</h2>
         
         <div id="sabala-container">
             <div id="nametag">Abrar</div>
             <div id="sabala-player">🐒</div>
         </div>
-
-        <button class="game-btn" style="position:fixed; bottom:20px; right:20px; z-index:5000;" onclick="location.reload()">BACK TO PETS</button>
     </div>
 
     <div id="janu-scare" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:2000; background:black; padding:10px; border:5px solid #FF69B4; border-radius:20px;">
@@ -104,9 +110,11 @@
 
     <script>
         let isSabalaActive = false;
-
-        // --- SEAL ---
         let pCount = 0;
+        let bClicks = 0;
+        let cTemp = 20;
+        let jClicks = 0;
+
         function playSeal() {
             pCount++;
             document.getElementById("seal-game").innerText = "Pets: " + pCount;
@@ -114,19 +122,13 @@
             if (pCount === 20) alert("bs la? shfeech mb 9a7ya 😂");
         }
 
-        // --- BUNNY ---
-        let bClicks = 0;
         function playBun() {
             bClicks++;
             const bunImg = document.getElementById("bun-img");
             bunImg.style.transform = `scale(${1 + bClicks * 0.45})`;
-            if (bClicks >= 5) {
-                document.getElementById("bun-game").innerHTML = "MEGA BUNNY!";
-            }
+            if (bClicks >= 5) document.getElementById("bun-game").innerHTML = "MEGA BUNNY!";
         }
 
-        // --- GOBLINO ---
-        let cTemp = 20;
         function playCat() {
             cTemp += 5;
             const text = document.getElementById("cat-game");
@@ -141,8 +143,6 @@
             }
         }
 
-        // --- JANU ---
-        let jClicks = 0;
         function playJanu() {
             jClicks++;
             if (jClicks < 7) {
@@ -161,8 +161,8 @@
 
         // --- SABALA SIM ---
         let score = 0;
-        let highscore = localStorage.getItem("sabalaHigh") || 0;
-        document.getElementById("high-score").innerText = highscore;
+        let highscore = parseInt(localStorage.getItem("sabalaHigh")) || 0;
+        document.getElementById("high-score-val").innerText = highscore;
 
         function startSabala() {
             isSabalaActive = true;
@@ -175,7 +175,6 @@
             const container = document.getElementById("sabala-container");
             if(container && isSabalaActive) {
                 let x = e.pageX;
-                // Keep within screen
                 if (x < 40) x = 40;
                 if (x > window.innerWidth - 40) x = window.innerWidth - 40;
                 container.style.left = x + "px";
@@ -199,21 +198,46 @@
                 if (bRect.top + 40 > pRect.top && bRect.left < pRect.right && bRect.right > pRect.left) {
                     score++;
                     document.getElementById("score-board").innerHTML = `Bananas: ${score} | High Score: ${highscore}`;
-                    if (score > highscore) { highscore = score; localStorage.setItem("sabalaHigh", highscore); }
                     b.remove(); clearInterval(fall);
                 }
                 if (topPos > window.innerHeight) {
                     b.remove(); clearInterval(fall);
-                    triggerAyooz();
+                    triggerDeath();
                 }
             }, 20);
             setTimeout(spawnBanana, 1000 - (score * 12));
         }
 
-        function triggerAyooz() {
+        function triggerDeath() {
             isSabalaActive = false;
+            const title = document.getElementById("death-title");
+            const gifBox = document.getElementById("gif-container");
             document.getElementById("final-score").innerText = score;
+            gifBox.innerHTML = ""; // Clear old gifs
+
+            if (score > highscore && score > 0) {
+                // BEAT HIGH SCORE
+                highscore = score;
+                localStorage.setItem("sabalaHigh", highscore);
+                document.getElementById("high-score-val").innerText = highscore;
+                title.innerText = "9ij Sabala";
+                gifBox.innerHTML = '<img src="lee_dance.gif" class="lee-gif"><img src="lee_yes.gif" class="lee-gif">';
+            } else {
+                // FAILED TO BEAT
+                title.innerText = "Yal 3ayooooz";
+                gifBox.innerHTML = '<img src="lee_crazy.gif" class="lee-gif">';
+            }
+
             document.getElementById("death-screen").style.display = "flex";
+        }
+
+        function clearHighScore() {
+            if(confirm("Are you sure you want to delete your best score?")) {
+                highscore = 0;
+                localStorage.setItem("sabalaHigh", 0);
+                document.getElementById("high-score-val").innerText = 0;
+                alert("Highscore deleted!");
+            }
         }
 
         function resetSabala() {
@@ -241,9 +265,7 @@
         });
 
         window.addEventListener('mousemove', (e) => {
-            // Disable glitter if playing the monkey game to prevent clutter
             if (isSabalaActive) return;
-
             if (Math.random() > 0.85) {
                 const g = document.createElement('div');
                 g.className = 'glitter';
