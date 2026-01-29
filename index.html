@@ -12,9 +12,7 @@
         #main-content { padding: 50px 0; }
 
         .glitter { position: fixed; width: 10px; height: 10px; border-radius: 2px; pointer-events: none; z-index: 1000; box-shadow: 0 0 10px white; }
-        #glitter-floor { position: fixed; bottom: 0; left: 0; width: 100%; height: 0px; background: linear-gradient(to right, #ff00ff, #00ffff, #ff00ff, #ffff00); background-size: 400% 400%; animation: rainbowShift 8s ease infinite; z-index: 999; opacity: 0.5; }
-        @keyframes rainbowShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-
+        
         .menagerie { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 40px auto; max-width: 1200px; }
         .animal-box { background: white; padding: 15px; border-radius: 25px; box-shadow: 8px 8px 0px #FF69B4; width: 200px; min-height: 280px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; transition: 0.5s; overflow: hidden; }
         .animal-img { width: 140px; height: 140px; object-fit: contain; cursor: pointer; transition: transform 0.2s, filter 0.3s; }
@@ -35,11 +33,10 @@
         .lee-gif { width: 160px; height: 160px; margin: 10px; border-radius: 15px; border: 4px solid white; object-fit: cover; }
 
         #final-boss-btn { display: inline-block; background: linear-gradient(45deg, #ffd700, #ff69b4); border: 5px solid white; padding: 20px 50px; font-size: 28px; border-radius: 50px; color: white; font-weight: bold; cursor: pointer; box-shadow: 0 0 30px gold; margin-top: 30px; animation: buttonPop 0.5s infinite alternate; }
+        @keyframes buttonPop { from { transform: scale(1); } to { transform: scale(1.05); } }
     </style>
 </head>
 <body>
-
-    <div id="glitter-floor"></div>
 
     <div id="death-screen">
         <div id="gif-container" style="display:flex;"></div>
@@ -102,6 +99,12 @@
     </div>
 
     <script>
+        // --- GLOBAL VARIABLES FOR PETS ---
+        let pCount = 0; // For Seal
+        let bClicks = 0; // For Bunny
+        let cTemp = 20; // For Cat
+
+        // --- GLOBAL VARIABLES FOR SABALA ---
         let isSabalaActive = false;
         let score = 0;
         let highscore = parseInt(localStorage.getItem("sabalaHigh")) || 0;
@@ -124,24 +127,36 @@
             document.body.style.backgroundColor = "#FFD1DC";
         });
 
-        // --- PETS LOGIC ---
+        // --- RESTORED PETS LOGIC ---
         function playSeal() {
-            let p = document.getElementById("seal-game");
-            let count = parseInt(p.innerText.replace("Pets: ", "")) + 1;
-            p.innerText = "Pets: " + count;
+            pCount++;
+            document.getElementById("seal-game").innerText = "Pets: " + pCount;
+            if (pCount === 10) alert("The seal thinks you're its best friend now.");
+            if (pCount === 20) alert("bs la? shfeech mb 9a7ya 😂");
         }
+
         function playBun() {
-            let b = document.getElementById("bun-img");
-            let s = b.style.transform ? parseFloat(b.style.transform.replace("scale(", "")) : 1;
-            b.style.transform = `scale(${s + 0.3})`;
-            document.getElementById("bun-game").innerText = "MEGA BUNNY!";
+            bClicks++;
+            const bunImg = document.getElementById("bun-img");
+            // Scales based on clicks, getting bigger and bigger
+            bunImg.style.transform = `scale(${1 + bClicks * 0.45})`;
+            if (bClicks >= 5) document.getElementById("bun-game").innerHTML = "MEGA BUNNY!";
         }
+
         function playCat() {
-            let t = document.getElementById("cat-game");
-            let temp = parseInt(t.innerText.replace("Temp: ", "")) + 5;
-            t.innerText = "Temp: " + temp + "°C";
-            document.getElementById("cat-img").style.filter = `drop-shadow(0 0 15px gold)`;
+            cTemp += 5;
+            const text = document.getElementById("cat-game");
+            text.innerText = "Temp: " + cTemp + "°C";
+            if (cTemp <= 65) {
+                document.getElementById("cat-img").style.filter = `drop-shadow(0 0 ${(cTemp-20)*0.8}px gold)`;
+            } else {
+                document.getElementById("cat-img").src = "sphynx_black.png";
+                text.innerText = "YOU OVERCOOKED HIM 😭";
+                text.style.color = "red";
+                alert("You overcooked him 😭");
+            }
         }
+
         function playJanu() {
             document.getElementById("scare-video").src = "https://www.youtube.com/embed/ix3rE46lWsU?autoplay=1";
             document.getElementById("janu-scare").style.display = "block";
@@ -153,9 +168,8 @@
 
         // --- SABALA ENGINE ---
         function startSabala() {
-            // Cleanup old bananas first
-            const oldBananas = document.querySelectorAll('.banana');
-            oldBananas.forEach(b => b.remove());
+            // Remove any leftover bananas
+            document.querySelectorAll('.banana').forEach(b => b.remove());
 
             isSabalaActive = true;
             score = 0;
@@ -184,40 +198,57 @@
             document.getElementById("sabala-sim").appendChild(b);
 
             let fall = setInterval(() => {
+                // If game ended, clean up immediately
                 if (!isSabalaActive) { clearInterval(fall); b.remove(); return; }
+                
                 let topPos = parseInt(b.style.top);
                 b.style.top = (topPos + 6 + (score/5)) + "px";
                 
-                let bRect = b.getBoundingClientRect(), pRect = document.getElementById("sabala-player").getBoundingClientRect();
+                let bRect = b.getBoundingClientRect();
+                let pRect = document.getElementById("sabala-player").getBoundingClientRect();
 
+                // CATCH
                 if (bRect.bottom > pRect.top && bRect.left < pRect.right && bRect.right > pRect.left) {
                     score++;
                     document.getElementById("score-board").innerHTML = `Bananas: ${score} | High Score: ${highscore}`;
                     b.remove(); clearInterval(fall);
                 }
+                
+                // MISS (GAME OVER)
                 if (topPos > window.innerHeight) {
                     clearInterval(fall);
                     b.remove();
                     triggerGameOver();
                 }
             }, 20);
-            setTimeout(spawnBanana, 1000 - (score * 12 > 700 ? 700 : score * 12));
+            
+            // Spawn speed increases
+            if (isSabalaActive) {
+                setTimeout(spawnBanana, 1000 - (score * 12 > 700 ? 700 : score * 12));
+            }
         }
 
         function triggerGameOver() {
-            isSabalaActive = false;
+            if (!isSabalaActive) return; // Prevent double trigger
+            isSabalaActive = false; // Stop game loop immediately
+
             const title = document.getElementById("death-title");
             const gifBox = document.getElementById("gif-container");
             document.getElementById("final-score").innerText = score;
             gifBox.innerHTML = "";
 
+            // Check if she beat the OLD highscore
             if (score > highscore && score > 0) {
+                // UPDATE HIGHSCORE
                 highscore = score;
                 localStorage.setItem("sabalaHigh", highscore);
                 document.getElementById("high-score-val").innerText = highscore;
+                
+                // SHOW WIN SCREEN
                 title.innerText = "9ij Sabala";
                 gifBox.innerHTML = '<img src="lee_dance.gif" class="lee-gif"><img src="lee_yes.gif" class="lee-gif">';
             } else {
+                // SHOW LOSE SCREEN
                 title.innerText = "Yal 3ayooooz";
                 gifBox.innerHTML = '<img src="lee_crazy.gif" class="lee-gif">';
             }
@@ -225,10 +256,12 @@
         }
 
         function clearHighScore() {
-            highscore = 0;
-            localStorage.setItem("sabalaHigh", 0);
-            document.getElementById("high-score-val").innerText = 0;
-            alert("Highscore deleted!");
+            if(confirm("Delete high score?")) {
+                highscore = 0;
+                localStorage.setItem("sabalaHigh", 0);
+                document.getElementById("high-score-val").innerText = 0;
+                alert("Highscore deleted!");
+            }
         }
 
         function resetSabala() {
