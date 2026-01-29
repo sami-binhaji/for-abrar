@@ -39,7 +39,7 @@ button.game-btn { background: #FF69B4; color: white; border: none; padding: 10px
     <h1 id="death-title" class="ayooz-title">Yal 3ayooooz</h1>
     <p style="font-size: 2rem; color: #555; font-weight: bold;">Score: <span id="final-score">0</span></p>
     <div style="display:flex; gap: 10px;">
-        <button class="game-btn" onclick="resetSabala()">RETRY 🔄</button>
+        <button class="game-btn" onclick="retryGame()">RETRY 🔄</button>
         <button class="game-btn" style="background: #555;" onclick="clearHighScore()">RESET BEST 🗑️</button>
     </div>
     <button class="game-btn" style="margin-top:20px; background: white; color: #FF69B4;" onclick="location.reload()">MAIN MENU</button>
@@ -105,10 +105,32 @@ fBtn.addEventListener("click", () => { document.getElementById("landing-page").s
 
 // --- PETS ---
 let pCount=0,bClicks=0,cTemp=20,jClicks=0;
-function playSeal(){ pCount++; document.getElementById("seal-game").innerText="Pets: "+pCount; }
+
+function playSeal(){ 
+    pCount++; 
+    let msg = "Pets: " + pCount;
+    if(pCount === 10) {
+        msg = "🥰 So cute and squishy! 🥰";
+    } else if(pCount === 20) {
+        msg = "Shfeech mb 9aya? 😅";
+    }
+    document.getElementById("seal-game").innerText = msg;
+}
+
 function playBun(){ bClicks++; document.getElementById("bun-img").style.transform=`scale(${1+bClicks*0.45})`; }
-function playCat(){ cTemp+=5; document.getElementById("cat-game").innerText="Temp: "+cTemp+"°C"; if(cTemp>65) document.getElementById("cat-img").src="sphynx_black.png"; }
+
+function playCat(){ 
+    cTemp+=5; 
+    let msg = "Temp: " + cTemp + "°C";
+    if(cTemp > 65) {
+        document.getElementById("cat-img").src="sphynx_black.png";
+        msg = "7aragteeee 🔥😱";
+    }
+    document.getElementById("cat-game").innerText = msg;
+}
+
 function playJanu(){ jClicks++; if(jClicks<=5){const phrases=["Whatcha doin?","Pretty girl!","I love Abrar!","Muah!","Peek-a-boo!"]; document.getElementById("janu-game").innerText="Janu says: "+phrases[Math.floor(Math.random()*phrases.length)];} else { document.getElementById("scare-video").src="https://www.youtube.com/embed/ix3rE46lWsU?autoplay=1"; document.getElementById("janu-scare").style.display="block"; } }
+
 function closeScare(){ document.getElementById("scare-video").src=""; document.getElementById("janu-scare").style.display="none"; jClicks=0; document.getElementById("janu-game").innerText="Janu is watching."; }
 
 // --- SABALA ---
@@ -116,7 +138,11 @@ let isSabalaActive=false, score=0, highscore=parseInt(localStorage.getItem("saba
 document.getElementById("high-score-val").innerText=highscore;
 let fallIntervals=[], spawnTimeouts=[];
 
-function startSabala(){ resetSabala(); document.getElementById("main-content").style.display="none"; document.getElementById("sabala-sim").style.display="block"; }
+function startSabala(){ 
+    resetSabala(); 
+    document.getElementById("main-content").style.display="none"; 
+    document.getElementById("sabala-sim").style.display="block"; 
+}
 
 function spawnBanana(){
     if(!isSabalaActive) return;
@@ -169,14 +195,23 @@ function triggerGameOver(){
 }
 
 function resetSabala(){
-    stopAllBananas(); score=0; isSabalaActive=true;
+    stopAllBananas(); 
+    score=0; 
+    isSabalaActive=true;
     document.querySelectorAll("#sabala-sim .banana").forEach(b=>b.remove());
     document.getElementById("score-board").innerHTML=`Bananas: 0 | High Score: ${highscore}`;
     document.getElementById("sabala-container").style.left="50%";
     spawnBanana();
 }
 
+function retryGame() {
+    document.getElementById("death-screen").style.display="none";
+    document.getElementById("sabala-sim").style.display="block";
+    resetSabala();
+}
+
 function stopAllBananas(){ fallIntervals.forEach(i=>clearInterval(i)); spawnTimeouts.forEach(t=>clearTimeout(t)); fallIntervals=[]; spawnTimeouts=[]; }
+
 function clearHighScore(){ localStorage.setItem("sabalaHigh",0); highscore=0; document.getElementById("high-score-val").innerText=0; alert("Record wiped!"); }
 
 // MONKEY FOLLOW MOUSE
