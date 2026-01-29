@@ -26,7 +26,7 @@
         #nametag { background: white; color: #FF69B4; padding: 2px 10px; border-radius: 10px; font-weight: bold; font-size: 14px; margin-bottom: 5px; box-shadow: 2px 2px 0px #000; }
         #sabala-player { font-size: 60px; line-height: 1; }
         
-        .banana { position: absolute; font-size: 40px; user-select: none; }
+        .banana { position: absolute; font-size: 40px; user-select: none; z-index: 10; }
 
         #death-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #FFD1DC; z-index: 9999; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
         .ayooz-title { color: #FF1493; font-size: 5rem; margin: 0; text-shadow: 4px 4px 0px white; }
@@ -99,7 +99,7 @@
     </div>
 
     <script>
-        // --- BUTTON LOGIC (NOW STOPS AFTER 6 JUMPS) ---
+        // --- BUTTON ---
         const fBtn = document.getElementById("forbidden-button");
         let escapes = 0;
         fBtn.addEventListener("mouseover", () => {
@@ -116,25 +116,16 @@
             document.body.style.backgroundColor = "#FFD1DC";
         });
 
-        // --- PETS & JANU ---
+        // --- PETS ---
         let pCount = 0, bClicks = 0, cTemp = 20, jClicks = 0;
-
-        function playSeal() {
-            pCount++; document.getElementById("seal-game").innerText = "Pets: " + pCount;
-            if (pCount === 20) alert("bs la? shfeech mb 9a7ya 😂");
-        }
-        function playBun() {
-            bClicks++; document.getElementById("bun-img").style.transform = `scale(${1 + bClicks * 0.45})`;
-            document.getElementById("bun-game").innerText = "MEGA BUNNY!";
-        }
-        function playCat() {
-            cTemp += 5; document.getElementById("cat-game").innerText = "Temp: " + cTemp + "°C";
-            if (cTemp > 65) { document.getElementById("cat-img").src = "sphynx_black.png"; alert("You overcooked him 😭"); }
-        }
+        function playSeal() { pCount++; document.getElementById("seal-game").innerText = "Pets: " + pCount; }
+        function playBun() { bClicks++; document.getElementById("bun-img").style.transform = `scale(${1 + bClicks * 0.45})`; }
+        function playCat() { cTemp += 5; document.getElementById("cat-game").innerText = "Temp: " + cTemp + "°C"; if (cTemp > 65) document.getElementById("cat-img").src = "sphynx_black.png"; }
+        
         function playJanu() {
             jClicks++;
             if (jClicks <= 5) {
-                const phrases = ["Whatcha doin?", "Pretty girl!", "I love Abrar!", "Peek-a-boo!", "Muah!"];
+                const phrases = ["Whatcha doin?", "Pretty girl!", "I love Abrar!", "Muah!", "Peek-a-boo!"];
                 document.getElementById("janu-game").innerText = "Janu says: " + phrases[Math.floor(Math.random() * phrases.length)];
             } else {
                 document.getElementById("scare-video").src = "https://www.youtube.com/embed/ix3rE46lWsU?autoplay=1";
@@ -147,14 +138,16 @@
             jClicks = 0; document.getElementById("janu-game").innerText = "Janu is watching.";
         }
 
-        // --- SABALA GAME ---
-        let isSabalaActive = false, score = 0;
-        let highscore = Number(localStorage.getItem("sabalaHigh")) || 0;
+        // --- SABALA ENGINE ---
+        let isSabalaActive = false;
+        let score = 0;
+        let highscore = parseInt(localStorage.getItem("sabalaHigh")) || 0;
         document.getElementById("high-score-val").innerText = highscore;
 
         function startSabala() {
-            document.querySelectorAll('.banana').forEach(b => b.remove());
-            isSabalaActive = true; score = 0;
+            isSabalaActive = true;
+            score = 0;
+            document.getElementById("high-score-val").innerText = highscore;
             document.getElementById("score-board").innerHTML = `Bananas: 0 | High Score: ${highscore}`;
             document.getElementById("main-content").style.display = "none";
             document.getElementById("sabala-sim").style.display = "block";
@@ -178,51 +171,76 @@
             b.style.top = "-50px";
             document.getElementById("sabala-sim").appendChild(b);
 
-            let fall = setInterval(() => {
-                if (!isSabalaActive) { clearInterval(fall); b.remove(); return; }
-                let topPos = parseInt(b.style.top);
-                b.style.top = (topPos + 6 + (score/5)) + "px";
-                let bRect = b.getBoundingClientRect(), pRect = document.getElementById("sabala-player").getBoundingClientRect();
+            let fallInterval = setInterval(() => {
+                if (!isSabalaActive) {
+                    clearInterval(fallInterval);
+                    b.remove();
+                    return;
+                }
 
+                let topPos = parseInt(b.style.top);
+                b.style.top = (topPos + 7 + (score / 4)) + "px"; // Speed increases slightly with score
+
+                let bRect = b.getBoundingClientRect();
+                let pRect = document.getElementById("sabala-player").getBoundingClientRect();
+
+                // CATCH LOGIC
                 if (bRect.bottom > pRect.top && bRect.left < pRect.right && bRect.right > pRect.left) {
                     score++;
                     document.getElementById("score-board").innerHTML = `Bananas: ${score} | High Score: ${highscore}`;
-                    b.remove(); clearInterval(fall);
+                    b.remove();
+                    clearInterval(fallInterval);
                 }
-                if (topPos > window.innerHeight) { clearInterval(fall); b.remove(); triggerGameOver(); }
+
+                // MISS LOGIC (Triggers Game Over)
+                if (topPos > window.innerHeight) {
+                    clearInterval(fallInterval);
+                    b.remove();
+                    triggerGameOver();
+                }
             }, 20);
-            setTimeout(spawnBanana, 1000 - (score * 12 > 700 ? 700 : score * 12));
+
+            // Time between spawns gets shorter as score goes up
+            let nextSpawn = Math.max(300, 1000 - (score * 15));
+            setTimeout(spawnBanana, nextSpawn);
         }
 
         function triggerGameOver() {
-            if (!isSabalaActive) return;
-            isSabalaActive = false;
+            if (!isSabalaActive) return; 
+            isSabalaActive = false; // Stop the engine
+
             const title = document.getElementById("death-title");
             const gifBox = document.getElementById("gif-container");
-            document.getElementById("final-score").innerText = score;
+            const finalScoreDisp = document.getElementById("final-score");
+            
+            finalScoreDisp.innerText = score;
+            gifBox.innerHTML = ""; // Clear old gifs
 
-            // CHECK SCORE VS MEMORY
-            let oldHigh = Number(localStorage.getItem("sabalaHigh")) || 0;
-
-            if (score > oldHigh) {
-                // WIN SCREEN
+            // Compare Score vs Highscore
+            if (score > highscore) {
+                // IT'S A NEW RECORD!
                 highscore = score;
                 localStorage.setItem("sabalaHigh", highscore);
                 document.getElementById("high-score-val").innerText = highscore;
+                
                 title.innerText = "9ij Sabala";
                 gifBox.innerHTML = '<img src="lee_dance.gif" class="lee-gif"><img src="lee_yes.gif" class="lee-gif">';
             } else {
-                // LOSE SCREEN
+                // NO NEW RECORD
                 title.innerText = "Yal 3ayooooz";
                 gifBox.innerHTML = '<img src="lee_crazy.gif" class="lee-gif">';
             }
+
+            // Hide Game, Show Death Screen
+            document.getElementById("sabala-sim").style.display = "none";
             document.getElementById("death-screen").style.display = "flex";
         }
 
         function clearHighScore() {
-            highscore = 0; localStorage.setItem("sabalaHigh", 0);
+            localStorage.setItem("sabalaHigh", 0);
+            highscore = 0;
             document.getElementById("high-score-val").innerText = 0;
-            alert("Highscore deleted!");
+            alert("Record wiped!");
         }
 
         function resetSabala() {
@@ -230,9 +248,10 @@
             startSabala();
         }
 
+        // Glitter effect
         window.addEventListener('mousemove', (e) => {
             if (isSabalaActive) return;
-            if (Math.random() > 0.85) {
+            if (Math.random() > 0.9) {
                 const g = document.createElement('div');
                 g.className = 'glitter'; g.style.left = e.pageX + 'px'; g.style.top = e.pageY + 'px';
                 g.style.background = ['#FF69B4', '#DA70D6', '#00FFFF', '#FFD700'][Math.floor(Math.random()*4)];
