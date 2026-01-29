@@ -1,157 +1,279 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FOR ABRAR & JANU 💖</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOR ABRAR & JANU 💖</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #FF69B4;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background-color 1s ease;
+            /* Hello Kitty Cursor */
+            cursor: url('https://img.icons8.com/color/32/hello-kitty.png'), auto;
+        }
+
+        /* Rainbow Glitter Pile */
+        #glitter-floor {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0px; 
+            background: linear-gradient(to right, #ff00ff, #00ffff, #ff00ff, #ffff00);
+            background-size: 400% 400%;
+            animation: rainbowShift 8s ease infinite;
+            box-shadow: 0 -10px 30px rgba(255, 105, 180, 0.6);
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0.5;
+            transition: height 0.5s ease;
+        }
+
+        @keyframes rainbowShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .glitter {
+            position: fixed;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
+            box-shadow: 0 0 8px white;
+        }
+
+        #landing-page { text-align: center; padding: 20px; z-index: 10; position: relative; }
+        #main-content { display: none; text-align: center; width: 100%; padding: 50px 0; z-index: 10; }
+        
+        #forbidden-button {
+            background-color: #FF69B4;
+            color: white;
+            border: 4px solid white;
+            padding: 20px 40px;
+            font-size: 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 20px #FF69B4;
+            font-weight: bold;
+        }
+
+        .menagerie { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 40px auto; max-width: 1200px; }
+
+        .animal-box {
+            background: white;
+            padding: 15px;
+            border-radius: 25px;
+            box-shadow: 8px 8px 0px #FF69B4;
+            width: 200px;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .animal-img {
+            width: 140px;
+            height: 140px;
+            object-fit: contain;
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .game-text { font-size: 0.8rem; color: #555; margin: 5px 0; font-weight: bold; }
+        .label { color: #1a1a1a; font-weight: bold; font-size: 1rem; text-transform: uppercase; }
+        button.game-btn { background: #FF69B4; color: white; border: none; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+        h1 { font-size: 2.5rem; text-shadow: 2px 2px 0px white; }
+    </style>
 </head>
 <body>
 
-<div id="landing-page">
-    <h1>⚠️ CAUTION ⚠️</h1>
-    <p style="color:white;font-weight:bold;">DO NOT TOUCH THE PINK BUTTON.</p>
-    <button id="forbidden-button">CLICK ME</button>
-</div>
+    <div id="glitter-floor"></div>
 
-<div id="main-content">
-    <h1>Happy Birthday, Abrar! 🎀</h1>
-    <p style="color:#666;">Look at all the chaos you're causing...</p>
-
-    <div class="menagerie">
-
-        <div class="animal-box">
-            <div class="label">The Squish</div>
-            <img src="seal.png" class="animal-img" onclick="playSeal()">
-            <p id="seal-game" class="game-text">Pets: 0</p>
-        </div>
-
-        <div class="animal-box">
-            <div class="label">The Chaos Bun</div>
-            <img src="bunny.png" class="animal-img" id="bun-img">
-            <p id="bun-game" class="game-text">Hungry...</p>
-            <button class="game-btn" id="feed-btn" onclick="playBun()">FEED CARROT 🥕</button>
-        </div>
-
-        <div class="animal-box">
-            <div class="label">The Goblino</div>
-            <img src="sphynx.png" class="animal-img" id="cat-img">
-            <p id="cat-game" class="game-text">Temp: 20°C (Cold!)</p>
-            <button class="game-btn" onclick="playCat()">TURN ON HEATER 🔥</button>
-        </div>
-
-        <div class="animal-box">
-            <div class="label">Janu</div>
-            <img src="janu.png" class="animal-img" id="janu-img">
-            <p id="janu-game" class="game-text">Janu wants to talk!</p>
-            <button class="game-btn" onclick="playJanu()">SAY HELLO</button>
-        </div>
-
+    <div id="landing-page">
+        <h1>⚠️ CAUTION ⚠️</h1>
+        <p style="color:white;font-weight:bold;">DO NOT TOUCH THE PINK BUTTON.</p>
+        <button id="forbidden-button">CLICK ME</button>
     </div>
-</div>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
+    <div id="main-content">
+        <h1>Happy Birthday, Abrar! 🎀</h1>
+        <p style="color:#666;">Look at all the chaos you're causing...</p>
 
-const btn = document.getElementById("forbidden-button");
-const landing = document.getElementById("landing-page");
-const main = document.getElementById("main-content");
+        <div class="menagerie">
+            <div class="animal-box">
+                <div class="label">The Squish</div>
+                <img src="seal.png" class="animal-img" onclick="playSeal()">
+                <p id="seal-game" class="game-text">Pets: 0</p>
+                <p class="game-text" style="font-size: 0.6rem;">(Click to pet)</p>
+            </div>
 
-let escapes = 0;
+            <div id="bunny-container" class="animal-box">
+                <div class="label">The Chaos Bun</div>
+                <img src="bunny.png" class="animal-img" id="bun-img">
+                <p id="bun-game" class="game-text">Hungry...</p>
+                <button class="game-btn" id="feed-btn" onclick="playBun()">FEED CARROT 🥕</button>
+            </div>
 
-// RUN AWAY BUTTON 😈
-btn.addEventListener("mouseover", () => {
-    if (escapes < 6) {
-        const x = Math.random() * (window.innerWidth - btn.clientWidth);
-        const y = Math.random() * (window.innerHeight - btn.clientHeight);
-        btn.style.position = "absolute";
-        btn.style.left = x + "px";
-        btn.style.top = y + "px";
-        escapes++;
-    }
-});
+            <div class="animal-box">
+                <div class="label">The Goblino</div>
+                <img src="sphynx.png" class="animal-img" id="cat-img">
+                <p id="cat-game" class="game-text">Temp: 20°C (Cold!)</p>
+                <button class="game-btn" onclick="playCat()">TURN ON HEATER 🔥</button>
+            </div>
 
-// CLICK → NEXT PAGE
-btn.addEventListener("click", () => {
-    landing.style.display = "none";
-    main.style.display = "block";
-    document.body.style.backgroundColor = "#FFD1DC";
-});
+            <div class="animal-box">
+                <div class="label">Janu</div>
+                <img src="janu.png" class="animal-img" id="janu-img">
+                <p id="janu-game" class="game-text">Janu wants to talk!</p>
+                <button class="game-btn" onclick="playJanu()">SAY HELLO</button>
+            </div>
+        </div>
+    </div>
 
-});
+    <script>
+        // --- GLITTER & CURSOR LOGIC ---
+        let pileHeight = 0;
+        const floor = document.getElementById('glitter-floor');
 
-// SEAL
-let pets = 0;
-function playSeal() {
-    pets++;
-    document.getElementById("seal-game").innerText = "Pets: " + pets;
-}
+        window.addEventListener('mousemove', (e) => {
+            if (Math.random() > 0.8) {
+                const glitter = document.createElement('div');
+                glitter.className = 'glitter';
+                glitter.style.left = e.pageX + 'px';
+                glitter.style.top = e.pageY + 'px';
+                
+                const colors = ['#FF69B4', '#DA70D6', '#00FFFF', '#FFD700', '#FF4500'];
+                glitter.style.background = colors[Math.floor(Math.random() * colors.length)];
+                
+                document.body.appendChild(glitter);
+                
+                // Pile rises slowly
+                pileHeight += 0.15; 
+                floor.style.height = pileHeight + 'px';
 
-// BUNNY
-let food = 0;
-let hasExploded = false;
-function playBun() {
-    if (hasExploded) return;
+                glitter.animate([
+                    { transform: 'translate(0,0) scale(1)', opacity: 1 },
+                    { transform: `translate(${(Math.random()-0.5)*100}px, ${window.innerHeight - e.pageY}px) scale(0)`, opacity: 0 }
+                ], { duration: 1500 });
+                setTimeout(() => glitter.remove(), 1500);
+            }
+        });
 
-    food++;
-    const bunImg = document.getElementById("bun-img");
-    const bunText = document.getElementById("bun-game");
-    const feedBtn = document.getElementById("feed-btn");
+        // --- BUTTON LOGIC ---
+        document.addEventListener("DOMContentLoaded", () => {
+            const btn = document.getElementById("forbidden-button");
+            const landing = document.getElementById("landing-page");
+            const main = document.getElementById("main-content");
+            let escapes = 0;
 
-    let scale = 1 + food * 0.25;
-    bunImg.style.transform = `scale(${scale})`;
+            btn.addEventListener("mouseover", () => {
+                if (escapes < 6) {
+                    const x = Math.random() * (window.innerWidth - btn.clientWidth);
+                    const y = Math.random() * (window.innerHeight - btn.clientHeight);
+                    btn.style.position = "absolute";
+                    btn.style.left = x + "px";
+                    btn.style.top = y + "px";
+                    escapes++;
+                }
+            });
 
-    if (food === 5) bunText.innerText = "He's getting chubby...";
-    if (food === 9) bunText.innerText = "Uh oh...";
-    if (food === 12) bunText.innerText = "CRITICAL MASS";
+            btn.addEventListener("click", () => {
+                landing.style.display = "none";
+                main.style.display = "block";
+                document.body.style.backgroundColor = "#FFD1DC";
+            });
+        });
 
-    if (food >= 13) {
-        hasExploded = true;
-        bunImg.classList.add("explode");
-        bunText.innerText = "BOOM 💥";
-        bunText.style.color = "red";
-        feedBtn.style.display = "none";
+        // --- SEAL MINI GAME ---
+        let pets = 0;
+        function playSeal() {
+            pets++;
+            const sealText = document.getElementById("seal-game");
+            sealText.innerText = "Pets: " + pets;
+            
+            if (pets === 10) alert("The seal thinks you're its best friend now.");
+            if (pets === 20) {
+                sealText.style.color = "red";
+                alert("bs la? shfeech mb 9a7ya 😂");
+                pets = 0; // Reset after the joke
+            }
+        }
 
-        setTimeout(() => { bunImg.style.display = "none"; }, 600);
-        alert("YOU FED HIM TOO MUCH 🥕💥");
-    }
-}
+        // --- BUNNY MINI GAME (GUARANTEED EXPLOSION) ---
+        let food = 0;
+        let hasExploded = false;
+        function playBun() {
+            if (hasExploded) return;
+            food++;
+            const bunImg = document.getElementById("bun-img");
+            const bunText = document.getElementById("bun-game");
+            const container = document.getElementById("bunny-container");
 
-// CAT
-let temp = 20;
-function playCat() {
-    temp += 5;
-    const catImg = document.getElementById("cat-img");
-    const catText = document.getElementById("cat-game");
+            let scale = 1 + food * 0.35;
+            bunImg.style.transform = `scale(${scale})`;
 
-    catText.innerText = "Temp: " + temp + "°C";
+            if (food === 5) bunText.innerText = "He's getting chubby...";
+            if (food === 9) bunText.innerText = "Uh oh...";
 
-    if (temp === 35) {
-        catText.innerText = "Perfectly Toasty ✨";
-        catImg.style.filter = "drop-shadow(0 0 10px gold)";
-    } 
-    else if (temp >= 55) {
-        catImg.src = "sphynx_black.png";
-        catText.innerText = "HE'S BURNT";
-        alert("You overcooked him 😭");
-    }
-}
+            if (food >= 13) {
+                hasExploded = true;
+                container.innerHTML = `
+                    <div class="label">The Chaos Bun</div>
+                    <div style="font-size: 80px; padding: 20px;">💥</div>
+                    <p class="game-text" style="color:red; font-size: 1.2rem;">KABOOM!</p>
+                `;
+                alert("YOU FED HIM TOO MUCH 🥕💥");
+                setTimeout(() => alert("All that's left is fur and regret."), 500);
+            }
+        }
 
-// JANU
-let januClicks = 0;
-function playJanu() {
-    januClicks++;
-    const januText = document.getElementById("janu-game");
-    const phrases = ["Whatcha doin?", "Pretty girl!", "I love Abrar!", "Peek-a-boo!"];
+        // --- CAT MINI GAME ---
+        let temp = 20;
+        function playCat() {
+            temp += 5;
+            const catImg = document.getElementById("cat-img");
+            const catText = document.getElementById("cat-game");
+            catText.innerText = "Temp: " + temp + "°C";
 
-    if (januClicks < 7) {
-        januText.innerText = "Janu says: " + phrases[Math.floor(Math.random() * phrases.length)];
-    } else {
-        alert("STOP POKING ME 😠");
-        januClicks = 0;
-    }
-}
-</script>
+            if (temp === 35) {
+                catText.innerText = "Perfectly Toasty ✨";
+                catImg.style.filter = "drop-shadow(0 0 10px gold)";
+            } 
+            else if (temp >= 55) {
+                catImg.src = "sphynx_black.png";
+                catImg.style.filter = "brightness(0.3)";
+                catText.innerText = "HE'S BURNT";
+                alert("You overcooked him 😭");
+            }
+        }
+
+        // --- JANU MINI GAME ---
+        let januClicks = 0;
+        function playJanu() {
+            januClicks++;
+            const januText = document.getElementById("janu-game");
+            const phrases = ["Whatcha doin?", "Pretty girl!", "I love Abrar!", "Peek-a-boo!"];
+
+            if (januClicks < 7) {
+                januText.innerText = "Janu says: " + phrases[Math.floor(Math.random() * phrases.length)];
+            } else {
+                alert("STOP POKING ME 😠");
+                januClicks = 0;
+            }
+        }
+    </script>
 
 </body>
 </html>
