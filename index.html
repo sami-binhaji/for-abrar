@@ -205,34 +205,39 @@
         }
 
         function triggerGameOver() {
-            if (!isSabalaActive) return; 
-            isSabalaActive = false;
+    if (!isSabalaActive) return; 
+    isSabalaActive = false; // Stop the engine
 
-            const title = document.getElementById("death-title");
-            const gifBox = document.getElementById("gif-container");
-            const finalScoreDisp = document.getElementById("final-score");
+    const title = document.getElementById("death-title");
+    const gifBox = document.getElementById("gif-container");
+    const finalScoreDisp = document.getElementById("final-score");
 
-            finalScoreDisp.innerText = score;
-            gifBox.innerHTML = "";
+    finalScoreDisp.innerText = score;
+    gifBox.innerHTML = "";
 
-            const oldHighscore = parseInt(localStorage.getItem("sabalaHigh")) || 0;
+    // Always get the old highscore from localStorage at the time of game over
+    const oldHighscore = parseInt(localStorage.getItem("sabalaHigh")) || 0;
 
-            if (score > oldHighscore) {
-                // NEW RECORD
-                highscore = score;
-                localStorage.setItem("sabalaHigh", highscore);
-                document.getElementById("high-score-val").innerText = highscore;
+    if (score > oldHighscore) {
+        // NEW RECORD
+        highscore = score;
+        localStorage.setItem("sabalaHigh", highscore);
+        document.getElementById("high-score-val").innerText = highscore;
 
-                title.innerText = "🎉 9ij Sabala! 🎉";
-                gifBox.innerHTML = '<img src="lee_dance.gif" class="lee-gif"><img src="lee_yes.gif" class="lee-gif">';
-            } else {
-                title.innerText = "Yal 3ayooooz";
-                gifBox.innerHTML = '<img src="lee_crazy.gif" class="lee-gif">';
-            }
+        title.innerText = "🎉 9ij Sabala! 🎉";
+        gifBox.innerHTML = '<img src="lee_dance.gif" class="lee-gif"><img src="lee_yes.gif" class="lee-gif">';
+    } else {
+        title.innerText = "Yal 3ayooooz";
+        gifBox.innerHTML = '<img src="lee_crazy.gif" class="lee-gif">';
+    }
 
-            document.getElementById("sabala-sim").style.display = "none";
-            document.getElementById("death-screen").style.display = "flex";
-        }
+    // Hide game, show death screen
+    document.getElementById("sabala-sim").style.display = "none";
+    document.getElementById("death-screen").style.display = "flex";
+
+    // Remove any leftover bananas
+    document.querySelectorAll("#sabala-sim .banana").forEach(b => b.remove());
+}
 
         function clearHighScore() {
             localStorage.setItem("sabalaHigh", 0);
@@ -242,29 +247,29 @@
         }
 
         function resetSabala() {
-    // Hide death screen
     document.getElementById("death-screen").style.display = "none";
-
-    // Remove all existing bananas
+    
+    // Remove all bananas
     document.querySelectorAll("#sabala-sim .banana").forEach(b => b.remove());
 
-    // Reset score and game state
+    // Reset score
     score = 0;
     isSabalaActive = true;
 
-    // Reset player position to center
+    // Reset player position
     const container = document.getElementById("sabala-container");
     container.style.left = "50%";
 
-    // Show sabala simulator
+    // Show game
     document.getElementById("sabala-sim").style.display = "block";
 
     // Update scoreboard
-    document.getElementById("score-board").innerHTML = `Bananas: 0 | High Score: ${highscore}`;
+    document.getElementById("score-board").innerHTML = `Bananas: 0 | High Score: ${parseInt(localStorage.getItem("sabalaHigh")) || 0}`;
 
     // Start spawning bananas
     spawnBanana();
 }
+
 
         // Glitter effect
         window.addEventListener('mousemove', (e) => {
@@ -281,4 +286,5 @@
     </script>
 </body>
 </html>
+
 
