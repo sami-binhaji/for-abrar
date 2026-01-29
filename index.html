@@ -195,18 +195,8 @@ function spawnBanana(){
     const b = document.createElement("div"); 
     b.className = "banana"; 
     b.innerHTML = "🍌";
-    
-    // Ensure bananas spawn in different horizontal positions
-    let xPos;
-    let attempts = 0;
-    do {
-        xPos = Math.random()*(window.innerWidth-50);
-        attempts++;
-    } while (attempts < 5 && isTooCloseToOtherBananas(xPos));
-    
-    b.style.left = xPos + "px"; 
+    b.style.left = Math.random()*(window.innerWidth-50) + "px"; 
     b.style.top = "-50px";
-    b.dataset.spawnTime = Date.now(); // Track when banana was spawned
     document.getElementById("sabala-sim").appendChild(b);
     activeBananas.add(b);
 
@@ -239,7 +229,6 @@ function spawnBanana(){
             // Check for win condition BEFORE updating display (beat previous highscore)
             if(!isTransitioning && highscore > 0 && score > highscore) {
                 isTransitioning = true;
-                isSabalaActive = false; // Stop the game immediately
                 clearInterval(fallInterval);
                 activeIntervals.delete(fallInterval);
                 activeBananas.delete(b);
@@ -249,8 +238,8 @@ function spawnBanana(){
                 activeIntervals.forEach(interval => clearInterval(interval));
                 activeIntervals.clear();
                 
-                // Trigger victory
-                setTimeout(() => triggerVictory(), 100);
+                // Trigger victory (game will be stopped inside triggerVictory)
+                setTimeout(() => triggerVictory(), 50);
                 return;
             }
             
@@ -266,7 +255,6 @@ function spawnBanana(){
         if(topPos > window.innerHeight){ 
             if(!isTransitioning) {
                 isTransitioning = true;
-                isSabalaActive = false; // Stop the game immediately
                 clearInterval(fallInterval);
                 activeIntervals.delete(fallInterval);
                 activeBananas.delete(b);
@@ -276,8 +264,8 @@ function spawnBanana(){
                 activeIntervals.forEach(interval => clearInterval(interval));
                 activeIntervals.clear();
                 
-                // Trigger game over
-                setTimeout(() => triggerGameOver(), 100);
+                // Trigger game over (game will be stopped inside triggerGameOver)
+                setTimeout(() => triggerGameOver(), 50);
             } else {
                 // If already transitioning, just clean up this banana
                 clearInterval(fallInterval);
@@ -288,19 +276,6 @@ function spawnBanana(){
         }
     }, 30);
     activeIntervals.add(fallInterval); // Track this interval
-}
-
-function isTooCloseToOtherBananas(xPos) {
-    const minDistance = 100; // pixels
-    for (let banana of activeBananas) {
-        if (banana.parentNode) {
-            const otherX = parseInt(banana.style.left);
-            if (Math.abs(xPos - otherX) < minDistance) {
-                return true;
-            }
-        }
-    }
-    return false;
 }
 
 function scheduleBananaSpawns(){
@@ -314,27 +289,10 @@ function scheduleBananaSpawns(){
     if(timeElapsed > 25) maxConcurrent = 3;
     if(timeElapsed > 45) maxConcurrent = 4;
     
-    // Spawn bananas if under the limit and with timing spread
+    // Spawn bananas if under the limit
     const currentCount = activeBananas.size;
     if(currentCount < maxConcurrent) {
-        // Check if enough time has passed since last spawn to prevent simultaneous landing
-        const now = Date.now();
-        let canSpawn = true;
-        
-        // Ensure bananas don't spawn too close together in time
-        for (let banana of activeBananas) {
-            if (banana.dataset.spawnTime) {
-                const timeSinceSpawn = now - parseInt(banana.dataset.spawnTime);
-                if (timeSinceSpawn < 300) { // At least 300ms between spawns
-                    canSpawn = false;
-                    break;
-                }
-            }
-        }
-        
-        if (canSpawn) {
-            spawnBanana();
-        }
+        spawnBanana();
     }
     
     // Schedule next check - faster as game progresses
@@ -344,8 +302,6 @@ function scheduleBananaSpawns(){
 }
 
 function triggerVictory(){
-    if(!isSabalaActive) return;
-    
     console.log("Victory triggered! Score:", score, "Highscore:", highscore);
     isSabalaActive = false; 
     
@@ -381,8 +337,6 @@ function triggerVictory(){
 }
 
 function triggerGameOver(){
-    if(!isSabalaActive) return;
-    
     console.log("Game Over triggered! Score:", score, "Highscore:", highscore);
     isSabalaActive = false; 
     
