@@ -16,9 +16,34 @@
             min-height: 100vh;
             overflow-x: hidden;
             transition: background-color 1s ease;
+            /* Hello Kitty Cursor */
+            cursor: url('https://img.icons8.com/color/32/hello-kitty.png'), auto;
         }
 
-        #landing-page { text-align: center; padding: 20px; }
+        /* The glitter "floor" */
+        #glitter-floor {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 10px; /* Starts small, grows as she moves */
+            background: linear-gradient(transparent, rgba(255, 105, 180, 0.3));
+            pointer-events: none;
+            z-index: 999;
+            transition: height 0.5s ease;
+        }
+
+        .glitter {
+            position: fixed;
+            width: 5px;
+            height: 5px;
+            background: #FF69B4;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        #landing-page { text-align: center; padding: 20px; z-index: 10; }
 
         #forbidden-button {
             background-color: #FF69B4;
@@ -37,6 +62,7 @@
             text-align: center;
             width: 100%;
             padding: 50px 0;
+            z-index: 10;
         }
 
         .menagerie {
@@ -70,34 +96,15 @@
             transition: transform 0.2s ease;
         }
 
-        .game-text {
-            font-size: 0.8rem;
-            color: #555;
-            margin: 5px 0;
-            font-weight: bold;
-        }
-
-        .label {
-            color: #1a1a1a;
-            font-weight: bold;
-            font-size: 1rem;
-            text-transform: uppercase;
-        }
-
-        button.game-btn {
-            background: #FF69B4;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 0.7rem;
-        }
-
+        .game-text { font-size: 0.8rem; color: #555; margin: 5px 0; font-weight: bold; }
+        .label { color: #1a1a1a; font-weight: bold; font-size: 1rem; text-transform: uppercase; }
+        button.game-btn { background: #FF69B4; color: white; border: none; padding: 5px 10px; border-radius: 10px; cursor: pointer; font-size: 0.7rem; }
         h1 { font-size: 2.5rem; text-shadow: 2px 2px 0px white; }
     </style>
 </head>
 <body>
+
+    <div id="glitter-floor"></div>
 
     <div id="landing-page">
         <h1>⚠️ CAUTION ⚠️</h1>
@@ -107,7 +114,7 @@
 
     <div id="main-content">
         <h1>Happy Birthday, Abrar! 🎀</h1>
-        <p style="color: #666;">Interacting with the animals might reveal secrets...</p>
+        <p style="color: #666;">Look at all the glitter you're making...</p>
 
         <div class="menagerie">
             <div class="animal-box">
@@ -141,6 +148,41 @@
     </div>
 
     <script>
+        // --- CURSOR GLITTER LOGIC ---
+        let pileHeight = 0;
+        const floor = document.getElementById('glitter-floor');
+
+        window.addEventListener('mousemove', (e) => {
+            if (Math.random() > 0.85) { // Only spawn glitter sometimes to prevent lag
+                createGlitter(e.pageX, e.pageY);
+                pileHeight += 0.05; // Pile grows slowly
+                floor.style.height = pileHeight + 'px';
+                floor.style.boxShadow = `0 -10px 20px ${pileHeight/5}px #FF69B4`;
+            }
+        });
+
+        function createGlitter(x, y) {
+            const glitter = document.createElement('div');
+            glitter.className = 'glitter';
+            glitter.style.left = x + 'px';
+            glitter.style.top = y + 'px';
+            glitter.style.background = `hsl(${Math.random() * 20 + 330}, 100%, 70%)`; // Pink shades
+            document.body.appendChild(glitter);
+
+            const destinationY = window.innerHeight;
+            const duration = Math.random() * 1000 + 1000;
+
+            glitter.animate([
+                { transform: 'translate(0, 0) rotate(0deg)', opacity: 1 },
+                { transform: `translate(${(Math.random()-0.5)*100}px, ${destinationY - y}px) rotate(720deg)`, opacity: 0 }
+            ], {
+                duration: duration,
+                easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+            });
+
+            setTimeout(() => glitter.remove(), duration);
+        }
+
         // --- BUTTON EVASION ---
         const btn = document.getElementById('forbidden-button');
         const landing = document.getElementById('landing-page');
@@ -166,84 +208,58 @@
         });
 
         // --- MINI GAMES ---
-
-        // 1. Seal Petting
         let pets = 0;
         function playSeal() {
             pets++;
             const sealText = document.getElementById('seal-game');
             sealText.innerText = "Pets: " + pets;
             if (pets === 10) alert("The seal thinks you're its best friend now.");
-            else if (pets === 20) {
-                sealText.style.color = "red";
-                alert("bs la? shfeech mb 9a7ya 😂");
-            }
+            else if (pets === 20) alert("bs la? shfeech mb 9a7ya 😂");
         }
 
-        // 2. Bunny Feeding (Progressively Fat -> Explode)
-        let food = 0;
-        let hasExploded = false;
+        let food = 0; let hasExploded = false;
         function playBun() {
             if (hasExploded) return;
             food++;
             const bunImg = document.getElementById('bun-img');
             const bunText = document.getElementById('bun-game');
-            
-            let currentScale = 1 + (food * 0.2); // Faster growth
-            bunImg.style.transform = `scale(${currentScale})`;
-            
+            bunImg.style.transform = `scale(${1 + (food * 0.2)})`;
             if (food === 3) bunText.innerText = "He's getting a bit round...";
-            if (food === 6) {
-                bunText.innerText = "He's becoming a sphere.";
-                alert("Do you see what you're doing to him?");
-            }
-            if (food === 10) {
-                bunText.innerText = "HE'S CHONKED OUT.";
-                alert("He literally cannot move. I hope you're happy.");
-            }
+            if (food === 10) alert("He literally cannot move. I hope you're happy.");
             if (food >= 13) {
                 hasExploded = true;
                 bunImg.style.transform = "scale(0)";
                 bunText.innerText = "BOOM. 💥";
-                bunText.style.color = "red";
                 alert("YOU FED HIM TOO MUCH. HE EXPLODED. 🥕💥");
-                setTimeout(() => alert("All that's left is fur and regret. Happy Birthday?"), 500);
+                setTimeout(() => alert("All that's left is fur and regret."), 500);
             }
         }
 
-        // 3. Cat Heater
         let temp = 20;
         function playCat() {
             temp += 5;
             const catImg = document.getElementById('cat-img');
             const catText = document.getElementById('cat-game');
             catText.innerText = "Temp: " + temp + "°C";
-
             if (temp === 35) {
                 catText.innerText = "Perfectly Toasty! ✨";
                 catImg.style.filter = "drop-shadow(0 0 10px gold)";
             } 
             else if (temp >= 55) {
-                catText.innerText = "HE'S BURNT!";
-                catText.style.color = "red";
-                catImg.src = "sphynx_black.png"; 
+                catImg.src = "sphynx_black.png";
                 catImg.style.filter = "brightness(0.4)";
                 alert("You overcooked him. He's a charcoal briquette now.");
             }
         }
 
-        // 4. Janu Talking
         let januClicks = 0;
         function playJanu() {
             januClicks++;
             const januText = document.getElementById('janu-game');
-            
             if (januClicks < 7) {
                 const phrases = ["Whatcha doin?", "Pretty girl!", "I love Abrar!", "Peek-a-boo!"];
-                const random = phrases[Math.floor(Math.random() * phrases.length)];
-                januText.innerText = "Janu says: " + random;
+                januText.innerText = "Janu says: " + phrases[Math.floor(Math.random() * phrases.length)];
             } else {
-                januText.innerText = "Janu is mad.";
                 alert("bs yal 7mara! Stop poking me!");
                 januClicks = 0; 
             }
