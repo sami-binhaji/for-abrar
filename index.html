@@ -167,11 +167,22 @@
         // --- MINI GAMES ---
 
         // 1. Seal Petting
+        // 1. Updated Seal Petting with the "bs la?" trigger
         let pets = 0;
         function playSeal() {
             pets++;
-            document.getElementById('seal-game').innerText = "Pets: " + pets;
-            if(pets == 10) alert("The seal thinks you're its best friend now.");
+            const sealText = document.getElementById('seal-game');
+            sealText.innerText = "Pets: " + pets;
+        
+            if (pets === 10) {
+                sealText.innerText = "Best Friends! 💖";
+                alert("The seal thinks you're its best friend now.");
+            } 
+            else if (pets === 20) {
+                sealText.style.color = "red";
+                sealText.style.fontWeight = "bold";
+                alert("bs la? shfeech mb 9a7ya 😂");
+            }
         }
 
         // 2. Bun Feeding
@@ -205,4 +216,5 @@
     </script>
 </body>
 </html>
+
 
