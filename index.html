@@ -139,144 +139,94 @@
         }
 
         // --- SABALA ENGINE ---
-        let isSabalaActive = false;
-        let score = 0;
-        let highscore = parseInt(localStorage.getItem("sabalaHigh")) || 0;
-        document.getElementById("high-score-val").innerText = highscore;
+let isSabalaActive = false;
+let score = 0;
+let highscore = parseInt(localStorage.getItem("sabalaHigh")) || 0;
+document.getElementById("high-score-val").innerText = highscore;
 
-        // Keep track of all intervals and timeouts
-        let spawnTimeouts = [];
-        let fallIntervals = [];
+// Track intervals and timeouts to clear them on retry/gameover
+let spawnTimeouts = [];
+let fallIntervals = [];
 
-        function startSabala() {
-            isSabalaActive = true;
-            score = 0;
-            document.getElementById("high-score-val").innerText = highscore;
-            document.getElementById("score-board").innerHTML = `Bananas: 0 | High Score: ${highscore}`;
-            document.getElementById("main-content").style.display = "none";
-            document.getElementById("sabala-sim").style.display = "block";
-            spawnBanana();
+function startSabala() {
+    resetSabala(); // Reuse reset function to fully initialize
+    isSabalaActive = true;
+    document.getElementById("main-content").style.display = "none";
+    document.getElementById("sabala-sim").style.display = "block";
+    spawnBanana();
+}
+
+function spawnBanana() {
+    if (!isSabalaActive) return;
+
+    const b = document.createElement("div");
+    b.className = "banana";
+    b.innerHTML = "🍌";
+    b.style.left = Math.random() * (window.innerWidth - 50) + "px";
+    b.style.top = "-50px";
+    document.getElementById("sabala-sim").appendChild(b);
+
+    const fallInterval = setInterval(() => {
+        if (!isSabalaActive) {
+            clearInterval(fallInterval);
+            b.remove();
+            return;
         }
 
-        window.addEventListener("mousemove", (e) => {
-            const container = document.getElementById("sabala-container");
-            if(container && isSabalaActive) {
-                let x = e.pageX;
-                if (x < 50) x = 50; if (x > window.innerWidth - 50) x = window.innerWidth - 50;
-                container.style.left = x + "px";
-            }
-        });
+        let topPos = parseInt(b.style.top);
+        b.style.top = (topPos + 7 + (score / 4)) + "px";
 
-        function spawnBanana() {
-            if (!isSabalaActive) return;
+        let bRect = b.getBoundingClientRect();
+        let pRect = document.getElementById("sabala-player").getBoundingClientRect();
 
-            const b = document.createElement("div");
-            b.className = "banana";
-            b.innerHTML = "🍌";
-            b.style.left = Math.random() * (window.innerWidth - 50) + "px";
-            b.style.top = "-50px";
-            document.getElementById("sabala-sim").appendChild(b);
-
-            const fallInterval = setInterval(() => {
-                if (!isSabalaActive) {
-                    clearInterval(fallInterval);
-                    b.remove();
-                    return;
-                }
-
-                let topPos = parseInt(b.style.top);
-                b.style.top = (topPos + 7 + (score / 4)) + "px";
-
-                let bRect = b.getBoundingClientRect();
-                let pRect = document.getElementById("sabala-player").getBoundingClientRect();
-
-                if (bRect.bottom > pRect.top && bRect.left < pRect.right && bRect.right > pRect.left) {
-                    score++;
-                    document.getElementById("score-board").innerHTML = `Bananas: ${score} | High Score: ${highscore}`;
-                    b.remove();
-                    clearInterval(fallInterval);
-                }
-
-                if (topPos > window.innerHeight) {
-                    clearInterval(fallInterval);
-                    b.remove();
-                    triggerGameOver();
-                }
-            }, 20);
-
-            fallIntervals.push(fallInterval);
-
-            let nextSpawn = Math.max(300, 1000 - (score * 15));
-            const timeout = setTimeout(spawnBanana, nextSpawn);
-            spawnTimeouts.push(timeout);
+        if (bRect.bottom > pRect.top && bRect.left < pRect.right && bRect.right > pRect.left) {
+            score++;
+            document.getElementById("score-board").innerHTML = `Bananas: ${score} | High Score: ${highscore}`;
+            b.remove();
+            clearInterval(fallInterval);
         }
 
-        function triggerGameOver() {
-            if (!isSabalaActive) return;
-            isSabalaActive = false;
-
-            // Clear all intervals and timeouts
-            fallIntervals.forEach(i => clearInterval(i));
-            spawnTimeouts.forEach(t => clearTimeout(t));
-            fallIntervals = [];
-            spawnTimeouts = [];
-
-            const title = document.getElementById("death-title");
-            const gifBox = document.getElementById("gif-container");
-            const finalScoreDisp = document.getElementById("final-score");
-
-            finalScoreDisp.innerText = score;
-            gifBox.innerHTML = "";
-
-            const oldHighscore = parseInt(localStorage.getItem("sabalaHigh")) || 0;
-
-            if (score > oldHighscore) {
-                highscore = score;
-                localStorage.setItem("sabalaHigh", highscore);
-                document.getElementById("high-score-val").innerText = highscore;
-
-                title.innerText = "🎉 9ij Sabala! 🎉";
-                gifBox.innerHTML = '<img src="lee_dance.gif" class="lee-gif"><img src="lee_yes.gif" class="lee-gif">';
-            } else {
-                title.innerText = "Yal 3ayooooz";
-                gifBox.innerHTML = '<img src="lee_crazy.gif" class="lee-gif">';
-            }
-
-            document.getElementById("sabala-sim").style.display = "none";
-            document.getElementById("death-screen").style.display = "flex";
-
-            document.querySelectorAll("#sabala-sim .banana").forEach(b => b.remove());
+        if (topPos > window.innerHeight) {
+            clearInterval(fallInterval);
+            b.remove();
+            triggerGameOver();
         }
+    }, 20);
 
-        function clearHighScore() {
-            localStorage.setItem("sabalaHigh", 0);
-            highscore = 0;
-            document.getElementById("high-score-val").innerText = 0;
-            alert("Record wiped!");
-        }
+    fallIntervals.push(fallInterval);
 
-        function resetSabala() {
-            document.getElementById("death-screen").style.display = "none";
+    const nextSpawn = Math.max(300, 1000 - (score * 15));
+    const timeout = setTimeout(spawnBanana, nextSpawn);
+    spawnTimeouts.push(timeout);
+}
 
-            // Clear any leftover intervals and timeouts
-            fallIntervals.forEach(i => clearInterval(i));
-            spawnTimeouts.forEach(t => clearTimeout(t));
-            fallIntervals = [];
-            spawnTimeouts = [];
+function resetSabala() {
+    // Hide death screen
+    document.getElementById("death-screen").style.display = "none";
 
-            document.querySelectorAll("#sabala-sim .banana").forEach(b => b.remove());
+    // Stop any leftover bananas
+    fallIntervals.forEach(i => clearInterval(i));
+    spawnTimeouts.forEach(t => clearTimeout(t));
+    fallIntervals = [];
+    spawnTimeouts = [];
 
-            score = 0;
-            isSabalaActive = true;
+    document.querySelectorAll("#sabala-sim .banana").forEach(b => b.remove());
 
-            const container = document.getElementById("sabala-container");
-            container.style.left = "50%";
+    // Reset score
+    score = 0;
+    isSabalaActive = true;
 
-            document.getElementById("sabala-sim").style.display = "block";
-            document.getElementById("score-board").innerHTML = `Bananas: 0 | High Score: ${parseInt(localStorage.getItem("sabalaHigh")) || 0}`;
+    // Reset player position
+    const container = document.getElementById("sabala-container");
+    container.style.left = "50%";
 
-            spawnBanana();
-        }
+    // Show game
+    document.getElementById("sabala-sim").style.display = "block";
+
+    // Update scoreboard
+    document.getElementById("score-board").innerHTML = `Bananas: 0 | High Score: ${parseInt(localStorage.getItem("sabalaHigh")) || 0}`;
+}
+
 
         // Glitter effect
         window.addEventListener('mousemove', (e) => {
@@ -293,3 +243,4 @@
     </script>
 </body>
 </html>
+
