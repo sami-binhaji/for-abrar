@@ -178,6 +178,7 @@ let score = 0;
 let highscore = parseInt(localStorage.getItem("sabalaHigh")) || 0;
 document.getElementById("high-score-val").innerText = highscore;
 let gameStartTime = 0;
+let hasBeatenHighscore = false; // Track if player beat highscore this session
 
 document.getElementById("final-boss-btn").addEventListener("click", function() {
     document.getElementById("main-content").style.display = "none"; 
@@ -187,7 +188,8 @@ document.getElementById("final-boss-btn").addEventListener("click", function() {
 
 function startGame(){
     console.log("Starting game...");
-    score = 0; 
+    score = 0;
+    hasBeatenHighscore = false;
     gameStartTime = Date.now();
     isSabalaActive = true;
     document.getElementById("score-board").innerHTML = `Bananas: 0 | High Score: ${highscore}`;
@@ -230,37 +232,48 @@ function spawnBanana(){
         if(bRect.bottom > pRect.top && bRect.top < pRect.bottom && 
            bRect.left < pRect.right && bRect.right > pRect.left){
             score++;
-            document.getElementById("score-board").innerHTML = `Bananas: ${score} | High Score: ${highscore}`;
+            
+            // Check if just beat highscore for the first time this session
+            if(!hasBeatenHighscore && highscore > 0 && score > highscore) {
+                hasBeatenHighscore = true;
+                // Show celebration message but keep playing!
+                console.log("🎉 Beat the highscore! Keep going!");
+            }
+            
+            document.getElementById("score-board").innerHTML = `Bananas: ${score} | High Score: ${highscore}${hasBeatenHighscore ? ' 🔥' : ''}`;
             clearInterval(fallInterval); 
             if(b.parentNode) b.remove();
             
-            // Check win condition
-            if(highscore > 0 && score > highscore) {
-                endGame(true); // Victory!
-            } else {
-                // Spawn next banana
-                setTimeout(() => spawnBanana(), 600 + Math.random() * 400);
-            }
+            // Always spawn next banana - game continues!
+            setTimeout(() => spawnBanana(), 600 + Math.random() * 400);
             return;
         }
 
         // Missed banana - game over
         if(topPos > window.innerHeight){ 
             clearInterval(fallInterval); 
-            if(b.parentNode) b.remove(); 
-            endGame(false); // Game over
+            if(b.parentNode) b.remove();
+            // Pass whether player beat highscore this session
+            endGame(hasBeatenHighscore);
         }
     }, 30);
 }
 
-function endGame(isVictory){
+function endGame(didBeatHighscore){
     if(!isSabalaActive) return; // Already ended
     
-    console.log(isVictory ? "VICTORY!" : "GAME OVER", "Score:", score);
+    console.log(didBeatHighscore ? "VICTORY!" : "GAME OVER", "Score:", score);
     isSabalaActive = false;
     
     // Remove all bananas
     document.querySelectorAll("#sabala-sim .banana").forEach(b => b.remove());
+    
+    // Update highscore if needed
+    if(score > highscore){
+        highscore = score;
+        localStorage.setItem("sabalaHigh", highscore);
+        document.getElementById("high-score-val").innerText = highscore;
+    }
     
     // Hide game, show result screen
     document.getElementById("sabala-sim").style.display = "none";
@@ -271,30 +284,17 @@ function endGame(isVictory){
     const gifBox = document.getElementById("gif-container"); 
     gifBox.innerHTML = "";
 
-    if(isVictory) {
-        // Victory screen
-        if(score > highscore){
-            highscore = score;
-            localStorage.setItem("sabalaHigh", highscore);
-            document.getElementById("high-score-val").innerText = highscore;
-        }
+    if(didBeatHighscore) {
+        // Victory screen - beat highscore during this session!
         document.getElementById("death-screen").style.background = "linear-gradient(45deg, #FFD700, #FF69B4, #00FFFF)";
         title.innerText = "🎉 YOU WON! SABALA! 🎉";
         gifBox.innerHTML = '<img src="lee_dance.gif" class="lee-gif"><img src="lee_yes.gif" class="lee-gif">';
         createGlitter();
     } else {
-        // Game over screen
+        // Regular game over - didn't beat highscore
         document.getElementById("death-screen").style.background = "#FFD1DC";
-        if(score > highscore){
-            highscore = score;
-            localStorage.setItem("sabalaHigh", highscore);
-            document.getElementById("high-score-val").innerText = highscore;
-            title.innerText = "🎉 New Record! 🎉";
-            gifBox.innerHTML = '<img src="lee_dance.gif" class="lee-gif"><img src="lee_yes.gif" class="lee-gif">';
-        } else {
-            title.innerText = "Yal 3ayooooz";
-            gifBox.innerHTML = '<img src="lee_crazy.gif" class="lee-gif">';
-        }
+        title.innerText = "Yal 3ayooooz";
+        gifBox.innerHTML = '<img src="lee_crazy.gif" class="lee-gif">';
     }
 }
 
