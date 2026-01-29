@@ -43,9 +43,9 @@
 
         .glitter {
             position: fixed;
-            width: 10px; /* Chunkier glitter */
+            width: 10px;
             height: 10px;
-            border-radius: 2px; /* Square-ish like real glitter */
+            border-radius: 2px;
             pointer-events: none;
             z-index: 1000;
             box-shadow: 0 0 10px white;
@@ -63,7 +63,7 @@
         }
 
         #forbidden-button {
-            position: relative; /* Fixed: starts in the center */
+            position: relative;
             background-color: #FF69B4;
             color: white;
             border: 4px solid white;
@@ -73,7 +73,6 @@
             cursor: pointer;
             box-shadow: 0 0 20px #FF69B4;
             font-weight: bold;
-            display: block;
         }
 
         #main-content { display: none; text-align: center; width: 100%; padding: 50px 0; z-index: 10; }
@@ -97,7 +96,7 @@
             height: 140px;
             object-fit: contain;
             cursor: pointer;
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.2s, filter 0.3s;
         }
 
         .game-text { font-size: 0.8rem; color: #555; margin: 5px 0; font-weight: bold; }
@@ -192,7 +191,34 @@
             document.body.style.backgroundColor = "#FFD1DC";
         });
 
-        // --- GAMES ---
+        // --- THE GOBLINO (CAT) LOGIC ---
+        let temp = 20;
+        function playCat() {
+            temp += 5;
+            const catImg = document.getElementById("cat-img");
+            const catText = document.getElementById("cat-game");
+            
+            catText.innerText = "Temp: " + temp + "°C";
+
+            if (temp <= 65) {
+                // Growing gold/orange glow as it gets hotter
+                let glowIntensity = (temp - 20) * 0.8;
+                catImg.style.filter = `drop-shadow(0 0 ${glowIntensity}px gold)`;
+                
+                if (temp === 35) catText.innerText = "Perfectly Toasty ✨";
+            } 
+            else {
+                // Over 65°C: Change image and set a burnt red glow
+                catImg.src = "sphynx_black.png";
+                catImg.style.filter = "drop-shadow(0 0 15px #FF4500) brightness(0.6)";
+                catText.innerText = "HE'S BURNT! 🔥";
+                
+                // Only alert the first time he burns
+                if (temp === 70) alert("You overcooked him 😭 He's a charcoal briquette now.");
+            }
+        }
+
+        // --- SEAL LOGIC ---
         let pets = 0;
         function playSeal() {
             pets++;
@@ -202,11 +228,11 @@
             if (pets === 20) alert("bs la? shfeech mb 9a7ya 😂");
         }
 
+        // --- BUNNY LOGIC ---
         let food = 0;
         function playBun() {
             food++;
             const bunImg = document.getElementById("bun-img");
-            const bunText = document.getElementById("bun-game");
             const container = document.getElementById("bunny-container");
             bunImg.style.transform = `scale(${1 + food * 0.35})`;
             if (food >= 13) {
@@ -215,16 +241,7 @@
             }
         }
 
-        let temp = 20;
-        function playCat() {
-            temp += 5;
-            document.getElementById("cat-game").innerText = "Temp: " + temp + "°C";
-            if (temp >= 55) {
-                document.getElementById("cat-img").style.filter = "brightness(0.3)";
-                alert("You overcooked him 😭");
-            }
-        }
-
+        // --- JANU LOGIC ---
         let januClicks = 0;
         function playJanu() {
             januClicks++;
