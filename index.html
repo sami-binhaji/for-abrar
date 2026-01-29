@@ -177,17 +177,25 @@ let isSabalaActive = false;
 let score = 0;
 let highscore = parseInt(localStorage.getItem("sabalaHigh")) || 0;
 document.getElementById("high-score-val").innerText = highscore;
-let bananaSpawnTimeouts = [];
 let gameStartTime = 0;
-let activeBananas = new Set();
-let activeIntervals = new Set(); // Track all active intervals
-let isTransitioning = false; // Prevent multiple end-game triggers
 
 document.getElementById("final-boss-btn").addEventListener("click", function() {
     document.getElementById("main-content").style.display = "none"; 
     document.getElementById("sabala-sim").style.display = "block"; 
-    resetSabala();
+    startGame();
 });
+
+function startGame(){
+    console.log("Starting game...");
+    score = 0; 
+    gameStartTime = Date.now();
+    isSabalaActive = true;
+    document.getElementById("score-board").innerHTML = `Bananas: 0 | High Score: ${highscore}`;
+    document.getElementById("sabala-container").style.left = "50%";
+    
+    // Start spawning
+    setTimeout(() => spawnBanana(), 500);
+}
 
 function spawnBanana(){
     if(!isSabalaActive) return;
@@ -198,20 +206,17 @@ function spawnBanana(){
     b.style.left = Math.random()*(window.innerWidth-50) + "px"; 
     b.style.top = "-50px";
     document.getElementById("sabala-sim").appendChild(b);
-    activeBananas.add(b);
 
-    // Progressive difficulty: speed increases over time
-    const timeElapsed = (Date.now() - gameStartTime) / 1000; // seconds
+    // Progressive difficulty
+    const timeElapsed = (Date.now() - gameStartTime) / 1000;
     const baseSpeed = 3.5;
-    const speedIncrease = Math.min(timeElapsed * 0.18, 5); // Caps at +5 after ~28 seconds
+    const speedIncrease = Math.min(timeElapsed * 0.18, 5);
     let fallSpeed = baseSpeed + speedIncrease;
     
     const fallInterval = setInterval(() => {
-        if(!isSabalaActive || isTransitioning){ 
-            clearInterval(fallInterval);
-            activeIntervals.delete(fallInterval);
+        if(!isSabalaActive){ 
+            clearInterval(fallInterval); 
             if(b.parentNode) b.remove(); 
-            activeBananas.delete(b);
             return; 
         }
         
@@ -221,151 +226,75 @@ function spawnBanana(){
         let bRect = b.getBoundingClientRect();
         let pRect = document.getElementById("sabala-player").getBoundingClientRect();
 
-        // Collision detection
+        // Collision detection - caught banana
         if(bRect.bottom > pRect.top && bRect.top < pRect.bottom && 
            bRect.left < pRect.right && bRect.right > pRect.left){
             score++;
-            
-            // Check for win condition BEFORE updating display (beat previous highscore)
-            if(!isTransitioning && highscore > 0 && score > highscore) {
-                isTransitioning = true;
-                clearInterval(fallInterval);
-                activeIntervals.delete(fallInterval);
-                activeBananas.delete(b);
-                if(b.parentNode) b.remove();
-                
-                // Clear all active intervals immediately
-                activeIntervals.forEach(interval => clearInterval(interval));
-                activeIntervals.clear();
-                
-                // Trigger victory (game will be stopped inside triggerVictory)
-                setTimeout(() => triggerVictory(), 50);
-                return;
-            }
-            
             document.getElementById("score-board").innerHTML = `Bananas: ${score} | High Score: ${highscore}`;
-            clearInterval(fallInterval);
-            activeIntervals.delete(fallInterval);
-            activeBananas.delete(b);
+            clearInterval(fallInterval); 
             if(b.parentNode) b.remove();
+            
+            // Check win condition
+            if(highscore > 0 && score > highscore) {
+                endGame(true); // Victory!
+            } else {
+                // Spawn next banana
+                setTimeout(() => spawnBanana(), 600 + Math.random() * 400);
+            }
             return;
         }
 
-        // Banana missed - game over
+        // Missed banana - game over
         if(topPos > window.innerHeight){ 
-            if(!isTransitioning) {
-                isTransitioning = true;
-                clearInterval(fallInterval);
-                activeIntervals.delete(fallInterval);
-                activeBananas.delete(b);
-                if(b.parentNode) b.remove();
-                
-                // Clear all active intervals immediately
-                activeIntervals.forEach(interval => clearInterval(interval));
-                activeIntervals.clear();
-                
-                // Trigger game over (game will be stopped inside triggerGameOver)
-                setTimeout(() => triggerGameOver(), 50);
-            } else {
-                // If already transitioning, just clean up this banana
-                clearInterval(fallInterval);
-                activeIntervals.delete(fallInterval);
-                activeBananas.delete(b);
-                if(b.parentNode) b.remove();
-            }
+            clearInterval(fallInterval); 
+            if(b.parentNode) b.remove(); 
+            endGame(false); // Game over
         }
     }, 30);
-    activeIntervals.add(fallInterval); // Track this interval
 }
 
-function scheduleBananaSpawns(){
-    if(!isSabalaActive) return;
+function endGame(isVictory){
+    if(!isSabalaActive) return; // Already ended
     
-    const timeElapsed = (Date.now() - gameStartTime) / 1000;
-    
-    // Dynamic spawn rate: start with 1 banana, gradually increase
-    let maxConcurrent = 1;
-    if(timeElapsed > 10) maxConcurrent = 2;
-    if(timeElapsed > 25) maxConcurrent = 3;
-    if(timeElapsed > 45) maxConcurrent = 4;
-    
-    // Spawn bananas if under the limit
-    const currentCount = activeBananas.size;
-    if(currentCount < maxConcurrent) {
-        spawnBanana();
-    }
-    
-    // Schedule next check - faster as game progresses
-    const checkDelay = 400 + Math.random() * 300; // 400-700ms
-    const timeout = setTimeout(() => scheduleBananaSpawns(), checkDelay);
-    bananaSpawnTimeouts.push(timeout);
-}
-
-function triggerVictory(){
-    console.log("Victory triggered! Score:", score, "Highscore:", highscore);
-    isSabalaActive = false; 
-    
-    // Clear any pending spawns
-    bananaSpawnTimeouts.forEach(timeout => clearTimeout(timeout));
-    bananaSpawnTimeouts = [];
+    console.log(isVictory ? "VICTORY!" : "GAME OVER", "Score:", score);
+    isSabalaActive = false;
     
     // Remove all bananas
     document.querySelectorAll("#sabala-sim .banana").forEach(b => b.remove());
-    activeBananas.clear();
     
-    // Update high score
-    if(score > highscore){
-        highscore = score;
-        localStorage.setItem("sabalaHigh", highscore);
-        document.getElementById("high-score-val").innerText = highscore;
-    }
-    
+    // Hide game, show result screen
     document.getElementById("sabala-sim").style.display = "none";
     document.getElementById("death-screen").style.display = "flex";
-    document.getElementById("death-screen").style.background = "linear-gradient(45deg, #FFD700, #FF69B4, #00FFFF)";
     document.getElementById("final-score").innerText = score;
 
     const title = document.getElementById("death-title");
     const gifBox = document.getElementById("gif-container"); 
     gifBox.innerHTML = "";
 
-    title.innerText = "🎉 YOU WON! SABALA! 🎉";
-    gifBox.innerHTML = '<img src="lee_dance.gif" class="lee-gif"><img src="lee_yes.gif" class="lee-gif">';
-    
-    // Trigger glitter effect
-    createGlitter();
-}
-
-function triggerGameOver(){
-    console.log("Game Over triggered! Score:", score, "Highscore:", highscore);
-    isSabalaActive = false; 
-    
-    // Clear any pending spawns
-    bananaSpawnTimeouts.forEach(timeout => clearTimeout(timeout));
-    bananaSpawnTimeouts = [];
-    
-    // Remove all bananas
-    document.querySelectorAll("#sabala-sim .banana").forEach(b => b.remove());
-    activeBananas.clear();
-    
-    document.getElementById("sabala-sim").style.display = "none";
-    document.getElementById("death-screen").style.display = "flex";
-    document.getElementById("death-screen").style.background = "#FFD1DC";
-    document.getElementById("final-score").innerText = score;
-
-    const title = document.getElementById("death-title");
-    const gifBox = document.getElementById("gif-container"); 
-    gifBox.innerHTML = "";
-
-    if(score > highscore){
-        highscore = score;
-        localStorage.setItem("sabalaHigh", highscore);
-        document.getElementById("high-score-val").innerText = highscore;
-        title.innerText = "🎉 New Record! 🎉";
+    if(isVictory) {
+        // Victory screen
+        if(score > highscore){
+            highscore = score;
+            localStorage.setItem("sabalaHigh", highscore);
+            document.getElementById("high-score-val").innerText = highscore;
+        }
+        document.getElementById("death-screen").style.background = "linear-gradient(45deg, #FFD700, #FF69B4, #00FFFF)";
+        title.innerText = "🎉 YOU WON! SABALA! 🎉";
         gifBox.innerHTML = '<img src="lee_dance.gif" class="lee-gif"><img src="lee_yes.gif" class="lee-gif">';
+        createGlitter();
     } else {
-        title.innerText = "Yal 3ayooooz";
-        gifBox.innerHTML = '<img src="lee_crazy.gif" class="lee-gif">';
+        // Game over screen
+        document.getElementById("death-screen").style.background = "#FFD1DC";
+        if(score > highscore){
+            highscore = score;
+            localStorage.setItem("sabalaHigh", highscore);
+            document.getElementById("high-score-val").innerText = highscore;
+            title.innerText = "🎉 New Record! 🎉";
+            gifBox.innerHTML = '<img src="lee_dance.gif" class="lee-gif"><img src="lee_yes.gif" class="lee-gif">';
+        } else {
+            title.innerText = "Yal 3ayooooz";
+            gifBox.innerHTML = '<img src="lee_crazy.gif" class="lee-gif">';
+        }
     }
 }
 
@@ -386,39 +315,12 @@ function createGlitter(){
     }
 }
 
-function resetSabala(){
-    console.log("Resetting game...");
-    
-    // Clear everything first
-    bananaSpawnTimeouts.forEach(timeout => clearTimeout(timeout));
-    bananaSpawnTimeouts = [];
-    
-    // Clear all intervals
-    activeIntervals.forEach(interval => clearInterval(interval));
-    activeIntervals.clear();
-    
-    // Remove all existing bananas
-    document.querySelectorAll("#sabala-sim .banana").forEach(b => b.remove());
-    activeBananas.clear();
-    
-    score = 0; 
-    gameStartTime = Date.now();
-    isSabalaActive = true;
-    isTransitioning = false; // Reset transition flag
-    document.getElementById("score-board").innerHTML = `Bananas: 0 | High Score: ${highscore}`;
-    document.getElementById("sabala-container").style.left = "50%";
-    
-    console.log("Game reset complete. Starting spawns...");
-    // Start the spawn scheduler
-    setTimeout(() => scheduleBananaSpawns(), 500);
-}
-
 // Retry button
 document.getElementById("retry-btn").addEventListener("click", function() {
     console.log("Retry clicked!");
     document.getElementById("death-screen").style.display = "none";
     document.getElementById("sabala-sim").style.display = "block";
-    resetSabala();
+    startGame();
 });
 
 // Clear high score button
@@ -429,7 +331,7 @@ document.getElementById("clear-btn").addEventListener("click", function() {
     alert("Record wiped!"); 
 });
 
-// MONKEY FOLLOW MOUSE with cursor glitter (Sabala game only)
+// MONKEY FOLLOW MOUSE with global cursor glitter
 let lastGlitterTime = 0;
 window.addEventListener("mousemove", e => {
     // Global cursor glitter trail
