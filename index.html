@@ -67,7 +67,7 @@
                 <div class="label">The Chaos Bun</div>
                 <img src="bunny.png" class="animal-img" id="bun-img">
                 <p id="bun-game" class="game-text">Hungry...</p>
-                <button class="game-btn" onclick="playBun()">FEED CARROT 🥕</button>
+                <button class="game-btn" id="bun-btn" onclick="playBun()">FEED CARROT 🥕</button>
             </div>
             <div class="animal-box">
                 <div class="label">The Goblino</div>
@@ -99,18 +99,19 @@
     </div>
 
     <script>
-        // --- GLOBAL VARIABLES FOR PETS ---
-        let pCount = 0; // For Seal
-        let bClicks = 0; // For Bunny
-        let cTemp = 20; // For Cat
+        // --- PET VARIABLES ---
+        let pCount = 0; 
+        let bClicks = 0; 
+        let cTemp = 20; 
+        let jClicks = 0; // NEW: Janu counter
 
-        // --- GLOBAL VARIABLES FOR SABALA ---
+        // --- SABALA VARIABLES ---
         let isSabalaActive = false;
         let score = 0;
-        let highscore = parseInt(localStorage.getItem("sabalaHigh")) || 0;
+        let highscore = Number(localStorage.getItem("sabalaHigh")) || 0;
         document.getElementById("high-score-val").innerText = highscore;
 
-        // --- FORBIDDEN BUTTON ---
+        // --- BUTTON LOGIC ---
         const fBtn = document.getElementById("forbidden-button");
         let escapes = 0;
         fBtn.addEventListener("mouseover", () => {
@@ -127,7 +128,7 @@
             document.body.style.backgroundColor = "#FFD1DC";
         });
 
-        // --- RESTORED PETS LOGIC ---
+        // --- PETS LOGIC ---
         function playSeal() {
             pCount++;
             document.getElementById("seal-game").innerText = "Pets: " + pCount;
@@ -138,7 +139,6 @@
         function playBun() {
             bClicks++;
             const bunImg = document.getElementById("bun-img");
-            // Scales based on clicks, getting bigger and bigger
             bunImg.style.transform = `scale(${1 + bClicks * 0.45})`;
             if (bClicks >= 5) document.getElementById("bun-game").innerHTML = "MEGA BUNNY!";
         }
@@ -158,19 +158,28 @@
         }
 
         function playJanu() {
-            document.getElementById("scare-video").src = "https://www.youtube.com/embed/ix3rE46lWsU?autoplay=1";
-            document.getElementById("janu-scare").style.display = "block";
+            jClicks++;
+            if (jClicks <= 5) {
+                // Talk for the first 5 clicks
+                const phrases = ["Whatcha doin?", "Pretty girl!", "I love Abrar!", "Peek-a-boo!", "Muah! 💋", "Hee hee!"];
+                document.getElementById("janu-game").innerText = "Janu says: " + phrases[Math.floor(Math.random() * phrases.length)];
+            } else {
+                // Scare on the 6th click
+                document.getElementById("scare-video").src = "https://www.youtube.com/embed/ix3rE46lWsU?autoplay=1";
+                document.getElementById("janu-scare").style.display = "block";
+            }
         }
+
         function closeScare() {
             document.getElementById("scare-video").src = "";
             document.getElementById("janu-scare").style.display = "none";
+            jClicks = 0; // Reset counter so she talks again
+            document.getElementById("janu-game").innerText = "Janu is watching.";
         }
 
         // --- SABALA ENGINE ---
         function startSabala() {
-            // Remove any leftover bananas
             document.querySelectorAll('.banana').forEach(b => b.remove());
-
             isSabalaActive = true;
             score = 0;
             document.getElementById("score-board").innerHTML = `Bananas: 0 | High Score: ${highscore}`;
@@ -198,7 +207,6 @@
             document.getElementById("sabala-sim").appendChild(b);
 
             let fall = setInterval(() => {
-                // If game ended, clean up immediately
                 if (!isSabalaActive) { clearInterval(fall); b.remove(); return; }
                 
                 let topPos = parseInt(b.style.top);
@@ -207,14 +215,12 @@
                 let bRect = b.getBoundingClientRect();
                 let pRect = document.getElementById("sabala-player").getBoundingClientRect();
 
-                // CATCH
                 if (bRect.bottom > pRect.top && bRect.left < pRect.right && bRect.right > pRect.left) {
                     score++;
                     document.getElementById("score-board").innerHTML = `Bananas: ${score} | High Score: ${highscore}`;
                     b.remove(); clearInterval(fall);
                 }
                 
-                // MISS (GAME OVER)
                 if (topPos > window.innerHeight) {
                     clearInterval(fall);
                     b.remove();
@@ -222,33 +228,31 @@
                 }
             }, 20);
             
-            // Spawn speed increases
             if (isSabalaActive) {
                 setTimeout(spawnBanana, 1000 - (score * 12 > 700 ? 700 : score * 12));
             }
         }
 
         function triggerGameOver() {
-            if (!isSabalaActive) return; // Prevent double trigger
-            isSabalaActive = false; // Stop game loop immediately
+            if (!isSabalaActive) return;
+            isSabalaActive = false;
 
             const title = document.getElementById("death-title");
             const gifBox = document.getElementById("gif-container");
             document.getElementById("final-score").innerText = score;
             gifBox.innerHTML = "";
 
-            // Check if she beat the OLD highscore
-            if (score > highscore && score > 0) {
-                // UPDATE HIGHSCORE
+            // Use Number() to ensure math is correct
+            if (Number(score) > Number(highscore) && Number(score) > 0) {
+                // NEW RECORD
                 highscore = score;
                 localStorage.setItem("sabalaHigh", highscore);
                 document.getElementById("high-score-val").innerText = highscore;
                 
-                // SHOW WIN SCREEN
                 title.innerText = "9ij Sabala";
                 gifBox.innerHTML = '<img src="lee_dance.gif" class="lee-gif"><img src="lee_yes.gif" class="lee-gif">';
             } else {
-                // SHOW LOSE SCREEN
+                // LOSS
                 title.innerText = "Yal 3ayooooz";
                 gifBox.innerHTML = '<img src="lee_crazy.gif" class="lee-gif">';
             }
