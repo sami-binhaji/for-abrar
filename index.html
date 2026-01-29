@@ -13,9 +13,16 @@ body { background-color: #1a1a1a; color: #FF69B4; font-family: 'Segoe UI', sans-
 .ambient-glitter { position: fixed; width: 12px; height: 12px; background: gold; border-radius: 50%; pointer-events: none; z-index: 1; box-shadow: 0 0 8px currentColor; animation: ambientFall linear forwards; }
 @keyframes ambientFall { from { opacity: 0; transform: translateY(-20px) rotate(0deg); } 20% { opacity: 1; } 80% { opacity: 1; } to { opacity: 0; transform: translateY(100vh) rotate(360deg); } }
 
+/* Water filling effect */
+.glitter-water { position: fixed; bottom: 0; left: 0; width: 100%; height: 0%; background: linear-gradient(to top, rgba(255, 215, 0, 0.3), rgba(255, 105, 180, 0.2), rgba(0, 255, 255, 0.2)); pointer-events: none; z-index: 2; transition: height 0.3s ease-out; overflow: hidden; }
+.glitter-water::before { content: ''; position: absolute; top: -50px; left: -50%; width: 200%; height: 100px; background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.3) 0%, transparent 70%); animation: wave 3s ease-in-out infinite; }
+@keyframes wave { 0%, 100% { transform: translateX(0) translateY(0); } 50% { transform: translateX(-25%) translateY(-10px); } }
+.glitter-particle { position: absolute; width: 8px; height: 8px; background: gold; border-radius: 50%; animation: floatUp 4s ease-in infinite; box-shadow: 0 0 6px gold; }
+@keyframes floatUp { from { transform: translateY(0) rotate(0deg); opacity: 1; } to { transform: translateY(-100px) rotate(360deg); opacity: 0; } }
+
 #landing-page, #main-content, #sabala-sim { display: none; text-align: center; min-height: 100vh; width: 100%; position: relative; }
-#landing-page { display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; overflow: hidden; }
-#main-content { padding: 50px 0; position: relative; overflow: hidden; }
+#landing-page { display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; overflow: hidden; z-index: 5; }
+#main-content { padding: 50px 0; position: relative; overflow: hidden; z-index: 5; }
 
 .menagerie { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 40px auto; max-width: 1200px; }
 .animal-box { background: white; padding: 15px; border-radius: 25px; box-shadow: 8px 8px 0px #FF69B4; width: 200px; min-height: 280px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; transition: 0.5s; overflow: hidden; position: relative; }
@@ -470,9 +477,39 @@ document.getElementById("clear-btn").addEventListener("click", function() {
     alert("Record wiped! Click Retry to start fresh."); 
 });
 
-// MONKEY FOLLOW MOUSE with enhanced cursor glitter
+// MONKEY FOLLOW MOUSE with enhanced cursor glitter and water filling
 let lastGlitterTime = 0;
-let lastFillingGlitterTime = 0;
+let waterFillLevel = 0; // 0 to 100 percentage
+let waterElement = null;
+let lastWaterUpdateTime = 0;
+
+// Create water element
+function createWaterElement() {
+    if(!waterElement) {
+        waterElement = document.createElement("div");
+        waterElement.className = "glitter-water";
+        document.body.appendChild(waterElement);
+        
+        // Add floating glitter particles in the water
+        setInterval(() => {
+            if(waterFillLevel > 5) { // Only add particles when there's visible water
+                const particle = document.createElement("div");
+                particle.className = "glitter-particle";
+                particle.style.left = Math.random() * 100 + "%";
+                particle.style.bottom = Math.random() * 20 + "%";
+                particle.style.background = ["gold", "#FF69B4", "#00FFFF", "#FFD700"][Math.floor(Math.random()*4)];
+                particle.style.animationDelay = Math.random() * 2 + "s";
+                particle.style.animationDuration = (3 + Math.random() * 2) + "s";
+                waterElement.appendChild(particle);
+                
+                setTimeout(() => particle.remove(), 6000);
+            }
+        }, 500);
+    }
+}
+
+// Initialize water on page load
+createWaterElement();
 
 window.addEventListener("mousemove", e => {
     const now = Date.now();
@@ -486,7 +523,7 @@ window.addEventListener("mousemove", e => {
     const onFirstTwoPages = !sabalaActive && (isLandingVisible || isMainVisible);
     
     // Enhanced cursor glitter trail (more particles, more visible)
-    if(now - lastGlitterTime > 30) { // Faster spawn rate
+    if(now - lastGlitterTime > 30) {
         lastGlitterTime = now;
         
         // Create 2-3 particles instead of 1 for more intensity
@@ -502,33 +539,26 @@ window.addEventListener("mousemove", e => {
             glitter.style.background = ["gold", "#FF69B4", "#00FFFF", "#FFD700", "white", "#FF1493"][Math.floor(Math.random()*6)];
             document.body.appendChild(glitter);
             
-            setTimeout(() => glitter.remove(), 1200); // Longer life
+            setTimeout(() => glitter.remove(), 1200);
         }
     }
     
-    // FILLING GLITTER: Only on first two pages, triggered by cursor movement
-    if(onFirstTwoPages && now - lastFillingGlitterTime > 100) { // Create filling glitter every 100ms
-        lastFillingGlitterTime = now;
+    // WATER FILLING: Increase water level on cursor movement (first two pages only)
+    if(onFirstTwoPages && now - lastWaterUpdateTime > 50) {
+        lastWaterUpdateTime = now;
         
-        // Create 3-5 glitter particles that fall and STAY on the page
-        const fillCount = Math.floor(Math.random() * 3) + 3; // 3-5 particles
-        for(let i = 0; i < fillCount; i++) {
-            const glitter = document.createElement("div");
-            glitter.className = "ambient-glitter";
-            // Spawn randomly across the width, near cursor Y position or top
-            glitter.style.left = Math.random() * 100 + "%";
-            glitter.style.background = ["gold", "#FF69B4", "#00FFFF", "#FFD700", "white", "#FF1493"][Math.floor(Math.random()*6)];
-            glitter.style.animationDuration = (3 + Math.random() * 4) + "s"; // 3-7 seconds to fall
-            
-            if(isLandingVisible) landing.appendChild(glitter);
-            else if(isMainVisible) mainContent.appendChild(glitter);
-            
-            // Don't remove these - let them accumulate and fill the page!
-            // Only remove after a long time to prevent memory issues
-            setTimeout(() => {
-                if(glitter.parentNode) glitter.remove();
-            }, 30000); // Keep for 30 seconds
+        // Increase water level slightly with each movement
+        waterFillLevel = Math.min(waterFillLevel + 0.3, 100); // Cap at 100%
+        
+        if(waterElement) {
+            waterElement.style.height = waterFillLevel + "%";
+            waterElement.style.display = "block";
         }
+    }
+    
+    // Hide water during Sabala game
+    if(sabalaActive && waterElement) {
+        waterElement.style.display = "none";
     }
     
     // Sabala game-specific: move the monkey
