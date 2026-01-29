@@ -19,7 +19,7 @@
             cursor: url('https://img.icons8.com/color/32/hello-kitty.png'), auto;
         }
 
-        /* Rainbow Glitter Pile */
+        /* Rainbow Glitter Pile - Slower Rising */
         #glitter-floor {
             position: fixed;
             bottom: 0;
@@ -28,11 +28,12 @@
             height: 0px; 
             background: linear-gradient(to right, #ff00ff, #00ffff, #ff00ff, #ffff00);
             background-size: 400% 400%;
-            animation: rainbowShift 5s ease infinite;
-            box-shadow: 0 -10px 30px rgba(255, 105, 180, 0.8);
+            animation: rainbowShift 8s ease infinite;
+            box-shadow: 0 -10px 30px rgba(255, 105, 180, 0.6);
             pointer-events: none;
             z-index: 999;
-            opacity: 0.6;
+            opacity: 0.5;
+            transition: height 0.8s ease; /* Smooth rising */
         }
 
         @keyframes rainbowShift {
@@ -43,15 +44,30 @@
 
         .glitter {
             position: fixed;
-            width: 8px; /* Bigger */
-            height: 8px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
             pointer-events: none;
             z-index: 1000;
-            box-shadow: 0 0 10px white; /* Glowing effect */
+            box-shadow: 0 0 8px white;
         }
 
+        #landing-page { text-align: center; padding: 20px; z-index: 10; position: relative; }
         #main-content { display: none; text-align: center; width: 100%; padding: 50px 0; z-index: 10; }
+        
+        #forbidden-button {
+            background-color: #FF69B4;
+            color: white;
+            border: 4px solid white;
+            padding: 20px 40px;
+            font-size: 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 20px #FF69B4;
+            font-weight: bold;
+            transition: 0.1s;
+        }
+
         .menagerie { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 40px auto; max-width: 1200px; }
 
         .animal-box {
@@ -65,8 +81,6 @@
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
-            position: relative;
-            overflow: visible; /* Allows big bunny to show */
         }
 
         .animal-img {
@@ -74,15 +88,13 @@
             height: 140px;
             object-fit: contain;
             cursor: pointer;
-            transition: transform 0.1s linear; /* Faster response */
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         @keyframes violentShake {
-            0% { transform: translate(2px, 2px) rotate(0deg); }
-            25% { transform: translate(-4px, -2px) rotate(2deg); }
-            50% { transform: translate(4px, 4px) rotate(-2deg); }
-            75% { transform: translate(-4px, 2px) rotate(1deg); }
-            100% { transform: translate(2px, -4px) rotate(-1deg); }
+            0% { transform: translate(2px, 2px); }
+            50% { transform: translate(-3px, -3px); }
+            100% { transform: translate(1px, 1px); }
         }
 
         .game-text { font-size: 0.8rem; color: #555; margin: 5px 0; font-weight: bold; }
@@ -95,92 +107,111 @@
 
     <div id="glitter-floor"></div>
 
-    <div id="landing-page" style="text-align: center;">
+    <div id="landing-page">
         <h1>⚠️ CAUTION ⚠️</h1>
-        <button id="forbidden-button" style="background:#FF69B4; color:white; padding:20px; border-radius:50px; cursor:pointer;">CLICK ME</button>
+        <p style="color: white; font-weight: bold;">DO NOT TOUCH THE PINK BUTTON.</p>
+        <button id="forbidden-button">CLICK ME</button>
     </div>
 
     <div id="main-content">
         <h1>Happy Birthday, Abrar! 🎀</h1>
         <div class="menagerie">
+            
             <div class="animal-box" id="bunny-container">
                 <div class="label">The Chaos Bun</div>
                 <img src="bunny.png" class="animal-img" id="bun-img">
                 <p id="bun-game" class="game-text">Hungry...</p>
                 <button class="game-btn" onclick="playBun()">FEED CARROT 🥕</button>
             </div>
-            
+
+            <div class="animal-box">
+                <div class="label">Janu</div>
+                <img src="janu.png" class="animal-img">
+                <p class="game-text">Janu is watching.</p>
             </div>
+
+        </div>
     </div>
 
     <script>
-        // --- RAINBOW GLITTER ---
+        // --- RAINBOW GLITTER (Slower Pile) ---
         let pileHeight = 0;
         const floor = document.getElementById('glitter-floor');
 
         window.addEventListener('mousemove', (e) => {
-            if (Math.random() > 0.6) {
+            if (Math.random() > 0.8) {
                 const glitter = document.createElement('div');
                 glitter.className = 'glitter';
                 glitter.style.left = e.pageX + 'px';
                 glitter.style.top = e.pageY + 'px';
                 
-                // Rainbowish colors
-                const colors = ['#FF69B4', '#DA70D6', '#00FFFF', '#FFD700', '#ADFF2F'];
+                const colors = ['#FF69B4', '#DA70D6', '#00FFFF', '#FFD700', '#FF4500'];
                 glitter.style.background = colors[Math.floor(Math.random() * colors.length)];
                 
                 document.body.appendChild(glitter);
                 
-                pileHeight += 0.8; // Faster rising
+                // SLOWED DOWN PILE
+                pileHeight += 0.1; 
                 floor.style.height = pileHeight + 'px';
 
                 glitter.animate([
                     { transform: 'translate(0,0) scale(1)', opacity: 1 },
-                    { transform: `translate(${(Math.random()-0.5)*150}px, ${window.innerHeight}px) scale(0)`, opacity: 0 }
-                ], { duration: 1200 });
-                setTimeout(() => glitter.remove(), 1200);
+                    { transform: `translate(${(Math.random()-0.5)*100}px, ${window.innerHeight}px) scale(0)`, opacity: 0 }
+                ], { duration: 2000 });
+                setTimeout(() => glitter.remove(), 2000);
             }
         });
 
-        // --- BUTTON EVASION (Standard) ---
+        // --- FIXED BUTTON EVASION ---
         const btn = document.getElementById('forbidden-button');
+        const landing = document.getElementById('landing-page');
+        const main = document.getElementById('main-content');
+        let escapes = 0;
+
+        btn.addEventListener('mouseover', () => {
+            if (escapes < 8) {
+                const x = Math.random() * (window.innerWidth - btn.clientWidth);
+                const y = Math.random() * (window.innerHeight - btn.clientHeight);
+                btn.style.position = 'absolute';
+                btn.style.left = x + 'px';
+                btn.style.top = y + 'px';
+                escapes++;
+            }
+        });
+
         btn.addEventListener('click', () => {
-            document.getElementById('landing-page').style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
+            landing.style.display = 'none';
+            main.style.display = 'block';
             document.body.style.backgroundColor = '#FFD1DC';
         });
 
-        // --- THE BUNNY EXPLOSION ---
+        // --- BUNNY EXPLOSION ---
         let foodCount = 0;
         function playBun() {
             foodCount++;
             const bunImg = document.getElementById('bun-img');
             const container = document.getElementById('bunny-container');
+            const bunText = document.getElementById('bun-game');
             
-            // Physical growth
             let size = 1 + (foodCount * 0.4);
             bunImg.style.transform = `scale(${size})`;
 
             if (foodCount >= 6) {
                 bunImg.style.animation = "violentShake 0.1s infinite";
+                bunText.innerText = "He's shaking... stop!";
             }
 
-            // FORCED DESTRUCTION at 12
             if (foodCount >= 12) {
-                // Wipe the entire container and replace with explosion
                 container.innerHTML = `
                     <div class="label">The Chaos Bun</div>
-                    <div style="font-size: 100px; animation: violentShake 0.05s infinite;">💥</div>
-                    <p class="game-text" style="color:red; font-size: 1.2rem;">FATAL ERROR: POPPED</p>
+                    <div style="font-size: 100px; padding: 20px;">💥</div>
+                    <p class="game-text" style="color:red; font-size: 1.2rem;">POP!</p>
                 `;
                 
-                // Screen shake effect
-                document.body.style.animation = "violentShake 0.2s 3";
-                
                 setTimeout(() => {
-                    alert("BOOM! You fed him until he ceased to exist. 🥕💥");
-                    alert("Abrar... look at what you've done.");
-                }, 200);
+                    alert("KABOOM! 🥕💥");
+                    alert("Abrar, you popped the bunny. He's confetti now.");
+                }, 100);
             }
         }
     </script>
