@@ -5,11 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FOR ABRAR 💖</title>
     <style>
-        /* ALL CSS INTEGRATED HERE FOR EASIER EDITS */
         body {
             background-color: #1a1a1a;
             color: #FF69B4;
-            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             display: flex;
             justify-content: center;
@@ -19,7 +18,7 @@
             transition: background-color 1s ease;
         }
 
-        #landing-page { text-align: center; }
+        #landing-page { text-align: center; padding: 20px; }
 
         #forbidden-button {
             background-color: #FF69B4;
@@ -30,90 +29,83 @@
             border-radius: 50px;
             cursor: pointer;
             box-shadow: 0 0 20px #FF69B4;
-            transition: transform 0.1s;
+            font-weight: bold;
         }
 
-        /* The Animal Menagerie Styling */
         #main-content {
             display: none;
             text-align: center;
             width: 100%;
-            padding: 50px 20px;
+            padding: 50px 0;
         }
 
         .menagerie {
             display: flex;
             justify-content: center;
-            gap: 40px;
+            gap: 30px;
             flex-wrap: wrap;
-            margin-top: 30px;
+            margin: 40px auto;
+            max-width: 1000px;
         }
 
         .animal-box {
             background: white;
             padding: 20px;
-            border-radius: 20px;
+            border-radius: 30px;
             box-shadow: 10px 10px 0px #FF69B4;
-            transition: transform 0.3s;
-            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 220px;
         }
 
         .animal-box:hover {
-            transform: scale(1.1) rotate(5deg);
+            transform: scale(1.1) rotate(3deg);
         }
 
-        .emoji { font-size: 80px; }
-        .label { color: #1a1a1a; font-weight: bold; margin-top: 10px; }
-
-        /* The Text Screenshot Section */
-        .receipts {
-            margin-top: 80px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
+        .animal-img {
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+            margin-bottom: 15px;
         }
 
-        .screenshot {
-            width: 200px;
-            border: 10px solid white;
-            border-bottom: 40px solid white;
-            box-shadow: 5px 5px 15px rgba(0,0,0,0.3);
-            transform: rotate(-3deg);
+        .label {
+            color: #1a1a1a;
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
+
+        h1 { font-size: 3rem; text-shadow: 2px 2px 0px white; }
     </style>
 </head>
 <body>
 
     <div id="landing-page">
-        <h1 style="font-size: 2.5rem;">WARNING: DO NOT CLICK THE BUTTON</h1>
+        <h1>⚠️ CAUTION ⚠️</h1>
+        <p style="color: white; font-weight: bold;">DO NOT TOUCH THE PINK BUTTON.</p>
         <button id="forbidden-button">CLICK ME</button>
     </div>
 
     <div id="main-content">
-        <h1 style="font-size: 3rem;">Happy Birthday, Abrar! 🎀</h1>
-        <p>You're my favorite chaotic animal. Hover for proof.</p>
+        <h1>Happy Birthday, Abrar! 🎀</h1>
+        <p style="color: #666;">You're my favorite chaotic energy. Hover for a secret...</p>
 
         <div class="menagerie">
-            <div class="animal-box" title="Round, squishy, and loves to nap. Sound familiar?">
-                <div class="emoji">🦭</div>
-                <div class="label">The Seal</div>
+            <div class="animal-box" title="Round, squishy, and basically a professional napper. Just like you.">
+                <img src="https://img.icons8.com/plasticine/200/seal.png" class="animal-img" alt="Seal">
+                <div class="label">The Squish</div>
             </div>
 
-            <div class="animal-box" title="High energy, constant snacking, very cute.">
-                <div class="emoji">🐰</div>
-                <div class="label">The Bun</div>
+            <div class="animal-box" title="High speed, constant snacking, and incredibly cute.">
+                <img src="https://img.icons8.com/plasticine/200/rabbit.png" class="animal-img" alt="Rabbit">
+                <div class="label">The Chaos Bun</div>
             </div>
 
-            <div class="animal-box" title="A little bit weird, very unique, 100% lovable.">
-                <div class="emoji">🐈‍⬛</div>
+            <div class="animal-box" title="A little weird, totally unique, and 100% lovable.">
+                <img src="https://img.icons8.com/plasticine/200/sphynx.png" class="animal-img" alt="Sphynx">
                 <div class="label">The Goblino</div>
             </div>
-        </div>
-
-        <div class="receipts">
-            <h2 style="width: 100%;">Some of my favorite "Receipts"</h2>
-            <p>(Replace these with your screenshot images later!)</p>
         </div>
     </div>
 
@@ -138,7 +130,7 @@
             landing.style.display = 'none';
             main.style.display = 'block';
             document.body.style.backgroundColor = '#FFD1DC';
-            document.body.style.overflow = 'auto'; // Let her scroll now!
+            document.body.style.overflow = 'auto';
         });
     </script>
 </body>
