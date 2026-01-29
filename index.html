@@ -61,27 +61,27 @@ button.game-btn { background: #FF69B4; color: white; border: none; padding: 10px
 </div>
 
 <div id="main-content">
-    <h1>Happy Birthday, Abrar! 🎀</h1>
+    <h1>Happy Birthday, Abrary! 🎀</h1>
     <div class="menagerie">
         <div class="animal-box">
-            <div class="label">The Squish</div>
+            <div class="label">The f8ma</div>
             <img src="seal.png" class="animal-img" id="seal-img">
             <p id="seal-game" class="game-text">Pets: 0</p>
         </div>
         <div class="animal-box">
-            <div class="label">The Chaos Bun</div>
+            <div class="label">The Fat Rabbit</div>
             <img src="bunny.png" class="animal-img" id="bun-img">
-            <p id="bun-game" class="game-text">Hungry...</p>
+            <p id="bun-game" class="game-text">Hes always hungry...</p>
             <button class="game-btn" id="bun-btn">FEED CARROT 🥕</button>
         </div>
         <div class="animal-box">
-            <div class="label">The Goblino</div>
+            <div class="label">Your Favorite Cat (lesh)</div>
             <img src="sphynx.png" class="animal-img" id="cat-img">
             <p id="cat-game" class="game-text">Temp: 20°C</p>
             <button class="game-btn" id="cat-btn">TURN ON HEATER 🔥</button>
         </div>
         <div class="animal-box">
-            <div class="label">Janu</div>
+            <div class="label">Janu!</div>
             <img src="janu.png" class="animal-img" id="janu-img">
             <p id="janu-game" class="game-text">Janu is watching.</p>
             <button class="game-btn" id="janu-btn">SAY HELLO</button>
@@ -129,11 +129,11 @@ document.getElementById("seal-img").addEventListener("click", function() {
     let msg = "Pets: " + pCount;
     
     if(pCount === 10) {
-        msg = "🥰 So cute and squishy! 🥰";
-        alert("🥰 So cute and squishy! 🥰");
+        msg = "she likes you all of a sudden..";
+        alert("she likes you all of a sudden..");
     } else if(pCount === 20) {
-        msg = "Shfeech mb 9aya? 😅";
-        alert("Shfeech mb 9aya? 😅");
+        msg = "Shfeech mb 9a7ya? Bs laaa 😅";
+        alert("Shfeech mb 9a7ya? Bs laaa 😅");
     }
     
     document.getElementById("seal-game").innerText = msg;
@@ -166,7 +166,7 @@ document.getElementById("bun-btn").addEventListener("click", function() {
         
         // Show guilt message
         setTimeout(() => {
-            alert("😭 How could you?! You fed the poor bunny to death! You monster! 😭\n\nThe bunny just wanted love, not ALL the carrots!");
+            alert("😭 How could you?! You fed the poor bunny to death yal 7mara! 😭\n\nThe bunny just wanted love, not ALL the carrots lesh itsaween che?!");
         }, 500);
         
         // Reset after shame
@@ -191,8 +191,8 @@ document.getElementById("cat-btn").addEventListener("click", function() {
     
     if(cTemp > 65) {
         document.getElementById("cat-img").src="sphynx_black.png";
-        msg = "7aragteeee 🔥😱";
-        alert("7aragteeee 🔥😱");
+        msg = "7aragteeee mskeeen 🔥😱";
+        alert("7aragteeee mskeeen 🔥😱");
     }
     
     document.getElementById("cat-game").innerText = msg;
@@ -201,7 +201,7 @@ document.getElementById("cat-btn").addEventListener("click", function() {
 document.getElementById("janu-btn").addEventListener("click", function() {
     jClicks++; 
     if(jClicks <= 5) {
-        const phrases = ["Whatcha doin?", "Pretty girl!", "I love Abrar!", "Muah!", "Peek-a-boo!"]; 
+        const phrases = ["Whatcha doin?", "Abrar!", "I love Abrar!", "Muah!", "Peek-a-boo!", "Eskit!"]; 
         document.getElementById("janu-game").innerText = "Janu says: " + phrases[Math.floor(Math.random()*phrases.length)];
     } else { 
         // Start video at 6 second mark
@@ -214,7 +214,7 @@ function closeScare(){
     document.getElementById("scare-video").src = ""; 
     document.getElementById("janu-scare").style.display = "none"; 
     jClicks = 0; 
-    document.getElementById("janu-game").innerText = "Janu is watching."; 
+    document.getElementById("janu-game").innerText = "Janu is watching youuu.."; 
 }
 
 // --- SABALA GAME ---
