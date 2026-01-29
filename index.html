@@ -12,7 +12,9 @@
         #main-content { padding: 50px 0; }
 
         .glitter { position: fixed; width: 10px; height: 10px; border-radius: 2px; pointer-events: none; z-index: 1000; box-shadow: 0 0 10px white; }
-        
+        #glitter-floor { position: fixed; bottom: 0; left: 0; width: 100%; height: 0px; background: linear-gradient(to right, #ff00ff, #00ffff, #ff00ff, #ffff00); background-size: 400% 400%; animation: rainbowShift 8s ease infinite; z-index: 999; opacity: 0.5; }
+        @keyframes rainbowShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
         .menagerie { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 40px auto; max-width: 1200px; }
         .animal-box { background: white; padding: 15px; border-radius: 25px; box-shadow: 8px 8px 0px #FF69B4; width: 200px; min-height: 280px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; transition: 0.5s; overflow: hidden; }
         .animal-img { width: 140px; height: 140px; object-fit: contain; cursor: pointer; transition: transform 0.2s, filter 0.3s; }
@@ -30,24 +32,24 @@
 
         #death-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #FFD1DC; z-index: 9999; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
         .ayooz-title { color: #FF1493; font-size: 5rem; margin: 0; text-shadow: 4px 4px 0px white; }
-        .lee-gif { width: 180px; height: 180px; margin: 10px; border-radius: 15px; border: 4px solid white; }
+        .lee-gif { width: 160px; height: 160px; margin: 10px; border-radius: 15px; border: 4px solid white; object-fit: cover; }
 
         #final-boss-btn { display: inline-block; background: linear-gradient(45deg, #ffd700, #ff69b4); border: 5px solid white; padding: 20px 50px; font-size: 28px; border-radius: 50px; color: white; font-weight: bold; cursor: pointer; box-shadow: 0 0 30px gold; margin-top: 30px; animation: buttonPop 0.5s infinite alternate; }
-        @keyframes buttonPop { from { transform: scale(1); } to { transform: scale(1.05); } }
     </style>
 </head>
 <body>
 
+    <div id="glitter-floor"></div>
+
     <div id="death-screen">
-        <div id="gif-container" style="display:flex; justify-content:center;"></div>
+        <div id="gif-container" style="display:flex;"></div>
         <h1 id="death-title" class="ayooz-title">Yal 3ayooooz</h1>
         <p style="font-size: 2rem; color: #555; font-weight: bold;">Score: <span id="final-score">0</span></p>
-        
-        <div style="display:flex; gap: 15px;">
-            <button class="game-btn" style="padding: 15px 30px;" onclick="resetSabala()">RETRY 🔄</button>
-            <button class="game-btn" style="background: #555; padding: 15px 30px;" onclick="clearHighScore()">RESET BEST 🗑️</button>
+        <div style="display:flex; gap: 10px;">
+            <button class="game-btn" onclick="resetSabala()">RETRY 🔄</button>
+            <button class="game-btn" style="background: #555;" onclick="clearHighScore()">RESET BEST 🗑️</button>
         </div>
-        <button class="game-btn" style="margin-top:20px; background: white; color: #FF69B4;" onclick="location.reload()">BACK TO PETS</button>
+        <button class="game-btn" style="margin-top:20px; background: white; color: #FF69B4;" onclick="location.reload()">MAIN MENU</button>
     </div>
 
     <div id="landing-page" style="display: flex;">
@@ -87,8 +89,7 @@
     </div>
 
     <div id="sabala-sim">
-        <div id="score-board">Bananas: 0 | Best: <span id="high-score-val">0</span></div>
-        <h2 style="color:white">CATCH THE BANANAS! 🍌</h2>
+        <div id="score-board">Bananas: 0 | High Score: <span id="high-score-val">0</span></div>
         <div id="sabala-container">
             <div id="nametag">Abrar</div>
             <div id="sabala-player">🐒</div>
@@ -102,11 +103,11 @@
 
     <script>
         let isSabalaActive = false;
-        let currentScore = 0;
+        let score = 0;
         let highscore = parseInt(localStorage.getItem("sabalaHigh")) || 0;
         document.getElementById("high-score-val").innerText = highscore;
 
-        // --- BUTTON LOGIC ---
+        // --- FORBIDDEN BUTTON ---
         const fBtn = document.getElementById("forbidden-button");
         let escapes = 0;
         fBtn.addEventListener("mouseover", () => {
@@ -123,25 +124,42 @@
             document.body.style.backgroundColor = "#FFD1DC";
         });
 
-        // --- PETS ---
-        function playSeal() { alert("Seal pet recorded!"); }
-        function playBun() { document.getElementById("bun-img").style.transform = "scale(1.5)"; }
-        function playCat() { alert("Cat is warm!"); }
-        function playJanu() { 
+        // --- PETS LOGIC ---
+        function playSeal() {
+            let p = document.getElementById("seal-game");
+            let count = parseInt(p.innerText.replace("Pets: ", "")) + 1;
+            p.innerText = "Pets: " + count;
+        }
+        function playBun() {
+            let b = document.getElementById("bun-img");
+            let s = b.style.transform ? parseFloat(b.style.transform.replace("scale(", "")) : 1;
+            b.style.transform = `scale(${s + 0.3})`;
+            document.getElementById("bun-game").innerText = "MEGA BUNNY!";
+        }
+        function playCat() {
+            let t = document.getElementById("cat-game");
+            let temp = parseInt(t.innerText.replace("Temp: ", "")) + 5;
+            t.innerText = "Temp: " + temp + "°C";
+            document.getElementById("cat-img").style.filter = `drop-shadow(0 0 15px gold)`;
+        }
+        function playJanu() {
             document.getElementById("scare-video").src = "https://www.youtube.com/embed/ix3rE46lWsU?autoplay=1";
             document.getElementById("janu-scare").style.display = "block";
         }
-        function closeScare() { 
+        function closeScare() {
             document.getElementById("scare-video").src = "";
             document.getElementById("janu-scare").style.display = "none";
         }
 
         // --- SABALA ENGINE ---
         function startSabala() {
+            // Cleanup old bananas first
+            const oldBananas = document.querySelectorAll('.banana');
+            oldBananas.forEach(b => b.remove());
+
             isSabalaActive = true;
-            currentScore = 0;
-            document.getElementById("high-score-val").innerText = highscore;
-            document.getElementById("score-board").innerHTML = `Bananas: 0 | Best: ${highscore}`;
+            score = 0;
+            document.getElementById("score-board").innerHTML = `Bananas: 0 | High Score: ${highscore}`;
             document.getElementById("main-content").style.display = "none";
             document.getElementById("sabala-sim").style.display = "block";
             spawnBanana();
@@ -168,58 +186,49 @@
             let fall = setInterval(() => {
                 if (!isSabalaActive) { clearInterval(fall); b.remove(); return; }
                 let topPos = parseInt(b.style.top);
-                b.style.top = (topPos + 6 + (currentScore/5)) + "px";
+                b.style.top = (topPos + 6 + (score/5)) + "px";
                 
-                let bRect = b.getBoundingClientRect();
-                let pRect = document.getElementById("sabala-player").getBoundingClientRect();
+                let bRect = b.getBoundingClientRect(), pRect = document.getElementById("sabala-player").getBoundingClientRect();
 
-                // Catch logic
                 if (bRect.bottom > pRect.top && bRect.left < pRect.right && bRect.right > pRect.left) {
-                    currentScore++;
-                    document.getElementById("score-board").innerHTML = `Bananas: ${currentScore} | Best: ${highscore}`;
+                    score++;
+                    document.getElementById("score-board").innerHTML = `Bananas: ${score} | High Score: ${highscore}`;
                     b.remove(); clearInterval(fall);
                 }
-
-                // Lose logic
                 if (topPos > window.innerHeight) {
                     clearInterval(fall);
                     b.remove();
                     triggerGameOver();
                 }
             }, 20);
-            setTimeout(spawnBanana, 1000 - (currentScore * 10 > 600 ? 600 : currentScore * 10));
+            setTimeout(spawnBanana, 1000 - (score * 12 > 700 ? 700 : score * 12));
         }
 
         function triggerGameOver() {
             isSabalaActive = false;
-            const deathScreen = document.getElementById("death-screen");
             const title = document.getElementById("death-title");
             const gifBox = document.getElementById("gif-container");
-            const finalScoreDisp = document.getElementById("final-score");
-            
-            finalScoreDisp.innerText = currentScore;
+            document.getElementById("final-score").innerText = score;
             gifBox.innerHTML = "";
 
-            if (currentScore > highscore) {
-                // SHE WON / NEW BEST
-                highscore = currentScore;
+            if (score > highscore && score > 0) {
+                highscore = score;
                 localStorage.setItem("sabalaHigh", highscore);
+                document.getElementById("high-score-val").innerText = highscore;
                 title.innerText = "9ij Sabala";
                 gifBox.innerHTML = '<img src="lee_dance.gif" class="lee-gif"><img src="lee_yes.gif" class="lee-gif">';
             } else {
-                // SHE LOST
                 title.innerText = "Yal 3ayooooz";
                 gifBox.innerHTML = '<img src="lee_crazy.gif" class="lee-gif">';
             }
-            
-            deathScreen.style.display = "flex";
+            document.getElementById("death-screen").style.display = "flex";
         }
 
         function clearHighScore() {
             highscore = 0;
             localStorage.setItem("sabalaHigh", 0);
             document.getElementById("high-score-val").innerText = 0;
-            alert("Highscore reset to 0!");
+            alert("Highscore deleted!");
         }
 
         function resetSabala() {
@@ -227,16 +236,15 @@
             startSabala();
         }
 
-        // --- GLITTER ---
         window.addEventListener('mousemove', (e) => {
             if (isSabalaActive) return;
-            if (Math.random() > 0.9) {
+            if (Math.random() > 0.85) {
                 const g = document.createElement('div');
                 g.className = 'glitter';
                 g.style.left = e.pageX + 'px'; g.style.top = e.pageY + 'px';
                 g.style.background = ['#FF69B4', '#DA70D6', '#00FFFF', '#FFD700'][Math.floor(Math.random()*4)];
                 document.body.appendChild(g);
-                g.animate([{ opacity: 1 }, { transform: `translate(${(Math.random()-0.5)*100}px, 200px) scale(0)`, opacity: 0 }], 1000);
+                g.animate([{ opacity: 1 }, { transform: `translate(${(Math.random()-0.5)*150}px, 200px) scale(0)`, opacity: 0 }], 1000);
                 setTimeout(() => g.remove(), 1000);
             }
         });
