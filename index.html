@@ -1,160 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FOR ABRAR & JANU 💖</title>
-    <style>
-        body { background-color: #1a1a1a; color: #FF69B4; font-family: 'Segoe UI', sans-serif; margin: 0; overflow-x: hidden; cursor: url('https://img.icons8.com/color/32/hello-kitty.png'), auto; }
-        
-        #landing-page, #main-content, #sabala-sim { display: none; text-align: center; min-height: 100vh; width: 100%; }
-        #landing-page { display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
-        #main-content { padding: 50px 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FOR ABRAR & JANU 💖</title>
+<style>
+body { background-color: #1a1a1a; color: #FF69B4; font-family: 'Segoe UI', sans-serif; margin: 0; overflow-x: hidden; cursor: url('https://img.icons8.com/color/32/hello-kitty.png'), auto; }
 
-        .glitter { position: fixed; width: 10px; height: 10px; border-radius: 2px; pointer-events: none; z-index: 1000; box-shadow: 0 0 10px white; }
-        
-        .menagerie { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 40px auto; max-width: 1200px; }
-        .animal-box { background: white; padding: 15px; border-radius: 25px; box-shadow: 8px 8px 0px #FF69B4; width: 200px; min-height: 280px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; transition: 0.5s; overflow: hidden; }
-        .animal-img { width: 140px; height: 140px; object-fit: contain; cursor: pointer; transition: transform 0.2s, filter 0.3s; }
-        .game-text { font-size: 0.8rem; color: #555; margin: 5px 0; font-weight: bold; }
-        button.game-btn { background: #FF69B4; color: white; border: none; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: bold; }
-        
-        #sabala-sim { background-color: #2ecc71; cursor: none; position: relative; overflow: hidden; }
-        #score-board { font-size: 30px; color: white; padding: 20px; font-weight: bold; text-shadow: 2px 2px #000; }
-        
-        #sabala-container { position: absolute; bottom: 20px; transform: translateX(-50%); pointer-events: none; display: flex; flex-direction: column; align-items: center; }
-        #nametag { background: white; color: #FF69B4; padding: 2px 10px; border-radius: 10px; font-weight: bold; font-size: 14px; margin-bottom: 5px; box-shadow: 2px 2px 0px #000; }
-        #sabala-player { font-size: 60px; line-height: 1; }
-        
-        .banana { position: absolute; font-size: 40px; user-select: none; z-index: 10; }
+#landing-page, #main-content, #sabala-sim { display: none; text-align: center; min-height: 100vh; width: 100%; }
+#landing-page { display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
+#main-content { padding: 50px 0; }
 
-        #death-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #FFD1DC; z-index: 9999; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-        .ayooz-title { color: #FF1493; font-size: 5rem; margin: 0; text-shadow: 4px 4px 0px white; }
-        .lee-gif { width: 160px; height: 160px; margin: 10px; border-radius: 15px; border: 4px solid white; object-fit: cover; }
+.glitter { position: fixed; width: 10px; height: 10px; border-radius: 2px; pointer-events: none; z-index: 1000; box-shadow: 0 0 10px white; }
 
-        #final-boss-btn { display: inline-block; background: linear-gradient(45deg, #ffd700, #ff69b4); border: 5px solid white; padding: 20px 50px; font-size: 28px; border-radius: 50px; color: white; font-weight: bold; cursor: pointer; box-shadow: 0 0 30px gold; margin-top: 30px; animation: buttonPop 0.5s infinite alternate; }
-        @keyframes buttonPop { from { transform: scale(1); } to { transform: scale(1.05); } }
-    </style>
+.menagerie { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 40px auto; max-width: 1200px; }
+.animal-box { background: white; padding: 15px; border-radius: 25px; box-shadow: 8px 8px 0px #FF69B4; width: 200px; min-height: 280px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; transition: 0.5s; overflow: hidden; }
+.animal-img { width: 140px; height: 140px; object-fit: contain; cursor: pointer; transition: transform 0.2s, filter 0.3s; }
+.game-text { font-size: 0.8rem; color: #555; margin: 5px 0; font-weight: bold; }
+button.game-btn { background: #FF69B4; color: white; border: none; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+
+#sabala-sim { background-color: #2ecc71; cursor: none; position: relative; overflow: hidden; }
+#score-board { font-size: 30px; color: white; padding: 20px; font-weight: bold; text-shadow: 2px 2px #000; }
+
+#sabala-container { position: absolute; bottom: 20px; transform: translateX(-50%); pointer-events: none; display: flex; flex-direction: column; align-items: center; }
+#nametag { background: white; color: #FF69B4; padding: 2px 10px; border-radius: 10px; font-weight: bold; font-size: 14px; margin-bottom: 5px; box-shadow: 2px 2px 0px #000; }
+#sabala-player { font-size: 60px; line-height: 1; }
+
+.banana { position: absolute; font-size: 40px; user-select: none; z-index: 10; }
+
+#death-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #FFD1DC; z-index: 9999; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+.ayooz-title { color: #FF1493; font-size: 5rem; margin: 0; text-shadow: 4px 4px 0px white; }
+.lee-gif { width: 160px; height: 160px; margin: 10px; border-radius: 15px; border: 4px solid white; object-fit: cover; }
+
+#final-boss-btn { display: inline-block; background: linear-gradient(45deg, #ffd700, #ff69b4); border: 5px solid white; padding: 20px 50px; font-size: 28px; border-radius: 50px; color: white; font-weight: bold; cursor: pointer; box-shadow: 0 0 30px gold; margin-top: 30px; animation: buttonPop 0.5s infinite alternate; }
+@keyframes buttonPop { from { transform: scale(1); } to { transform: scale(1.05); } }
+</style>
 </head>
 <body>
 
-    <div id="death-screen">
-        <div id="gif-container" style="display:flex; justify-content:center;"></div>
-        <h1 id="death-title" class="ayooz-title">Yal 3ayooooz</h1>
-        <p style="font-size: 2rem; color: #555; font-weight: bold;">Score: <span id="final-score">0</span></p>
-        <div style="display:flex; gap: 10px;">
-            <button class="game-btn" onclick="resetSabala()">RETRY 🔄</button>
-            <button class="game-btn" style="background: #555;" onclick="clearHighScore()">RESET BEST 🗑️</button>
+<div id="death-screen">
+    <div id="gif-container" style="display:flex; justify-content:center;"></div>
+    <h1 id="death-title" class="ayooz-title">Yal 3ayooooz</h1>
+    <p style="font-size: 2rem; color: #555; font-weight: bold;">Score: <span id="final-score">0</span></p>
+    <div style="display:flex; gap: 10px;">
+        <button class="game-btn" onclick="resetSabala()">RETRY 🔄</button>
+        <button class="game-btn" style="background: #555;" onclick="clearHighScore()">RESET BEST 🗑️</button>
+    </div>
+    <button class="game-btn" style="margin-top:20px; background: white; color: #FF69B4;" onclick="location.reload()">MAIN MENU</button>
+</div>
+
+<div id="landing-page" style="display: flex;">
+    <h1>⚠️ CAUTION ⚠️</h1>
+    <p style="color:white;font-weight:bold;">DO NOT TOUCH THE PINK BUTTON.</p>
+    <button id="forbidden-button" style="background-color: #FF69B4; color: white; border: 4px solid white; padding: 20px 40px; font-size: 24px; border-radius: 50px; cursor: pointer; font-weight: bold;">CLICK ME</button>
+</div>
+
+<div id="main-content">
+    <h1>Happy Birthday, Abrar! 🎀</h1>
+    <div class="menagerie">
+        <div class="animal-box">
+            <div class="label">The Squish</div>
+            <img src="seal.png" class="animal-img" onclick="playSeal()">
+            <p id="seal-game" class="game-text">Pets: 0</p>
         </div>
-        <button class="game-btn" style="margin-top:20px; background: white; color: #FF69B4;" onclick="location.reload()">MAIN MENU</button>
-    </div>
-
-    <div id="landing-page" style="display: flex;">
-        <h1>⚠️ CAUTION ⚠️</h1>
-        <p style="color:white;font-weight:bold;">DO NOT TOUCH THE PINK BUTTON.</p>
-        <button id="forbidden-button" style="background-color: #FF69B4; color: white; border: 4px solid white; padding: 20px 40px; font-size: 24px; border-radius: 50px; cursor: pointer; font-weight: bold;">CLICK ME</button>
-    </div>
-
-    <div id="main-content">
-        <h1>Happy Birthday, Abrar! 🎀</h1>
-        <div class="menagerie">
-            <div class="animal-box">
-                <div class="label">The Squish</div>
-                <img src="seal.png" class="animal-img" onclick="playSeal()">
-                <p id="seal-game" class="game-text">Pets: 0</p>
-            </div>
-            <div class="animal-box">
-                <div class="label">The Chaos Bun</div>
-                <img src="bunny.png" class="animal-img" id="bun-img">
-                <p id="bun-game" class="game-text">Hungry...</p>
-                <button class="game-btn" onclick="playBun()">FEED CARROT 🥕</button>
-            </div>
-            <div class="animal-box">
-                <div class="label">The Goblino</div>
-                <img src="sphynx.png" class="animal-img" id="cat-img">
-                <p id="cat-game" class="game-text">Temp: 20°C</p>
-                <button class="game-btn" onclick="playCat()">TURN ON HEATER 🔥</button>
-            </div>
-            <div class="animal-box">
-                <div class="label">Janu</div>
-                <img src="janu.png" class="animal-img" id="janu-img">
-                <p id="janu-game" class="game-text">Janu is watching.</p>
-                <button class="game-btn" onclick="playJanu()">SAY HELLO</button>
-            </div>
+        <div class="animal-box">
+            <div class="label">The Chaos Bun</div>
+            <img src="bunny.png" class="animal-img" id="bun-img">
+            <p id="bun-game" class="game-text">Hungry...</p>
+            <button class="game-btn" onclick="playBun()">FEED CARROT 🥕</button>
         </div>
-        <button id="final-boss-btn" onclick="startSabala()">ENTER SABALA SIMULATOR (enti)</button>
-    </div>
-
-    <div id="sabala-sim">
-        <div id="score-board">Bananas: 0 | High Score: <span id="high-score-val">0</span></div>
-        <div id="sabala-container">
-            <div id="nametag">Abrar</div>
-            <div id="sabala-player">🐒</div>
+        <div class="animal-box">
+            <div class="label">The Goblino</div>
+            <img src="sphynx.png" class="animal-img" id="cat-img">
+            <p id="cat-game" class="game-text">Temp: 20°C</p>
+            <button class="game-btn" onclick="playCat()">TURN ON HEATER 🔥</button>
+        </div>
+        <div class="animal-box">
+            <div class="label">Janu</div>
+            <img src="janu.png" class="animal-img" id="janu-img">
+            <p id="janu-game" class="game-text">Janu is watching.</p>
+            <button class="game-btn" onclick="playJanu()">SAY HELLO</button>
         </div>
     </div>
+    <button id="final-boss-btn" onclick="startSabala()">ENTER SABALA SIMULATOR (enti)</button>
+</div>
 
-    <div id="janu-scare" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:2000; background:black; padding:10px; border:5px solid #FF69B4; border-radius:20px;">
-        <iframe id="scare-video" width="315" height="560" src="" frameborder="0"></iframe><br>
-        <button class="game-btn" onclick="closeScare()">SORRY JANU 😭</button>
+<div id="sabala-sim">
+    <div id="score-board">Bananas: 0 | High Score: <span id="high-score-val">0</span></div>
+    <div id="sabala-container">
+        <div id="nametag">Abrar</div>
+        <div id="sabala-player">🐒</div>
     </div>
+</div>
 
-    <script>
-        // --- BUTTON ---
-        const fBtn = document.getElementById("forbidden-button");
-        let escapes = 0;
-        fBtn.addEventListener("mouseover", () => {
-            if (escapes < 6) {
-                fBtn.style.position = "absolute";
-                fBtn.style.left = Math.random() * (window.innerWidth - 200) + "px";
-                fBtn.style.top = Math.random() * (window.innerHeight - 100) + "px";
-                escapes++;
-            }
-        });
-        fBtn.addEventListener("click", () => {
-            document.getElementById("landing-page").style.display = "none";
-            document.getElementById("main-content").style.display = "block";
-            document.body.style.backgroundColor = "#FFD1DC";
-        });
+<div id="janu-scare" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:2000; background:black; padding:10px; border:5px solid #FF69B4; border-radius:20px;">
+    <iframe id="scare-video" width="315" height="560" src="" frameborder="0"></iframe><br>
+    <button class="game-btn" onclick="closeScare()">SORRY JANU 😭</button>
+</div>
 
-        // --- PETS ---
-        let pCount = 0, bClicks = 0, cTemp = 20, jClicks = 0;
-        function playSeal() { pCount++; document.getElementById("seal-game").innerText = "Pets: " + pCount; }
-        function playBun() { bClicks++; document.getElementById("bun-img").style.transform = `scale(${1 + bClicks * 0.45})`; }
-        function playCat() { cTemp += 5; document.getElementById("cat-game").innerText = "Temp: " + cTemp + "°C"; if (cTemp > 65) document.getElementById("cat-img").src = "sphynx_black.png"; }
-        
-        function playJanu() {
-            jClicks++;
-            if (jClicks <= 5) {
-                const phrases = ["Whatcha doin?", "Pretty girl!", "I love Abrar!", "Muah!", "Peek-a-boo!"];
-                document.getElementById("janu-game").innerText = "Janu says: " + phrases[Math.floor(Math.random() * phrases.length)];
-            } else {
-                document.getElementById("scare-video").src = "https://www.youtube.com/embed/ix3rE46lWsU?autoplay=1";
-                document.getElementById("janu-scare").style.display = "block";
-            }
-        }
-        function closeScare() {
-            document.getElementById("scare-video").src = "";
-            document.getElementById("janu-scare").style.display = "none";
-            jClicks = 0; document.getElementById("janu-game").innerText = "Janu is watching.";
-        }
+<script>
+// --- BUTTON ---
+const fBtn = document.getElementById("forbidden-button");
+let escapes = 0;
+fBtn.addEventListener("mouseover", () => {
+    if (escapes < 6) {
+        fBtn.style.position = "absolute";
+        fBtn.style.left = Math.random() * (window.innerWidth - 200) + "px";
+        fBtn.style.top = Math.random() * (window.innerHeight - 100) + "px";
+        escapes++;
+    }
+});
+fBtn.addEventListener("click", () => {
+    document.getElementById("landing-page").style.display = "none";
+    document.getElementById("main-content").style.display = "block";
+    document.body.style.backgroundColor = "#FFD1DC";
+});
 
-        // --- SABALA ENGINE ---
+// --- PETS ---
+let pCount = 0, bClicks = 0, cTemp = 20, jClicks = 0;
+function playSeal() { pCount++; document.getElementById("seal-game").innerText = "Pets: " + pCount; }
+function playBun() { bClicks++; document.getElementById("bun-img").style.transform = `scale(${1 + bClicks * 0.45})`; }
+function playCat() { cTemp += 5; document.getElementById("cat-game").innerText = "Temp: " + cTemp + "°C"; if (cTemp > 65) document.getElementById("cat-img").src = "sphynx_black.png"; }
+
+function playJanu() {
+    jClicks++;
+    if (jClicks <= 5) {
+        const phrases = ["Whatcha doin?", "Pretty girl!", "I love Abrar!", "Muah!", "Peek-a-boo!"];
+        document.getElementById("janu-game").innerText = "Janu says: " + phrases[Math.floor(Math.random() * phrases.length)];
+    } else {
+        document.getElementById("scare-video").src = "https://www.youtube.com/embed/ix3rE46lWsU?autoplay=1";
+        document.getElementById("janu-scare").style.display = "block";
+    }
+}
+function closeScare() {
+    document.getElementById("scare-video").src = "";
+    document.getElementById("janu-scare").style.display = "none";
+    jClicks = 0; document.getElementById("janu-game").innerText = "Janu is watching.";
+}
+
+// --- SABALA ENGINE ---
 let isSabalaActive = false;
 let score = 0;
 let highscore = parseInt(localStorage.getItem("sabalaHigh")) || 0;
 document.getElementById("high-score-val").innerText = highscore;
 
-// Track intervals and timeouts to clear them on retry/gameover
 let spawnTimeouts = [];
 let fallIntervals = [];
 
 function startSabala() {
-    resetSabala(); // Reuse reset function to fully initialize
+    resetSabala();
     isSabalaActive = true;
     document.getElementById("main-content").style.display = "none";
     document.getElementById("sabala-sim").style.display = "block";
     spawnBanana();
 }
+
+// Monkey follows mouse
+window.addEventListener("mousemove", (e) => {
+    if (!isSabalaActive) return;
+    const container = document.getElementById("sabala-container");
+    let x = e.pageX;
+    if (x < 50) x = 50; 
+    if (x > window.innerWidth - 50) x = window.innerWidth - 50;
+    container.style.left = x + "px";
+});
 
 function spawnBanana() {
     if (!isSabalaActive) return;
@@ -200,11 +209,45 @@ function spawnBanana() {
     spawnTimeouts.push(timeout);
 }
 
+function triggerGameOver() {
+    if (!isSabalaActive) return;
+    isSabalaActive = false;
+
+    const title = document.getElementById("death-title");
+    const gifBox = document.getElementById("gif-container");
+    const finalScoreDisp = document.getElementById("final-score");
+
+    finalScoreDisp.innerText = score;
+    gifBox.innerHTML = "";
+
+    const oldHighscore = parseInt(localStorage.getItem("sabalaHigh")) || 0;
+
+    if (score > oldHighscore) {
+        highscore = score;
+        localStorage.setItem("sabalaHigh", highscore);
+        document.getElementById("high-score-val").innerText = highscore;
+
+        title.innerText = "🎉 9ij Sabala! 🎉";
+        gifBox.innerHTML = '<img src="lee_dance.gif" class="lee-gif"><img src="lee_yes.gif" class="lee-gif">';
+    } else {
+        title.innerText = "Yal 3ayooooz";
+        gifBox.innerHTML = '<img src="lee_crazy.gif" class="lee-gif">';
+    }
+
+    document.getElementById("sabala-sim").style.display = "none";
+    document.getElementById("death-screen").style.display = "flex";
+
+    fallIntervals.forEach(i => clearInterval(i));
+    spawnTimeouts.forEach(t => clearTimeout(t));
+    fallIntervals = [];
+    spawnTimeouts = [];
+
+    document.querySelectorAll("#sabala-sim .banana").forEach(b => b.remove());
+}
+
 function resetSabala() {
-    // Hide death screen
     document.getElementById("death-screen").style.display = "none";
 
-    // Stop any leftover bananas
     fallIntervals.forEach(i => clearInterval(i));
     spawnTimeouts.forEach(t => clearTimeout(t));
     fallIntervals = [];
@@ -212,35 +255,38 @@ function resetSabala() {
 
     document.querySelectorAll("#sabala-sim .banana").forEach(b => b.remove());
 
-    // Reset score
     score = 0;
     isSabalaActive = true;
 
-    // Reset player position
     const container = document.getElementById("sabala-container");
     container.style.left = "50%";
 
-    // Show game
     document.getElementById("sabala-sim").style.display = "block";
 
-    // Update scoreboard
     document.getElementById("score-board").innerHTML = `Bananas: 0 | High Score: ${parseInt(localStorage.getItem("sabalaHigh")) || 0}`;
+
+    spawnBanana();
 }
 
+function clearHighScore() {
+    localStorage.setItem("sabalaHigh", 0);
+    highscore = 0;
+    document.getElementById("high-score-val").innerText = 0;
+    alert("Record wiped!");
+}
 
-        // Glitter effect
-        window.addEventListener('mousemove', (e) => {
-            if (isSabalaActive) return;
-            if (Math.random() > 0.9) {
-                const g = document.createElement('div');
-                g.className = 'glitter'; g.style.left = e.pageX + 'px'; g.style.top = e.pageY + 'px';
-                g.style.background = ['#FF69B4', '#DA70D6', '#00FFFF', '#FFD700'][Math.floor(Math.random()*4)];
-                document.body.appendChild(g);
-                g.animate([{ opacity: 1 }, { transform: `translate(${(Math.random()-0.5)*150}px, 200px) scale(0)`, opacity: 0 }], 1000);
-                setTimeout(() => g.remove(), 1000);
-            }
-        });
-    </script>
+// Glitter effect
+window.addEventListener('mousemove', (e) => {
+    if (isSabalaActive) return;
+    if (Math.random() > 0.9) {
+        const g = document.createElement('div');
+        g.className = 'glitter'; g.style.left = e.pageX + 'px'; g.style.top = e.pageY + 'px';
+        g.style.background = ['#FF69B4', '#DA70D6', '#00FFFF', '#FFD700'][Math.floor(Math.random()*4)];
+        document.body.appendChild(g);
+        g.animate([{ opacity: 1 }, { transform: `translate(${(Math.random()-0.5)*150}px, 200px) scale(0)`, opacity: 0 }], 1000);
+        setTimeout(() => g.remove(), 1000);
+    }
+});
+</script>
 </body>
 </html>
-
