@@ -8,7 +8,7 @@
         body { background-color: #1a1a1a; color: #FF69B4; font-family: 'Segoe UI', sans-serif; margin: 0; overflow-x: hidden; cursor: url('https://img.icons8.com/color/32/hello-kitty.png'), auto; }
         
         #landing-page, #main-content, #sabala-sim { display: none; text-align: center; min-height: 100vh; width: 100%; }
-        #landing-page { display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        #landing-page { display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
         #main-content { padding: 50px 0; }
 
         .glitter { position: fixed; width: 10px; height: 10px; border-radius: 2px; pointer-events: none; z-index: 1000; box-shadow: 0 0 10px white; }
@@ -46,7 +46,6 @@
         <div id="gif-container"></div>
         <h1 id="death-title" class="ayooz-title">Yal 3ayooooz</h1>
         <p style="font-size: 2rem; color: #555; font-weight: bold;">Score: <span id="final-score">0</span></p>
-        
         <div style="display:flex; gap: 10px;">
             <button class="game-btn" onclick="resetSabala()">RETRY 🔄</button>
             <button class="game-btn" style="background: #555;" onclick="clearHighScore()">RESET BEST 🗑️</button>
@@ -110,6 +109,26 @@
         let highscore = parseInt(localStorage.getItem("sabalaHigh")) || 0;
         document.getElementById("high-score-val").innerText = highscore;
 
+        // --- LANDING PAGE FIX ---
+        const fBtn = document.getElementById("forbidden-button");
+        let escapes = 0;
+
+        fBtn.addEventListener("mouseover", () => {
+            if (escapes < 6) {
+                fBtn.style.position = "absolute";
+                fBtn.style.left = Math.random() * (window.innerWidth - 200) + "px";
+                fBtn.style.top = Math.random() * (window.innerHeight - 100) + "px";
+                escapes++;
+            }
+        });
+
+        fBtn.addEventListener("click", () => {
+            document.getElementById("landing-page").style.display = "none";
+            document.getElementById("main-content").style.display = "block";
+            document.body.style.backgroundColor = "#FFD1DC";
+        });
+
+        // --- PETS LOGIC ---
         function playSeal() {
             let p = document.getElementById("seal-game");
             let count = parseInt(p.innerText.replace("Pets: ", "")) + 1;
@@ -154,6 +173,7 @@
             document.getElementById("janu-scare").style.display = "none";
         }
 
+        // --- SABALA SIM ---
         function startSabala() {
             isSabalaActive = true;
             score = 0;
@@ -207,7 +227,6 @@
             document.getElementById("final-score").innerText = score;
             gifBox.innerHTML = "";
 
-            // LOGIC FIX: Always show screen. Check score vs old highscore.
             if (score > highscore && score > 0) {
                 highscore = score;
                 localStorage.setItem("sabalaHigh", highscore);
@@ -218,7 +237,6 @@
                 title.innerText = "Yal 3ayooooz";
                 gifBox.innerHTML = '<img src="lee_crazy.gif" class="lee-gif">';
             }
-
             document.getElementById("death-screen").style.display = "flex";
         }
 
@@ -234,13 +252,6 @@
             document.getElementById("death-screen").style.display = "none";
             startSabala();
         }
-
-        // --- LANDING ---
-        document.getElementById("forbidden-button").addEventListener("click", () => {
-            document.getElementById("landing-page").style.display = "none";
-            document.getElementById("main-content").style.display = "block";
-            document.body.style.backgroundColor = "#FFD1DC";
-        });
 
         window.addEventListener('mousemove', (e) => {
             if (isSabalaActive) return;
