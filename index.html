@@ -99,127 +99,192 @@ button.game-btn { background: #FF69B4; color: white; border: none; padding: 10px
 const fBtn = document.getElementById("forbidden-button");
 let escapes = 0;
 fBtn.addEventListener("mouseover", () => {
-    if(escapes<6){ fBtn.style.position="absolute"; fBtn.style.left=Math.random()*(window.innerWidth-200)+"px"; fBtn.style.top=Math.random()*(window.innerHeight-100)+"px"; escapes++; }
+    if(escapes<6){ 
+        fBtn.style.position="absolute"; 
+        fBtn.style.left=Math.random()*(window.innerWidth-200)+"px"; 
+        fBtn.style.top=Math.random()*(window.innerHeight-100)+"px"; 
+        escapes++; 
+    }
 });
-fBtn.addEventListener("click", () => { document.getElementById("landing-page").style.display="none"; document.getElementById("main-content").style.display="block"; document.body.style.backgroundColor="#FFD1DC"; });
+fBtn.addEventListener("click", () => { 
+    document.getElementById("landing-page").style.display="none"; 
+    document.getElementById("main-content").style.display="block"; 
+    document.body.style.backgroundColor="#FFD1DC"; 
+});
 
 // --- PETS ---
-let pCount=0,bClicks=0,cTemp=20,jClicks=0;
+let pCount=0, bClicks=0, cTemp=20, jClicks=0;
 
 function playSeal(){ 
     pCount++; 
     let msg = "Pets: " + pCount;
+    
     if(pCount === 10) {
         msg = "🥰 So cute and squishy! 🥰";
     } else if(pCount === 20) {
         msg = "Shfeech mb 9aya? 😅";
+    } else if(pCount > 20) {
+        msg = "Pets: " + pCount + " (mb t3abt?)";
     }
+    
     document.getElementById("seal-game").innerText = msg;
 }
 
-function playBun(){ bClicks++; document.getElementById("bun-img").style.transform=`scale(${1+bClicks*0.45})`; }
+function playBun(){ 
+    bClicks++; 
+    document.getElementById("bun-img").style.transform=`scale(${1+bClicks*0.45})`; 
+}
 
 function playCat(){ 
-    cTemp+=5; 
+    cTemp += 5; 
     let msg = "Temp: " + cTemp + "°C";
+    
     if(cTemp > 65) {
         document.getElementById("cat-img").src="sphynx_black.png";
         msg = "7aragteeee 🔥😱";
     }
+    
     document.getElementById("cat-game").innerText = msg;
 }
 
-function playJanu(){ jClicks++; if(jClicks<=5){const phrases=["Whatcha doin?","Pretty girl!","I love Abrar!","Muah!","Peek-a-boo!"]; document.getElementById("janu-game").innerText="Janu says: "+phrases[Math.floor(Math.random()*phrases.length)];} else { document.getElementById("scare-video").src="https://www.youtube.com/embed/ix3rE46lWsU?autoplay=1"; document.getElementById("janu-scare").style.display="block"; } }
+function playJanu(){ 
+    jClicks++; 
+    if(jClicks <= 5) {
+        const phrases = ["Whatcha doin?", "Pretty girl!", "I love Abrar!", "Muah!", "Peek-a-boo!"]; 
+        document.getElementById("janu-game").innerText = "Janu says: " + phrases[Math.floor(Math.random()*phrases.length)];
+    } else { 
+        document.getElementById("scare-video").src = "https://www.youtube.com/embed/ix3rE46lWsU?autoplay=1"; 
+        document.getElementById("janu-scare").style.display = "block"; 
+    } 
+}
 
-function closeScare(){ document.getElementById("scare-video").src=""; document.getElementById("janu-scare").style.display="none"; jClicks=0; document.getElementById("janu-game").innerText="Janu is watching."; }
+function closeScare(){ 
+    document.getElementById("scare-video").src = ""; 
+    document.getElementById("janu-scare").style.display = "none"; 
+    jClicks = 0; 
+    document.getElementById("janu-game").innerText = "Janu is watching."; 
+}
 
-// --- SABALA ---
-let isSabalaActive=false, score=0, highscore=parseInt(localStorage.getItem("sabalaHigh"))||0;
-document.getElementById("high-score-val").innerText=highscore;
-let fallIntervals=[], spawnTimeouts=[];
+// --- SABALA GAME ---
+let isSabalaActive = false;
+let score = 0;
+let highscore = parseInt(localStorage.getItem("sabalaHigh")) || 0;
+document.getElementById("high-score-val").innerText = highscore;
+let fallIntervals = [];
+let spawnTimeouts = [];
 
 function startSabala(){ 
-    resetSabala(); 
-    document.getElementById("main-content").style.display="none"; 
-    document.getElementById("sabala-sim").style.display="block"; 
+    document.getElementById("main-content").style.display = "none"; 
+    document.getElementById("sabala-sim").style.display = "block"; 
+    resetSabala();
 }
 
 function spawnBanana(){
     if(!isSabalaActive) return;
-    const b=document.createElement("div"); b.className="banana"; b.innerHTML="🍌";
-    b.style.left=Math.random()*(window.innerWidth-50)+"px"; b.style.top="-50px";
+    
+    const b = document.createElement("div"); 
+    b.className = "banana"; 
+    b.innerHTML = "🍌";
+    b.style.left = Math.random()*(window.innerWidth-50) + "px"; 
+    b.style.top = "-50px";
     document.getElementById("sabala-sim").appendChild(b);
 
-    const fallInterval=setInterval(()=>{
-        if(!isSabalaActive){ clearInterval(fallInterval); b.remove(); return; }
-        let topPos=parseInt(b.style.top);
-        b.style.top=(topPos+7+score/4)+"px";
+    const fallInterval = setInterval(() => {
+        if(!isSabalaActive){ 
+            clearInterval(fallInterval); 
+            b.remove(); 
+            return; 
+        }
+        
+        let topPos = parseInt(b.style.top);
+        b.style.top = (topPos + 7 + score/4) + "px";
 
-        let bRect=b.getBoundingClientRect();
-        let pRect=document.getElementById("sabala-player").getBoundingClientRect();
+        let bRect = b.getBoundingClientRect();
+        let pRect = document.getElementById("sabala-player").getBoundingClientRect();
 
-        if(bRect.bottom>pRect.top && bRect.left<pRect.right && bRect.right>pRect.left){
+        if(bRect.bottom > pRect.top && bRect.left < pRect.right && bRect.right > pRect.left){
             score++;
-            document.getElementById("score-board").innerHTML=`Bananas: ${score} | High Score: ${highscore}`;
-            clearInterval(fallInterval); b.remove();
+            document.getElementById("score-board").innerHTML = `Bananas: ${score} | High Score: ${highscore}`;
+            clearInterval(fallInterval); 
+            b.remove();
             spawnBanana();
             return;
         }
 
-        if(topPos>window.innerHeight){ clearInterval(fallInterval); b.remove(); triggerGameOver(); }
-    },20);
+        if(topPos > window.innerHeight){ 
+            clearInterval(fallInterval); 
+            b.remove(); 
+            triggerGameOver(); 
+        }
+    }, 20);
+    
     fallIntervals.push(fallInterval);
-    spawnTimeouts.push(setTimeout(spawnBanana, Math.max(300,1000-score*15)));
+    spawnTimeouts.push(setTimeout(spawnBanana, Math.max(300, 1000 - score*15)));
 }
 
 function triggerGameOver(){
     if(!isSabalaActive) return;
-    isSabalaActive=false; stopAllBananas();
-    document.getElementById("sabala-sim").style.display="none";
-    document.getElementById("death-screen").style.display="flex";
-    document.getElementById("final-score").innerText=score;
+    
+    isSabalaActive = false; 
+    stopAllBananas();
+    document.getElementById("sabala-sim").style.display = "none";
+    document.getElementById("death-screen").style.display = "flex";
+    document.getElementById("final-score").innerText = score;
 
-    const title=document.getElementById("death-title");
-    const gifBox=document.getElementById("gif-container"); gifBox.innerHTML="";
+    const title = document.getElementById("death-title");
+    const gifBox = document.getElementById("gif-container"); 
+    gifBox.innerHTML = "";
 
-    if(score>highscore){
-        highscore=score;
-        localStorage.setItem("sabalaHigh",highscore);
-        document.getElementById("high-score-val").innerText=highscore;
-        title.innerText="🎉 9ij Sabala! 🎉";
-        gifBox.innerHTML='<img src="lee_dance.gif" class="lee-gif"><img src="lee_yes.gif" class="lee-gif">';
+    if(score > highscore){
+        highscore = score;
+        localStorage.setItem("sabalaHigh", highscore);
+        document.getElementById("high-score-val").innerText = highscore;
+        title.innerText = "🎉 9ij Sabala! 🎉";
+        gifBox.innerHTML = '<img src="lee_dance.gif" class="lee-gif"><img src="lee_yes.gif" class="lee-gif">';
     } else {
-        title.innerText="Yal 3ayooooz";
-        gifBox.innerHTML='<img src="lee_crazy.gif" class="lee-gif">';
+        title.innerText = "Yal 3ayooooz";
+        gifBox.innerHTML = '<img src="lee_crazy.gif" class="lee-gif">';
     }
 }
 
 function resetSabala(){
     stopAllBananas(); 
-    score=0; 
-    isSabalaActive=true;
-    document.querySelectorAll("#sabala-sim .banana").forEach(b=>b.remove());
-    document.getElementById("score-board").innerHTML=`Bananas: 0 | High Score: ${highscore}`;
-    document.getElementById("sabala-container").style.left="50%";
+    score = 0; 
+    isSabalaActive = true;
+    document.querySelectorAll("#sabala-sim .banana").forEach(b => b.remove());
+    document.getElementById("score-board").innerHTML = `Bananas: 0 | High Score: ${highscore}`;
+    document.getElementById("sabala-container").style.left = "50%";
     spawnBanana();
 }
 
 function retryGame() {
-    document.getElementById("death-screen").style.display="none";
-    document.getElementById("sabala-sim").style.display="block";
+    document.getElementById("death-screen").style.display = "none";
+    document.getElementById("sabala-sim").style.display = "block";
     resetSabala();
 }
 
-function stopAllBananas(){ fallIntervals.forEach(i=>clearInterval(i)); spawnTimeouts.forEach(t=>clearTimeout(t)); fallIntervals=[]; spawnTimeouts=[]; }
+function stopAllBananas(){ 
+    fallIntervals.forEach(i => clearInterval(i)); 
+    spawnTimeouts.forEach(t => clearTimeout(t)); 
+    fallIntervals = []; 
+    spawnTimeouts = []; 
+}
 
-function clearHighScore(){ localStorage.setItem("sabalaHigh",0); highscore=0; document.getElementById("high-score-val").innerText=0; alert("Record wiped!"); }
+function clearHighScore(){ 
+    localStorage.setItem("sabalaHigh", 0); 
+    highscore = 0; 
+    document.getElementById("high-score-val").innerText = 0; 
+    alert("Record wiped!"); 
+}
 
 // MONKEY FOLLOW MOUSE
-window.addEventListener("mousemove", e=>{
+window.addEventListener("mousemove", e => {
     if(!isSabalaActive) return;
-    const container=document.getElementById("sabala-container");
-    let x=e.pageX; if(x<50)x=50; if(x>window.innerWidth-50)x=window.innerWidth-50;
-    container.style.left=x+"px";
+    const container = document.getElementById("sabala-container");
+    let x = e.pageX; 
+    if(x < 50) x = 50; 
+    if(x > window.innerWidth - 50) x = window.innerWidth - 50;
+    container.style.left = x + "px";
 });
 </script>
 </body>
