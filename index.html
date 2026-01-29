@@ -57,6 +57,21 @@ const btn = document.getElementById("forbidden-button");
 const landing = document.getElementById("landing-page");
 const main = document.getElementById("main-content");
 
+let escapes = 0;
+
+// RUN AWAY BUTTON 😈
+btn.addEventListener("mouseover", () => {
+    if (escapes < 6) {
+        const x = Math.random() * (window.innerWidth - btn.clientWidth);
+        const y = Math.random() * (window.innerHeight - btn.clientHeight);
+        btn.style.position = "absolute";
+        btn.style.left = x + "px";
+        btn.style.top = y + "px";
+        escapes++;
+    }
+});
+
+// CLICK → NEXT PAGE
 btn.addEventListener("click", () => {
     landing.style.display = "none";
     main.style.display = "block";
@@ -75,7 +90,6 @@ function playSeal() {
 // BUNNY
 let food = 0;
 let hasExploded = false;
-
 function playBun() {
     if (hasExploded) return;
 
@@ -98,10 +112,7 @@ function playBun() {
         bunText.style.color = "red";
         feedBtn.style.display = "none";
 
-        setTimeout(() => {
-            bunImg.style.display = "none";
-        }, 600);
-
+        setTimeout(() => { bunImg.style.display = "none"; }, 600);
         alert("YOU FED HIM TOO MUCH 🥕💥");
     }
 }
