@@ -181,16 +181,24 @@
             const bunBtn = document.getElementById("bun-btn");
             const frame = document.getElementById("bun-frame");
 
-            bunImg.style.transform = `scale(${1 + food * 0.35})`;
+            // Scale the bunny up
+            let currentScale = 1 + food * 0.35;
+            bunImg.style.transform = `scale(${currentScale})`;
 
+            // Add shake as it gets dangerously big
             if (food > 8 && food < 13) {
                 bunImg.style.animation = "shake 0.5s infinite";
             }
 
             if (food >= 13) {
-                frame.innerHTML = "<span style='font-size: 80px;'>💥</span>";
+                // 1. Force the frame to ONLY show the explosion
+                frame.innerHTML = "<span style='font-size: 100px; display: block; transform: scale(2); transition: 0.2s;'>💥</span>";
+                
+                // 2. Hide the button and update text immediately
                 bunBtn.style.display = "none";
                 bunText.innerHTML = "POPPED!";
+                
+                // 3. After the "pop" moment, show the tombstone
                 setTimeout(() => {
                     frame.innerHTML = "<span style='font-size: 60px;'>🪦</span>";
                     container.style.backgroundColor = "#2a2a2a";
@@ -201,7 +209,6 @@
                 }, 600);
             }
         }
-
         // FIXED SEAL LOGIC
         let pets = 0;
         function playSeal() {
@@ -244,3 +251,4 @@
     </script>
 </body>
 </html>
+
