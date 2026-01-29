@@ -7,32 +7,26 @@
     <style>
         body { background-color: #1a1a1a; color: #FF69B4; font-family: 'Segoe UI', sans-serif; margin: 0; overflow-x: hidden; cursor: url('https://img.icons8.com/color/32/hello-kitty.png'), auto; }
         
-        /* Layouts */
         #landing-page, #main-content, #sabala-sim { display: none; text-align: center; min-height: 100vh; width: 100%; }
         #landing-page { display: flex; flex-direction: column; justify-content: center; align-items: center; }
         #main-content { padding: 50px 0; }
 
-        /* Glitter */
         .glitter { position: fixed; width: 10px; height: 10px; border-radius: 2px; pointer-events: none; z-index: 1000; box-shadow: 0 0 10px white; }
         #glitter-floor { position: fixed; bottom: 0; left: 0; width: 100%; height: 0px; background: linear-gradient(to right, #ff00ff, #00ffff, #ff00ff, #ffff00); background-size: 400% 400%; animation: rainbowShift 8s ease infinite; z-index: 999; opacity: 0.5; }
         @keyframes rainbowShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
-        /* Menagerie */
         .menagerie { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 40px auto; max-width: 1200px; }
-        .animal-box { background: white; padding: 15px; border-radius: 25px; box-shadow: 8px 8px 0px #FF69B4; width: 200px; min-height: 280px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; transition: 0.5s; }
+        .animal-box { background: white; padding: 15px; border-radius: 25px; box-shadow: 8px 8px 0px #FF69B4; width: 200px; min-height: 280px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; transition: 0.5s; overflow: hidden; }
         .animal-img { width: 140px; height: 140px; object-fit: contain; cursor: pointer; transition: transform 0.2s, filter 0.3s; }
         button.game-btn { background: #FF69B4; color: white; border: none; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: bold; }
         
-        /* Sabala Sim Styling */
         #sabala-sim { background-color: #2ecc71; cursor: none; }
         #sabala-player { position: absolute; font-size: 60px; bottom: 20px; transform: translateX(-50%); pointer-events: none; }
         .banana { position: absolute; font-size: 40px; }
         #score-board { font-size: 30px; color: white; padding: 20px; font-weight: bold; text-shadow: 2px 2px #000; }
 
-        /* Secret Button */
-        #final-boss-btn { display: none; background: linear-gradient(45deg, #ffd700, #ff69b4); border: 5px solid white; padding: 20px 50px; font-size: 28px; border-radius: 50px; color: white; font-weight: bold; cursor: pointer; box-shadow: 0 0 30px gold; margin-top: 30px; animation: shake 0.5s infinite; }
-        @keyframes shake { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(5deg); } 75% { transform: rotate(-5deg); } }
-        @keyframes imgShake { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-2px, -1px); } 100% { transform: translate(1px, 1px); } }
+        #final-boss-btn { display: none; background: linear-gradient(45deg, #ffd700, #ff69b4); border: 5px solid white; padding: 20px 50px; font-size: 28px; border-radius: 50px; color: white; font-weight: bold; cursor: pointer; box-shadow: 0 0 30px gold; margin-top: 30px; animation: buttonPop 0.5s infinite alternate; }
+        @keyframes buttonPop { from { transform: scale(1); } to { transform: scale(1.05); } }
     </style>
 </head>
 <body>
@@ -55,7 +49,7 @@
             </div>
             <div id="bunny-container" class="animal-box">
                 <div class="label">The Chaos Bun</div>
-                <div id="bun-frame"><img src="bunny.png" class="animal-img" id="bun-img"></div>
+                <img src="bunny.png" class="animal-img" id="bun-img">
                 <p id="bun-game" class="game-text">Hungry...</p>
                 <button class="game-btn" id="bun-btn" onclick="playBun()">FEED CARROT 🥕</button>
             </div>
@@ -77,12 +71,12 @@
 
     <div id="sabala-sim">
         <div id="score-board">Bananas: 0 | High Score: <span id="high-score">0</span></div>
-        <h2 style="color:white">MOVE MOUSE TO CATCH BANANAS! 🍌</h2>
+        <h2 style="color:white">CATCH THE BANANAS! 🍌</h2>
         <div id="sabala-player">🐒</div>
     </div>
 
     <div id="janu-scare" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:2000; background:black; padding:10px; border:5px solid #FF69B4; border-radius:20px;">
-        <iframe id="scare-video" width="315" height="560" src="" frameborder="0" allow="autoplay"></iframe><br>
+        <iframe id="scare-video" width="315" height="560" src="" frameborder="0"></iframe><br>
         <button class="game-btn" onclick="closeScare()">SORRY JANU 😭</button>
     </div>
 
@@ -94,28 +88,26 @@
             }
         }
 
-        // --- BUNNY ---
+        // --- BUNNY (REVERTED TO GROWING) ---
         let food = 0;
         function playBun() {
             food++;
             const bunImg = document.getElementById("bun-img");
-            if (food > 8 && food < 13) bunImg.style.animation = "imgShake 0.1s infinite";
-            bunImg.style.transform = `scale(${1 + food * 0.35})`;
+            const bunText = document.getElementById("bun-game");
+            const bunBtn = document.getElementById("bun-btn");
+
+            bunImg.style.transform = `scale(${1 + food * 0.45})`;
+
             if (food >= 13) {
-                document.getElementById("bun-frame").innerHTML = "<span style='font-size: 100px; display: block; transform: scale(2);'>💥</span>";
-                document.getElementById("bun-btn").style.display = "none";
-                setTimeout(() => {
-                    document.getElementById("bun-frame").innerHTML = "<span style='font-size: 60px;'>🪦</span>";
-                    document.getElementById("bunny-container").style.backgroundColor = "#2a2a2a";
-                    document.getElementById("bun-game").innerHTML = "YOU MURDERED THE BUNNY??";
-                    document.getElementById("bun-game").style.color = "red";
-                    gamesDone.bun = true; checkProgress();
-                    alert("YOU MURDERED THE BUNNY?? 🥕💥");
-                }, 600);
+                bunText.innerHTML = "MEGA BUNNY UNLOCKED! ✨";
+                bunBtn.innerText = "MAX LEVEL";
+                bunBtn.style.opacity = "0.5";
+                bunBtn.disabled = true;
+                gamesDone.bun = true; checkProgress();
             }
         }
 
-        // --- SEAL ---
+        // --- SEAL (RESTORED MESSAGES) ---
         let pets = 0;
         function playSeal() {
             pets++;
@@ -157,7 +149,7 @@
         }
         function closeScare() { document.getElementById("scare-video").src = ""; document.getElementById("janu-scare").style.display = "none"; }
 
-        // --- SABALA SIMULATOR ---
+        // --- SABALA SIM ---
         let score = 0;
         let highscore = localStorage.getItem("sabalaHigh") || 0;
         document.getElementById("high-score").innerText = highscore;
@@ -165,56 +157,41 @@
         function startSabala() {
             document.getElementById("main-content").style.display = "none";
             document.getElementById("sabala-sim").style.display = "block";
-            document.body.style.backgroundColor = "#2ecc71";
             spawnBanana();
         }
 
-        const player = document.getElementById("sabala-player");
         window.addEventListener("mousemove", (e) => {
-            player.style.left = e.pageX + "px";
+            document.getElementById("sabala-player").style.left = e.pageX + "px";
         });
 
         function spawnBanana() {
             if (document.getElementById("sabala-sim").style.display === "none") return;
             const b = document.createElement("div");
-            b.className = "banana";
-            b.innerHTML = "🍌";
+            b.className = "banana"; b.innerHTML = "🍌";
             b.style.left = Math.random() * (window.innerWidth - 50) + "px";
             b.style.top = "-50px";
             document.getElementById("sabala-sim").appendChild(b);
 
             let fall = setInterval(() => {
                 let top = parseInt(b.style.top);
-                b.style.top = (top + 5 + (score/5)) + "px";
-
-                // Collision Detection
-                let bRect = b.getBoundingClientRect();
-                let pRect = player.getBoundingClientRect();
+                b.style.top = (top + 6 + (score/4)) + "px";
+                let bRect = b.getBoundingClientRect(), pRect = document.getElementById("sabala-player").getBoundingClientRect();
 
                 if (bRect.top + 40 > pRect.top && bRect.left < pRect.right && bRect.right > pRect.left) {
                     score++;
                     document.getElementById("score-board").innerHTML = `Bananas: ${score} | High Score: ${highscore}`;
-                    if (score > highscore) {
-                        highscore = score;
-                        localStorage.setItem("sabalaHigh", highscore);
-                    }
-                    b.remove();
-                    clearInterval(fall);
+                    if (score > highscore) { highscore = score; localStorage.setItem("sabalaHigh", highscore); }
+                    b.remove(); clearInterval(fall);
                 }
-
                 if (top > window.innerHeight) {
-                    b.remove();
-                    clearInterval(fall);
-                    if (score > 0) {
-                        alert("GAME OVER! You dropped a banana. Score: " + score);
-                        score = 0;
-                    }
+                    b.remove(); clearInterval(fall);
+                    if (score > 0) { alert("GAME OVER! Score: " + score); score = 0; }
                 }
             }, 20);
-            setTimeout(spawnBanana, 1000 - (score * 10));
+            setTimeout(spawnBanana, 1000 - (score * 12));
         }
 
-        // --- LANDING BUTTON ---
+        // --- LANDING & GLITTER ---
         const fBtn = document.getElementById("forbidden-button");
         let escapes = 0;
         fBtn.addEventListener("mouseover", () => {
@@ -231,17 +208,15 @@
             document.body.style.backgroundColor = "#FFD1DC";
         });
 
-        // --- GLITTER ---
         window.addEventListener('mousemove', (e) => {
             if (Math.random() > 0.85) {
                 const g = document.createElement('div');
                 g.className = 'glitter';
                 g.style.left = e.pageX + 'px'; g.style.top = e.pageY + 'px';
-                const colors = ['#FF69B4', '#DA70D6', '#00FFFF', '#FFD700', '#FF4500'];
-                g.style.background = colors[Math.floor(Math.random() * colors.length)];
+                g.style.background = ['#FF69B4', '#DA70D6', '#00FFFF', '#FFD700'][Math.floor(Math.random()*4)];
                 document.body.appendChild(g);
-                let floorHeight = parseFloat(document.getElementById('glitter-floor').style.height) || 0;
-                document.getElementById('glitter-floor').style.height = (floorHeight + 0.2) + 'px';
+                let floor = document.getElementById('glitter-floor');
+                floor.style.height = (parseFloat(floor.style.height || 0) + 0.2) + 'px';
                 g.animate([{ opacity: 1 }, { transform: `translate(${(Math.random()-0.5)*150}px, ${window.innerHeight}px) scale(0)`, opacity: 0 }], 1500);
                 setTimeout(() => g.remove(), 1500);
             }
