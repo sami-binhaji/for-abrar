@@ -26,7 +26,8 @@
         .banana { position: absolute; font-size: 40px; }
         #score-board { font-size: 30px; color: white; padding: 20px; font-weight: bold; text-shadow: 2px 2px #000; }
 
-        #final-boss-btn { display: none; background: linear-gradient(45deg, #ffd700, #ff69b4); border: 5px solid white; padding: 20px 50px; font-size: 28px; border-radius: 50px; color: white; font-weight: bold; cursor: pointer; box-shadow: 0 0 30px gold; margin-top: 30px; animation: buttonPop 0.5s infinite alternate; }
+        /* GOLDEN BUTTON - NOW ALWAYS VISIBLE */
+        #final-boss-btn { display: inline-block; background: linear-gradient(45deg, #ffd700, #ff69b4); border: 5px solid white; padding: 20px 50px; font-size: 28px; border-radius: 50px; color: white; font-weight: bold; cursor: pointer; box-shadow: 0 0 30px gold; margin-top: 30px; animation: buttonPop 0.5s infinite alternate; }
         @keyframes buttonPop { from { transform: scale(1); } to { transform: scale(1.05); } }
     </style>
 </head>
@@ -74,6 +75,7 @@
         <div id="score-board">Bananas: 0 | High Score: <span id="high-score">0</span></div>
         <h2 style="color:white">CATCH THE BANANAS! 🍌</h2>
         <div id="sabala-player">🐒</div>
+        <button class="game-btn" style="position:fixed; bottom:20px; right:20px; z-index:5000;" onclick="location.reload()">BACK TO PETS</button>
     </div>
 
     <div id="janu-scare" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:2000; background:black; padding:10px; border:5px solid #FF69B4; border-radius:20px;">
@@ -82,33 +84,16 @@
     </div>
 
     <script>
-        // Track the 4 core conditions
-        let conditions = {
-            petsDone: false,
-            bunDone: false,
-            catDone: false,
-            januDone: false
-        };
-
-        function checkFinalUnlock() {
-            if (conditions.petsDone && conditions.bunDone && conditions.catDone && conditions.januDone) {
-                document.getElementById('final-boss-btn').style.display = 'inline-block';
-            }
-        }
-
-        // --- SEAL (Pets = 20) ---
+        // --- SEAL ---
         let pCount = 0;
         function playSeal() {
             pCount++;
             document.getElementById("seal-game").innerText = "Pets: " + pCount;
             if (pCount === 10) alert("The seal thinks you're its best friend now.");
-            if (pCount >= 20) {
-                conditions.petsDone = true;
-                checkFinalUnlock();
-            }
+            if (pCount === 20) alert("bs la? shfeech mb 9a7ya 😂");
         }
 
-        // --- BUNNY (Clicked 5 times) ---
+        // --- BUNNY ---
         let bClicks = 0;
         function playBun() {
             bClicks++;
@@ -116,12 +101,10 @@
             bunImg.style.transform = `scale(${1 + bClicks * 0.45})`;
             if (bClicks >= 5) {
                 document.getElementById("bun-game").innerHTML = "MEGA BUNNY!";
-                conditions.bunDone = true;
-                checkFinalUnlock();
             }
         }
 
-        // --- GOBLINO (Until overcooked > 65) ---
+        // --- GOBLINO ---
         let cTemp = 20;
         function playCat() {
             cTemp += 5;
@@ -133,12 +116,11 @@
                 document.getElementById("cat-img").src = "sphynx_black.png";
                 text.innerText = "YOU OVERCOOKED HIM 😭";
                 text.style.color = "red";
-                conditions.catDone = true;
-                checkFinalUnlock();
+                alert("You overcooked him 😭");
             }
         }
 
-        // --- JANU (Click Sorry Janu) ---
+        // --- JANU ---
         let jClicks = 0;
         function playJanu() {
             jClicks++;
@@ -151,13 +133,9 @@
                 jClicks = 0;
             }
         }
-
         function closeScare() {
             document.getElementById("scare-video").src = "";
             document.getElementById("janu-scare").style.display = "none";
-            // TRIGGER FOR JANU CONDITION
-            conditions.januDone = true;
-            checkFinalUnlock();
         }
 
         // --- SABALA SIM ---
