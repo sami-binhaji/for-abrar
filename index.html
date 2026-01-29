@@ -255,13 +255,14 @@ function spawnBanana(){
             score++;
             
             // Check if just beat highscore for the first time this session
-            if(!hasBeatenHighscore && highscore > 0 && score > highscore) {
+            // Note: if highscore is 0, ANY score counts as beating it
+            if(!hasBeatenHighscore && score > highscore) {
                 hasBeatenHighscore = true;
                 // Update highscore in real-time
                 highscore = score;
                 localStorage.setItem("sabalaHigh", highscore);
                 document.getElementById("high-score-val").innerText = highscore;
-                console.log("🎉 Beat the highscore! Keep going!");
+                console.log("🎉 Beat the highscore! Keep going! Old:", highscore, "New:", score);
             } else if(hasBeatenHighscore && score > highscore) {
                 // Continue updating highscore as player keeps going
                 highscore = score;
