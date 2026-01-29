@@ -1,109 +1,45 @@
-body {
-    background-color: #1a1a1a;
-    color: #FF69B4;
-    font-family: 'Segoe UI', Tahoma, sans-serif;
+/* Resetting the basics */
+html, body {
     margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #1a1a1a; /* Dark background so the pink pops */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
     overflow: hidden;
 }
 
-/* BOTH PAGES FULL SCREEN */
-#landing-page,
-#main-content {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
+#landing-page {
     text-align: center;
+    z-index: 10;
 }
 
-/* hide minigames at start */
-#main-content {
-    display: none;
+#warning-text {
+    color: #FF69B4;
+    margin-bottom: 20px;
+    font-size: 2rem;
 }
 
-/* BUTTON */
 #forbidden-button {
     background-color: #FF69B4;
     color: white;
     border: 4px solid white;
-    padding: 20px 40px;
-    font-size: 24px;
+    padding: 15px 30px;
+    font-size: 1.5rem;
     border-radius: 50px;
     cursor: pointer;
     box-shadow: 0 0 20px #FF69B4;
-    font-weight: bold;
+    /* This ensures it doesn't vanish immediately */
+    position: relative; 
 }
 
-/* MENAGERIE LAYOUT */
-.menagerie {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-    margin-top: 40px;
-}
-
-.animal-box {
-    background: white;
-    padding: 15px;
-    border-radius: 25px;
-    box-shadow: 8px 8px 0px #FF69B4;
-    width: 200px;
-    min-height: 280px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-}
-
-/* IMAGES */
-.animal-img {
-    width: 140px;
-    height: 140px;
-    object-fit: contain;
-    cursor: pointer;
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-/* TEXT */
-.label {
-    color: #1a1a1a;
-    font-weight: bold;
-    font-size: 1rem;
-    text-transform: uppercase;
-}
-
-.game-text {
-    font-size: 0.8rem;
-    color: #555;
-    font-weight: bold;
-}
-
-/* GAME BUTTONS */
-.game-btn {
-    background: #FF69B4;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 0.7rem;
-}
-
-/* BUNNY EXPLOSION */
-.explode {
-    animation: boom 0.6s ease-out forwards;
-}
-
-@keyframes boom {
-    0% { transform: scale(3) rotate(0deg); opacity: 1; }
-    50% { transform: scale(5) rotate(180deg); opacity: 0.7; }
-    100% { transform: scale(0); opacity: 0; }
+/* The Menagerie (hidden at first) */
+#main-content {
+    display: none;
+    width: 100%;
+    height: 100%;
+    background-color: #FFD1DC; /* Pink background for the surprise */
 }
