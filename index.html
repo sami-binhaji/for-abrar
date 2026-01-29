@@ -95,38 +95,40 @@ button.game-btn { background: #FF69B4; color: white; border: none; padding: 10px
 </div>
 
 <script>
-// BUTTON
-const fBtn=document.getElementById("forbidden-button");
-let escapes=0;
-fBtn.addEventListener("mouseover",()=>{if(escapes<6){fBtn.style.position="absolute";fBtn.style.left=Math.random()*(window.innerWidth-200)+"px";fBtn.style.top=Math.random()*(window.innerHeight-100)+"px";escapes++;}});
-fBtn.addEventListener("click",()=>{document.getElementById("landing-page").style.display="none";document.getElementById("main-content").style.display="block";document.body.style.backgroundColor="#FFD1DC";});
+// --- BUTTON ---
+const fBtn = document.getElementById("forbidden-button");
+let escapes = 0;
+fBtn.addEventListener("mouseover", () => {
+    if(escapes<6){ fBtn.style.position="absolute"; fBtn.style.left=Math.random()*(window.innerWidth-200)+"px"; fBtn.style.top=Math.random()*(window.innerHeight-100)+"px"; escapes++; }
+});
+fBtn.addEventListener("click", () => { document.getElementById("landing-page").style.display="none"; document.getElementById("main-content").style.display="block"; document.body.style.backgroundColor="#FFD1DC"; });
 
-// PETS
+// --- PETS ---
 let pCount=0,bClicks=0,cTemp=20,jClicks=0;
-function playSeal(){pCount++; document.getElementById("seal-game").innerText="Pets: "+pCount;}
-function playBun(){bClicks++; document.getElementById("bun-img").style.transform=`scale(${1+bClicks*0.45})`;}
-function playCat(){cTemp+=5; document.getElementById("cat-game").innerText="Temp: "+cTemp+"°C"; if(cTemp>65) document.getElementById("cat-img").src="sphynx_black.png";}
-function playJanu(){jClicks++; if(jClicks<=5){const phrases=["Whatcha doin?","Pretty girl!","I love Abrar!","Muah!","Peek-a-boo!"]; document.getElementById("janu-game").innerText="Janu says: "+phrases[Math.floor(Math.random()*phrases.length)];}else{document.getElementById("scare-video").src="https://www.youtube.com/embed/ix3rE46lWsU?autoplay=1";document.getElementById("janu-scare").style.display="block";}}
-function closeScare(){document.getElementById("scare-video").src="";document.getElementById("janu-scare").style.display="none";jClicks=0;document.getElementById("janu-game").innerText="Janu is watching.";}
+function playSeal(){ pCount++; document.getElementById("seal-game").innerText="Pets: "+pCount; }
+function playBun(){ bClicks++; document.getElementById("bun-img").style.transform=`scale(${1+bClicks*0.45})`; }
+function playCat(){ cTemp+=5; document.getElementById("cat-game").innerText="Temp: "+cTemp+"°C"; if(cTemp>65) document.getElementById("cat-img").src="sphynx_black.png"; }
+function playJanu(){ jClicks++; if(jClicks<=5){const phrases=["Whatcha doin?","Pretty girl!","I love Abrar!","Muah!","Peek-a-boo!"]; document.getElementById("janu-game").innerText="Janu says: "+phrases[Math.floor(Math.random()*phrases.length)];} else { document.getElementById("scare-video").src="https://www.youtube.com/embed/ix3rE46lWsU?autoplay=1"; document.getElementById("janu-scare").style.display="block"; } }
+function closeScare(){ document.getElementById("scare-video").src=""; document.getElementById("janu-scare").style.display="none"; jClicks=0; document.getElementById("janu-game").innerText="Janu is watching."; }
 
-// SABALA GAME
-let isSabalaActive=false,score=0,highscore=parseInt(localStorage.getItem("sabalaHigh"))||0;
+// --- SABALA ---
+let isSabalaActive=false, score=0, highscore=parseInt(localStorage.getItem("sabalaHigh"))||0;
 document.getElementById("high-score-val").innerText=highscore;
-let fallIntervals=[],spawnTimeouts=[];
+let fallIntervals=[], spawnTimeouts=[];
 
 function startSabala(){ resetSabala(); document.getElementById("main-content").style.display="none"; document.getElementById("sabala-sim").style.display="block"; }
 
 function spawnBanana(){
     if(!isSabalaActive) return;
-    const b=document.createElement("div");
-    b.className="banana"; b.innerHTML="🍌";
+    const b=document.createElement("div"); b.className="banana"; b.innerHTML="🍌";
     b.style.left=Math.random()*(window.innerWidth-50)+"px"; b.style.top="-50px";
     document.getElementById("sabala-sim").appendChild(b);
 
     const fallInterval=setInterval(()=>{
-        if(!isSabalaActive){clearInterval(fallInterval); b.remove(); return;}
+        if(!isSabalaActive){ clearInterval(fallInterval); b.remove(); return; }
         let topPos=parseInt(b.style.top);
         b.style.top=(topPos+7+score/4)+"px";
+
         let bRect=b.getBoundingClientRect();
         let pRect=document.getElementById("sabala-player").getBoundingClientRect();
 
@@ -138,7 +140,7 @@ function spawnBanana(){
             return;
         }
 
-        if(topPos>window.innerHeight){clearInterval(fallInterval); b.remove(); triggerGameOver();}
+        if(topPos>window.innerHeight){ clearInterval(fallInterval); b.remove(); triggerGameOver(); }
     },20);
     fallIntervals.push(fallInterval);
     spawnTimeouts.push(setTimeout(spawnBanana, Math.max(300,1000-score*15)));
@@ -152,11 +154,9 @@ function triggerGameOver(){
     document.getElementById("final-score").innerText=score;
 
     const title=document.getElementById("death-title");
-    const gifBox=document.getElementById("gif-container");
-    gifBox.innerHTML="";
+    const gifBox=document.getElementById("gif-container"); gifBox.innerHTML="";
 
     if(score>highscore){
-        // NEW HIGHSCORE
         highscore=score;
         localStorage.setItem("sabalaHigh",highscore);
         document.getElementById("high-score-val").innerText=highscore;
@@ -169,24 +169,21 @@ function triggerGameOver(){
 }
 
 function resetSabala(){
-    stopAllBananas();
-    score=0;
-    isSabalaActive=true;
+    stopAllBananas(); score=0; isSabalaActive=true;
     document.querySelectorAll("#sabala-sim .banana").forEach(b=>b.remove());
     document.getElementById("score-board").innerHTML=`Bananas: 0 | High Score: ${highscore}`;
     document.getElementById("sabala-container").style.left="50%";
     spawnBanana();
 }
 
-function stopAllBananas(){fallIntervals.forEach(i=>clearInterval(i)); spawnTimeouts.forEach(t=>clearTimeout(t)); fallIntervals=[]; spawnTimeouts=[];}
-function clearHighScore(){localStorage.setItem("sabalaHigh",0); highscore=0; document.getElementById("high-score-val").innerText=0; alert("Record wiped!");}
+function stopAllBananas(){ fallIntervals.forEach(i=>clearInterval(i)); spawnTimeouts.forEach(t=>clearTimeout(t)); fallIntervals=[]; spawnTimeouts=[]; }
+function clearHighScore(){ localStorage.setItem("sabalaHigh",0); highscore=0; document.getElementById("high-score-val").innerText=0; alert("Record wiped!"); }
 
 // MONKEY FOLLOW MOUSE
 window.addEventListener("mousemove", e=>{
     if(!isSabalaActive) return;
     const container=document.getElementById("sabala-container");
-    let x=e.pageX;
-    if(x<50)x=50; if(x>window.innerWidth-50)x=window.innerWidth-50;
+    let x=e.pageX; if(x<50)x=50; if(x>window.innerWidth-50)x=window.innerWidth-50;
     container.style.left=x+"px";
 });
 </script>
