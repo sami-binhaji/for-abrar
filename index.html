@@ -242,9 +242,29 @@
         }
 
         function resetSabala() {
-            document.getElementById("death-screen").style.display = "none";
-            startSabala();
-        }
+    // Hide death screen
+    document.getElementById("death-screen").style.display = "none";
+
+    // Remove all existing bananas
+    document.querySelectorAll("#sabala-sim .banana").forEach(b => b.remove());
+
+    // Reset score and game state
+    score = 0;
+    isSabalaActive = true;
+
+    // Reset player position to center
+    const container = document.getElementById("sabala-container");
+    container.style.left = "50%";
+
+    // Show sabala simulator
+    document.getElementById("sabala-sim").style.display = "block";
+
+    // Update scoreboard
+    document.getElementById("score-board").innerHTML = `Bananas: 0 | High Score: ${highscore}`;
+
+    // Start spawning bananas
+    spawnBanana();
+}
 
         // Glitter effect
         window.addEventListener('mousemove', (e) => {
@@ -261,3 +281,4 @@
     </script>
 </body>
 </html>
+
