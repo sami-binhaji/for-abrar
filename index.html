@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOR ABRAR 💖</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="landing-page">
+        <h1 id="warning-text">WARNING: DO NOT CLICK THE PINK BUTTON</h1>
+        <button id="forbidden-button">CLICK ME</button>
+    </div>
+
+    <div id="main-content" style="display: none;">
+        <h1>Happy Birthday Abrar! 🐷💖</h1>
+        <p>Hover over the animals for a surprise...</p>
+        <div class="menagerie">
+            <span class="animal" title="You're as cute as a pig!">🐷</span>
+            <span class="animal" title="Chaotic but lovable">🐿️</span>
+            <span class="animal" title="One of a kind">🦄</span>
+        </div>
+    </div>
+
+    <script>
+        const btn = document.getElementById('forbidden-button');
+        const landing = document.getElementById('landing-page');
+        const main = document.getElementById('main-content');
+        let count = 0;
+
+        btn.addEventListener('mouseover', () => {
+            if (count < 5) {
+                const x = Math.random() * (window.innerWidth - 100);
+                const y = Math.random() * (window.innerHeight - 50);
+                btn.style.position = 'absolute';
+                btn.style.left = x + 'px';
+                btn.style.top = y + 'px';
+                count++;
+            }
+        });
+
+        btn.addEventListener('click', () => {
+            landing.style.display = 'none';
+            main.style.display = 'block';
+            document.body.style.backgroundColor = '#FFD1DC';
+        });
+    </script>
+</body>
+</html>
