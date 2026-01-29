@@ -18,6 +18,8 @@ body { background-color: #1a1a1a; color: #FF69B4; font-family: 'Segoe UI', sans-
 button.game-btn { background: #FF69B4; color: white; border: none; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: bold; }
 
 #sabala-sim { background-color: #2ecc71; cursor: none; position: relative; overflow: hidden; }
+.cursor-glitter { position: fixed; width: 8px; height: 8px; background: gold; border-radius: 50%; pointer-events: none; animation: cursorGlitterFade 0.8s ease-out forwards; z-index: 9998; }
+@keyframes cursorGlitterFade { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.3) translateY(20px); } }
 #score-board { font-size: 30px; color: white; padding: 20px; font-weight: bold; text-shadow: 2px 2px #000; }
 #sabala-container { position: absolute; bottom: 20px; transform: translateX(-50%); pointer-events: none; display: flex; flex-direction: column; align-items: center; }
 #nametag { background: white; color: #FF69B4; padding: 2px 10px; border-radius: 10px; font-weight: bold; font-size: 14px; margin-bottom: 5px; box-shadow: 2px 2px 0px #000; }
@@ -85,7 +87,7 @@ button.game-btn { background: #FF69B4; color: white; border: none; padding: 10px
 </div>
 
 <div id="sabala-sim">
-    <div id="score-board">Bananas: 0 | High Score: <span id="high-score-val">0</span> | Win at 30! 🏆</div>
+    <div id="score-board">Bananas: 0 | High Score: <span id="high-score-val">0</span></div>
     <div id="sabala-container">
         <div id="nametag">Abrar</div>
         <div id="sabala-player">🐒</div>
@@ -175,6 +177,7 @@ let score = 0;
 let highscore = parseInt(localStorage.getItem("sabalaHigh")) || 0;
 document.getElementById("high-score-val").innerText = highscore;
 let bananaSpawnTimeout = null;
+let gameStartTime = 0;
 
 document.getElementById("final-boss-btn").addEventListener("click", function() {
     document.getElementById("main-content").style.display = "none"; 
@@ -192,7 +195,11 @@ function spawnBanana(){
     b.style.top = "-50px";
     document.getElementById("sabala-sim").appendChild(b);
 
-    let fallSpeed = 5;
+    // Progressive difficulty: speed increases over time
+    const timeElapsed = (Date.now() - gameStartTime) / 1000; // seconds
+    const baseSpeed = 3;
+    const speedIncrease = Math.min(timeElapsed * 0.15, 5); // Caps at +5 after ~33 seconds
+    let fallSpeed = baseSpeed + speedIncrease;
     
     const fallInterval = setInterval(() => {
         if(!isSabalaActive){ 
@@ -211,19 +218,20 @@ function spawnBanana(){
         if(bRect.bottom > pRect.top && bRect.top < pRect.bottom && 
            bRect.left < pRect.right && bRect.right > pRect.left){
             score++;
-            document.getElementById("score-board").innerHTML = `Bananas: ${score} | High Score: ${highscore} | Win at 30! 🏆`;
+            document.getElementById("score-board").innerHTML = `Bananas: ${score} | High Score: ${highscore}`;
             clearInterval(fallInterval); 
             if(b.parentNode) b.remove();
             
-            // Check for win condition (30 bananas)
-            if(score >= 30) {
+            // Check for win condition (beat highscore)
+            if(highscore > 0 && score > highscore) {
                 triggerVictory();
                 return;
             }
             
-            // Spawn next banana after catching (slower pace)
+            // Spawn next banana - faster with slight randomness
             if(bananaSpawnTimeout) clearTimeout(bananaSpawnTimeout);
-            bananaSpawnTimeout = setTimeout(() => spawnBanana(), 1500);
+            const spawnDelay = 600 + Math.random() * 400; // 600-1000ms
+            bananaSpawnTimeout = setTimeout(() => spawnBanana(), spawnDelay);
             return;
         }
 
@@ -336,8 +344,9 @@ function resetSabala(){
     document.querySelectorAll("#sabala-sim .banana").forEach(b => b.remove());
     
     score = 0; 
+    gameStartTime = Date.now();
     isSabalaActive = true;
-    document.getElementById("score-board").innerHTML = `Bananas: 0 | High Score: ${highscore} | Win at 30! 🏆`;
+    document.getElementById("score-board").innerHTML = `Bananas: 0 | High Score: ${highscore}`;
     document.getElementById("sabala-container").style.left = "50%";
     
     // Start spawning after a brief delay
@@ -360,14 +369,30 @@ document.getElementById("clear-btn").addEventListener("click", function() {
     alert("Record wiped!"); 
 });
 
-// MONKEY FOLLOW MOUSE
+// MONKEY FOLLOW MOUSE with cursor glitter
+let lastGlitterTime = 0;
 window.addEventListener("mousemove", e => {
     if(!isSabalaActive) return;
+    
     const container = document.getElementById("sabala-container");
     let x = e.pageX; 
     if(x < 50) x = 50; 
     if(x > window.innerWidth - 50) x = window.innerWidth - 50;
     container.style.left = x + "px";
+    
+    // Add cursor glitter trail
+    const now = Date.now();
+    if(now - lastGlitterTime > 50) { // Throttle glitter creation
+        lastGlitterTime = now;
+        const glitter = document.createElement("div");
+        glitter.className = "cursor-glitter";
+        glitter.style.left = e.pageX + "px";
+        glitter.style.top = e.pageY + "px";
+        glitter.style.background = ["gold", "#FF69B4", "#00FFFF", "#FFD700", "white"][Math.floor(Math.random()*5)];
+        document.getElementById("sabala-sim").appendChild(glitter);
+        
+        setTimeout(() => glitter.remove(), 800);
+    }
 });
 </script>
 </body>
