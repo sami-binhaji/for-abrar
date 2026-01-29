@@ -255,6 +255,7 @@ function spawnBanana(){
            bRect.top < pRect.bottom + hitboxPadding && 
            bRect.left < pRect.right + hitboxPadding && 
            bRect.right > pRect.left - hitboxPadding){
+            console.log("CAUGHT! Score:", score + 1, "Highscore:", highscore, "HasBeaten:", hasBeatenHighscore);
             score++;
             
             // Check if just beat highscore for the first time this session
@@ -287,7 +288,10 @@ function spawnBanana(){
 
         // Missed banana - game over
         if(topPos > window.innerHeight){ 
-            clearInterval(fallInterval); 
+            console.log("MISSED BANANA! Ending game. Score:", score, "HasBeaten:", hasBeatenHighscore);
+            clearInterval(fallInterval);
+            const idx = allIntervals.indexOf(fallInterval);
+            if(idx > -1) allIntervals.splice(idx, 1);
             if(b.parentNode) b.remove();
             // Pass whether player beat highscore this session
             endGame(hasBeatenHighscore);
@@ -372,10 +376,12 @@ document.getElementById("retry-btn").addEventListener("click", function() {
 
 // Clear high score button
 document.getElementById("clear-btn").addEventListener("click", function() {
-    console.log("Clearing highscore...");
+    console.log("===== CLEARING HIGHSCORE =====");
+    console.log("Before - Score:", score, "Highscore:", highscore, "Active:", isSabalaActive, "HasBeaten:", hasBeatenHighscore);
     
     // Stop current game if running
     if(isSabalaActive) {
+        console.log("Stopping active game...");
         isSabalaActive = false;
         allIntervals.forEach(interval => clearInterval(interval));
         allIntervals = [];
@@ -384,13 +390,16 @@ document.getElementById("clear-btn").addEventListener("click", function() {
         document.querySelectorAll("#sabala-sim .banana").forEach(b => b.remove());
     }
     
-    // Reset highscore
+    // Reset all game state
     localStorage.setItem("sabalaHigh", 0); 
     highscore = 0;
     hasBeatenHighscore = false;
     score = 0;
     document.getElementById("high-score-val").innerText = 0;
     document.getElementById("score-board").innerHTML = `Bananas: 0 | High Score: 0`;
+    
+    console.log("After - Score:", score, "Highscore:", highscore, "Active:", isSabalaActive, "HasBeaten:", hasBeatenHighscore);
+    console.log("===== HIGHSCORE CLEARED =====");
     
     alert("Record wiped! Click Retry to start fresh."); 
 });
